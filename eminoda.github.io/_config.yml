@@ -12,7 +12,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: http://eminoda.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -34,7 +34,7 @@ titlecase: false # Transform title into titlecase
 external_link: true # Open external links in new tab
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 highlight:
@@ -67,6 +67,9 @@ theme: next
 
 # baidu 统计
 baidu_analytics: 2ef1aa85abed08ce76cd8d41d5f2de71
+
+# duoshuo 多说
+duoshuo_shortname: eminoda
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html

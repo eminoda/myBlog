@@ -53,3 +53,8 @@ redis-server /root/eminoda/redis/redis-3.2.7/redis.conf
 ````
 redis-cli
 ````
+
+8. 关闭
+````
+redis-cli -p 6379 shutdown
+````

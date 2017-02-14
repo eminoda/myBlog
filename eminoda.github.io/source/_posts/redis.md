@@ -41,7 +41,6 @@ source /etc/profile
 redis-server
 ````
 
-
 6. 后台启动
 ````
 vi redis.conf
@@ -55,6 +54,18 @@ redis-cli
 ````
 
 8. 关闭
-````
-redis-cli -p 6379 shutdown
-````
+	````
+	ps -aux |grep redis
+	root     15774  0.0  0.7 136964  7536 ?        Ssl  00:18   0:44 redis-server 106.14.35.133:6379
+	kill -9 15774
+	````
+	````
+	redis-cli -p 6379 shutdown
+	````
+
+### 客户端
+[redis manager](https://github.com/ServiceStack/redis-windows)
+
+### 文档
+[redis 公网访问](http://www.cnblogs.com/moxiaoan/p/5683743.html)
+[redis sockio](http://blog.csdn.net/icetime17/article/details/45768065)

@@ -26,7 +26,7 @@ date: 2017-02-09 20:27:57
 4. git的三种状态
 {% asset_img 5.png git %}
 
-## 基本cli
+## cli基本操作
 1. 服务器端创建项目
 {% asset_img 6.png Subversion，CVS... %}
 
@@ -112,3 +112,30 @@ $ git diff
 	{% asset_img 19.png start %}
 	{% asset_img 20.png git rebase master %}
 	{% asset_img 21.png git merge experiment %}
+
+## GUI基本操作
+1. clone
+{% asset_img g1.png clone %}
+{% asset_img g2.png clone %}
+
+2. add/commit/ignore
+{% asset_img g3.png git %}
+{% asset_img g4.png git %}
+
+3. branch
+{% asset_img g5.png 创建分支 %}
+{% asset_img g6.png 切换分支 %}
+{% asset_img g7.png 切换分支 %}
+{% asset_img g8.png 分支中修改文件提交 %}
+{% asset_img g9.png 比较目录变化 %}
+
+## 帮助文档
+1. [git download](https://git-scm.com/downloads)
+2. [tortoiseGit download](https://tortoisegit.org/)
+3. [git	在线操作](https://try.github.io/levels/1/challenges/1)
+4. [git 中文文档](https://git-scm.com/book/zh/v2/%E8%B5%B7%E6%AD%A5-%E5%85%B3%E4%BA%8E%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6)
+
+## 代码托管平台
+1. [github](https://github.com/eminoda)
+2. [coding](https://coding.net/)
+3. [csdn](https://code.csdn.net/)

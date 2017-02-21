@@ -8,9 +8,10 @@ categories: nginx
 comments: true
 ---
 
-## 帮助文档
+## 帮助文档（对原作者表示感谢）
 [nginx proxy](http://www.qttc.net/201307355.html)
-
+[proxy param解释](http://bbs.linuxtone.org/forum.php?mod=viewthread&tid=24357)
+[proxy param图例，解释很详细](http://blog.csdn.net/dengjiexian123/article/details/53386586)
 ## nginx缓存设置
 ### 现象
 nginx error.log 出现warn：an upstream response is buffered to a temporary file
@@ -30,7 +31,9 @@ nginx error.log 出现warn：an upstream response is buffered to a temporary fil
   proxy_buffers         4    64k;
   proxy_busy_buffers_size    128k;
   proxy_temp_file_write_size 128k;
+  # 临时缓存路径
   proxy_temp_path  /var/cache/nginx/temp_dir;
+  # 设置缓存区域大小，存储位置
   proxy_cache_path /var/cache/nginx/cache levels=1:2 keys_zone=cache_one:200m inactive=1d max_size=500m;
   ##proxy end##
   ````
@@ -51,5 +54,8 @@ nginx error.log 出现warn：an upstream response is buffered to a temporary fil
   {% asset_img 2.png 生成缓存文件目录 %}
 
   3. 效果
-  {% asset_img 3.png 之前，每次回到服务器拿资源 %}
-  {% asset_img 4.png 现在，直接去缓存目录获取 %}
+  之前，每次去服务器拿资源
+  {% asset_img 3.png 服务器命中 %}
+
+  现在，直接去缓存目录获取，不在请求服务器
+  {% asset_img 4.png file缓存中命中 %}

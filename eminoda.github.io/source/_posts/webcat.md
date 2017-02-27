@@ -15,19 +15,29 @@ comments: true
 4. [JS-SDK](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115&token=&lang=zh_CN)
 5. [网页授权](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115&token=&lang=zh_CN)
 
-## 公众平台
+## 公众平台设置
+**由于没有自己的生产账号，保存截图以做记录**
 ### 开发者权限
 {% asset_img 1.png 左侧开发菜单 %}
 {% asset_img 2.png web开发者工具 %}
 {% asset_img 3.png 绑定微信号 %}
 
-### 授权设置
-{% asset_img 4.png 网页授权 %}
-{% asset_img 6.png 网页授权 %}
-{% asset_img 5.png js-sdk安全域名 %}
-{% asset_img 7.png 回调网页授权 %}
+### 回调授权设置
+  {% asset_img 4.png 授权入口 %}
+  {% asset_img gzh.png 授权种类 %}
 
-## 开放平台
+  1. 业务域名
+    {% asset_img gzh2.png 业务域名 %}
+
+  2. JS调用域名
+    **可设置顶级域名**
+    {% asset_img 5.png js-sdk安全域名调用 %}
+
+  3. 网页授权域名
+    **貌似不能设置顶级域名，自行做页面中间跳转**
+    {% asset_img 7.png 回调网页授权 %}
+
+## 开放平台设置
 ### 设置回调域名
 {% asset_img 8.png 进入网站应用 %}
 {% asset_img 9.png 回调网页授权 %}

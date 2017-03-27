@@ -12,6 +12,22 @@ comments: true
 2. 分享描述文案字数过多。（建议20字左右）
 {% asset_img 1.png 分享图片 %}
 
+## 分享图片的ImgUrl的请求头:WeChat
+pro环境上，nginx对终端适配
+````
+  if ( $http_user_agent !~* "(Mobile|Android|iPad|iPhone|iPod|WeChat|BlackBerry|Windows Phone)" ) {
+    rewrite ^/ http://www.xxx.com? last;
+  }
+````
+
+## 禁用微信返回
+````
+history.pushState(null , null , window.location.href),
+window.onpopstate = function(e) {
+    history.go(1)
+}
+````
+
 ## signature签名生成
 1. [线上验证工具](https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=jsapisign)
 2. 参数说明

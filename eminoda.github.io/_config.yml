@@ -69,7 +69,7 @@ theme: next
 baidu_analytics: 2ef1aa85abed08ce76cd8d41d5f2de71
 
 # duoshuo 多说
-duoshuo_shortname: eminoda
+disqus_shortname: eminoda-github-io
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html

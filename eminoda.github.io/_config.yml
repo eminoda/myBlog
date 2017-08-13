@@ -4,7 +4,7 @@
 
 # Site
 title: HELLO GITHUB BLOG
-subtitle: 联系方式：245978782@qq.com
+subtitle: 私密：245978782@qq.com
 description: 堺雅人，我叔赛高
 author: Eminoda
 language: zh-Hans
@@ -69,7 +69,7 @@ theme: next
 baidu_analytics: 2ef1aa85abed08ce76cd8d41d5f2de71
 
 # duoshuo 多说
-disqus_shortname: eminoda-github-io
+# disqus_shortname: eminoda-github-io
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
@@ -78,3 +78,5 @@ deploy:
   repo: git@github.com:eminoda/eminoda.github.io.git
   branch: master
   message:
+
+entie_productKey: f4ae5ae713a5b9869e910d0a9c755054

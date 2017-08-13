@@ -11,7 +11,7 @@ alipay: /images/aliPay.jpg
 favicon: /favicon.ico
 
 # Set default keywords (Use a comma to separate)
-keywords: "Hexo, NexT"
+keywords: "eminoda|blog|Hexo|Next"
 
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
@@ -217,7 +217,7 @@ excerpt_description: true
 # Please use <!-- more --> in the post to control excerpt accurately.
 auto_excerpt:
   enable: true
-  length: 150
+  length: 20
 
 # Post meta display settings
 post_meta:
@@ -277,13 +277,13 @@ mathjax:
 #duoshuo_shortname:
 
 # Disqus
-disqus_shortname: eminoda-github-io
+# disqus_shortname: eminoda-github-io
 
 # Hypercomments
 #hypercomments_id:
 
 # Gentie productKey
-#gentie_productKey:
+gentie_productKey: f4ae5ae713a5b9869e910d0a9c755054
 
 # Support for youyan comments system.
 # You can get your uid from http://www.uyan.cc
@@ -484,3 +484,4 @@ images: images
 
 # Theme version
 version: 5.1.0
+

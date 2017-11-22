@@ -27,16 +27,26 @@ comments: true
   {% asset_img gzh.png 授权种类 %}
 
   1. 业务域名
+    设置业务域名后，在微信内访问该域名下页面时，不会被**重新排版**。
     {% asset_img gzh2.png 业务域名 %}
 
-  2. JS调用域名
+  2. JS调用域名（JSSDK）
     **可设置顶级域名**
     {% asset_img 5.png js-sdk安全域名调用 %}
-
+    JSSDK使用步骤：
+    - 绑定域名
+      先登录微信公众平台进入“公众号设置”的“功能设置”里填写“JS接口安全域名”。
+    - 引入JS文件
+      http://res.wx.qq.com/open/js/jweixin-1.2.0.js
+    - 通过config接口注入权限验证配置（附录有Q&A）
+      [config配置](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115)
   3. 网页授权域名
     **貌似不能设置顶级域名，自行做页面中间跳转**
     {% asset_img 7.png 回调网页授权 %}
-
+  4. 设置白名单
+    开发>基本设置>设置白名单
+    {% asset_img 10.png white list %}
+  
 ## 开放平台设置
 ### 设置回调域名
 {% asset_img 8.png 进入网站应用 %}

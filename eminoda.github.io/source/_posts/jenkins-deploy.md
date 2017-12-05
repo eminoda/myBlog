@@ -52,4 +52,8 @@ export JAVA_HOME=/mydata/jdk1.8.0_144
 export JRE_HOME=/mydata/jdk1.8.0_144
 ````
 
-3. 
+3. ssh cmd
+````
+ssh-keygen -t rsa
+ssh-copy-id -i ~/.ssh/id_rsa.pub "root@x.x.x.x"
+````

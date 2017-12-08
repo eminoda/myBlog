@@ -4,7 +4,7 @@ date: 2017-12-04 10:34:25
 tags: vue
 ---
 
-# 环境搭建
+# error
 1. [Vue warn]: Cannot find element: #app
     没有在html模板中*[提供的元素只能作为挂载点](https://cn.vuejs.org/v2/api/#el)*
 
@@ -28,6 +28,9 @@ tags: vue
     [Vue组件注册时，没有定义组件name](https://cn.vuejs.org/v2/api/#选项-其它)
     [Vue组件定义规范](https://cn.vuejs.org/v2/api/#Vue-component)
 
+4. [Vue warn]: Failed to mount component: template or render function not defined.
+    
+    
 # vue-loader
 1. 使用postcss预编译,Module not found: Error: Can't resolve 'sass-loader' in 'e:\github\vue-mintui\helloworld\src'
     ````
@@ -62,7 +65,7 @@ tags: vue
     "vetur.format.defaultFormatter.html": "prettier"
     ````
 
-# 一些技巧
+# 概念
 1. 异步加载
     [https://router.vuejs.org/zh-cn/advanced/lazy-loading.html](https://router.vuejs.org/zh-cn/advanced/lazy-loading.html)
     ````
@@ -121,4 +124,21 @@ tags: vue
         60%,
         ...
     }
+    ````
+
+6. stop prevent区别?
+    .stop - 调用 event.stopPropagation()。
+    .prevent - 调用 event.preventDefault()。
+
+7. router中，to和:to的区别?
+
+    ````
+    vm.to = '/foo'
+    <router-link to="to">foo
+    //解析为
+    <a href="/foo">foo</a>
+
+    <router-link :to="to">foo
+    //解析为
+    <a href="#/foo">foo</a>
     ````

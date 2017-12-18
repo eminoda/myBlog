@@ -32,4 +32,12 @@ categories: vscode
 
 -   Debugger for Chrome
 
-
+# 插件配置设置
+````
+"editor.formatOnSave": true,//更改后保存
+"fileheader.Author": "shixinghao",//vscode-fileheader
+"fileheader.LastModifiedBy": "shixinghao",//vscode-fileheader
+"vetur.format.defaultFormatter.js": "vscode-typescript",//js format
+"vetur.format.defaultFormatter.html": "js-beautify-html",//html format
+"javascript.format.insertSpaceBeforeFunctionParenthesis": true//js format
+````

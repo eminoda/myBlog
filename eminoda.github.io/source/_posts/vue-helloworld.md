@@ -144,3 +144,14 @@ tags: vue
     //解析为
     <a href="#/foo">foo</a>
     ````
+
+# vue-mintui
+饿了吗不错的ui框架，pc端element，移动端mintui。个人能力有限，用起来有些坑。
+1. 上拉组件Loadmore
+    问1：由于页面page上有个headerbar，调用onBottomLoaded()后，会自动向下滚动scrollTop += 50。
+    解决：首次不重置loadmore.onBottomLoaded()，第二次后再调用。
+    {% asset_img loadmore.gif 上拉加载自动上移的问题 %}
+
+    问2：底部有tabbar，list展示补全
+    解决：list中设置padding-bottom，拉长list
+    {% asset_img loadmore2.gif 上拉加载自动上移的问题 %}

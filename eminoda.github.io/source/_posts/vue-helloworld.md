@@ -30,6 +30,8 @@ tags: vue
 
 4. [Vue warn]: Failed to mount component: template or render function not defined.
     
+5. [Vue warn]: Property or method "splice" is not defined on the instance but referenced during render. Make sure that this property is reactive, either in the data option, or for class-based components, by initializing the property
+    是不是处理过console.log(this)
     
 # vue-loader
 1. 使用postcss预编译,Module not found: Error: Can't resolve 'sass-loader' in 'e:\github\vue-mintui\helloworld\src'

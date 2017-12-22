@@ -57,3 +57,6 @@ export JRE_HOME=/mydata/jdk1.8.0_144
 ssh-keygen -t rsa
 ssh-copy-id -i ~/.ssh/id_rsa.pub "root@x.x.x.x"
 ````
+
+4. jenkins配置config.xml参考
+    {% asset_img config.xml 4 %}

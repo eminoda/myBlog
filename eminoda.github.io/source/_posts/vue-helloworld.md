@@ -32,7 +32,7 @@ tags: vue
     
 5. [Vue warn]: Property or method "splice" is not defined on the instance but referenced during render. Make sure that this property is reactive, either in the data option, or for class-based components, by initializing the property
     是不是处理过console.log(this)
-    
+ 
 # vue-loader
 1. 使用postcss预编译,Module not found: Error: Can't resolve 'sass-loader' in 'e:\github\vue-mintui\helloworld\src'
     ````
@@ -155,3 +155,24 @@ tags: vue
     问2：底部有tabbar，list展示补全
     解决：list中设置padding-bottom，拉长list
     {% asset_img loadmore2.gif 上拉加载自动上移的问题 %}
+
+2. vue.esm.js:578 [Vue warn]: Error in created hook: "TypeError: Cannot read property 'onTopLoaded' of undefined"
+    钩子函数：refs.loadmore.onBottomLoaded();等 是否写错地方了。
+
+3. Toast全局唯一
+    由于每调用接口，就new一个Toast，在不同的tab页下切换会导致不同的Toast显示重叠
+    解决：全局初始化一个变量，并且每次new Toast后，获取return的instance，重复调用时先close历史Toast，再open新的。
+    
+    ````
+    showToast: (options) => {
+        if (MINUTI.toastInstance) {
+            MINUTI.toastInstance.close();
+        }
+        MINUTI.toastInstance = Toast({
+            message: typeof options === 'string' ? options : options.message,
+            position: options.position || 'middle',
+            duration: options.duration || SYSTEM.TOAST_TIMEOUT
+        });
+        // console.log(MINUTI.toastInstance.closed);
+    }
+    ````

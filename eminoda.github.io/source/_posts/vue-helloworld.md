@@ -32,7 +32,11 @@ tags: vue
     
 5. [Vue warn]: Property or method "splice" is not defined on the instance but referenced during render. Make sure that this property is reactive, either in the data option, or for class-based components, by initializing the property
     是不是处理过console.log(this)
- 
+
+6. Vue.directive调用vue instance?
+    [请移步](https://cn.vuejs.org/v2/api/#VNode-接口)
+    [请移步2](https://stackoverflow.com/questions/42777870/vuejs-2-0-how-to-access-vm-instance-within-hook-functions-in-custom-directives)
+
 # vue-loader
 1. 使用postcss预编译,Module not found: Error: Can't resolve 'sass-loader' in 'e:\github\vue-mintui\helloworld\src'
     ````
@@ -145,6 +149,9 @@ tags: vue
     <a href="#/foo">foo</a>
     ````
 
+8. vue的vnode
+    [简而已懂的一个blog](https://zhuanlan.zhihu.com/p/29220175)
+
 # vue-mintui
 饿了吗不错的ui框架，pc端element，移动端mintui。个人能力有限，用起来有些坑。
 1. 上拉组件Loadmore
@@ -176,3 +183,13 @@ tags: vue
         // console.log(MINUTI.toastInstance.closed);
     }
     ````
+
+4. 选中效果初始加载未实现
+
+````
+data() {
+    return {
+      selected: '1'//字符串还是数字，需要确认
+    };
+  }
+````

@@ -5,6 +5,7 @@ categories:
   - 前端
   - 微信
 date: 2017-02-16 18:42:41
+thumb_img: webcat.png
 ---
 
 

@@ -308,6 +308,10 @@
             </a>
           </div>
           <!--/noindex-->
+        
+        {% elif post.thumb_img %}
+          {% set thumb_img_url = '/images/thumb_img/' %}
+          <img src="{{ thumb_img_url+post.thumb_img }}">
         {% elif theme.auto_excerpt.enable %}
           {% set content = post.content | striptags %}
           {{ content.substring(0, theme.auto_excerpt.length) }}

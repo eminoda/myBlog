@@ -4,6 +4,7 @@ tags: jenkins
 categories:
   - 运维
 date: 2018-04-27 10:59:04
+thumb_img: jenkins2.jpg
 ---
 
 

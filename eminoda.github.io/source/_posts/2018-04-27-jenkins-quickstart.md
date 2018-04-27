@@ -2,7 +2,6 @@
 title: 初识jenkins
 tags: jenkins
 categories:
-  - 开发
   - 运维
 date: 2018-04-27 10:58:57
 ---

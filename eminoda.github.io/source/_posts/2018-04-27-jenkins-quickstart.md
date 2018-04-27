@@ -1,10 +1,12 @@
 ---
 title: 初识jenkins
 tags: jenkins
-categories: 
-    - 开发
-    - 运维
+categories:
+  - 开发
+  - 运维
+date: 2018-04-27 10:58:57
 ---
+
 
 {% asset_img start.png %}
 
@@ -23,8 +25,8 @@ categories:
 ## [什么是jenkins？](https://jenkins.io/doc/#what-is-jenkins)
 Jenkins是一个独立的，开源自动化服务器，可用于**自动化**各种任务，如构建，测试和部署软件。
 
-{% asset_img example-2.jpg 持续交付 %}
-{% asset_img example-3.jpg 持续部署 %}
+{% asset_img example-2.jpg 持续交付 Continuous Integration %}
+{% asset_img example-3.jpg 持续部署 Continuous Delivery %}
 
 ## 跑一个例子
 ### 搭建环境
@@ -51,11 +53,15 @@ Jenkins是一个独立的，开源自动化服务器，可用于**自动化**各
 1. 创建一个新任务
 {% asset_img config-1.png 创建一个新任务 %}
 {% asset_img config-2.png %}
-{% asset_img config-3.png 创建一个新任务 %}
-{% asset_img config-4.gif %}
-{% asset_img config-5.png 结果 %}
-{% asset_img config-6.png 结果 %}
+2. 配置版本工具
+{% asset_img config-3.png git and branch %}
+3. 构建脚本（test,build）
+4. 开始构建
+{% asset_img config-4.gif 开始构建 %}
+5. 验证结果
+{% asset_img config-5.png 构建成功 %}
+{% asset_img config-6.png 代码发布已发布到对应jenkins workspace %}
 
 ## 参考
-1. https://www.zhihu.com/question/23444990
-2. https://segmentfault.com/a/1190000004639923
+> https://www.zhihu.com/question/23444990
+> https://segmentfault.com/a/1190000004639923

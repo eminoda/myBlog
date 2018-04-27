@@ -1,10 +1,12 @@
 ---
 title: jenkins自动部署
 tags: jenkins
-categories: 
-    - 开发
-    - 运维
+categories:
+  - 开发
+  - 运维
+date: 2018-04-27 10:59:04
 ---
+
 
 ## **传统**方式
 {% asset_img example-1.gif %}

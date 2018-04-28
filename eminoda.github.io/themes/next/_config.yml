@@ -240,7 +240,7 @@ wechat_subscriber:
   enabled: true
   qcode: /images/qrcode/webcat.jpg
   description: 前端攻城狮的日常，【长按关注】看看↓↓↓?
-  description2: 好好学习，天天向上
+  description2: 好好学习，天天向上!
   description3: 欢迎留言，一起讨论前端问题
 
 # Reward

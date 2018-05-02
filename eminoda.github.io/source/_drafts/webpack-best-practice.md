@@ -20,6 +20,26 @@ thumb_img: webpack2.jpg
 ps：以目前团队在项目遇到问题，给出一些可落地的方案，帮助大家解决困难，如有不正确，欢迎指正
 
 ## 最佳实践
+### 如何区分不同环境加载不同配置
+1. 维护npm script，构建不同命令，加载不同配置文件
+````json
+"scripts": {
+    "start": "cross-env NODE_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "build:test": "cross-env NODE_ENV=development webpack --config build/webpack.dev.conf.js",
+    "build:production": "cross-env NODE_ENV=production webpack --config build/webpack.pro.conf.js"
+}
+````
+    npm run start //开发脚本
+    npm run build:test //测试环境打包
+    npm run build:production //线上环境打包
+
+2. [配置DefinePlugin](https://webpack.js.org/plugins/define-plugin/#usage)
+````js
+plugins: [
+    new webpack.DefinePlugin(config.systemEnv())
+]
+````
+
 ### 公用样式分离出来，sass变量由模块js引用，避免打包重复
 css出现相同样式覆盖，导致整个css文件过大，影响加载速度
 {% asset_img question-1.png %}
@@ -38,6 +58,8 @@ common.scss引用了_var.scss变量文件和维护了公共样式
 ### sass中的资源文件（如fonts）怎么正确引入
 使用__正确的__相对路径，但构建时找不到资源
 {% asset_img question-2.png %}
+
+错误如下：
 ````js
 ERROR in ./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js!./src/scss/style.scss
 Module not found: Error: Can't resolve '../../assets/fonts/iconfont.eot' in 'E:\webpack_demo\src\scss'
@@ -85,6 +107,25 @@ static/fonts/iconfont.14df282.ttf    70.8 kB          [emitted]
 很不凑巧我用了1.1.8，也因为这样很庆幸有了这样的实践条目。update version不要太激进
 {% asset_img answer-3-1.png %}
 
-### 性能提升（再开文章详讲）
+### 性能提升-外部资源文件导入
+使用externals关联cdn文件
+````js
+externals: {
+    'vue': 'Vue',
+    'vue-router': 'VueRouter',
+    'vuex': 'Vuex',
+    'rx-lite': 'Rx'
+}
+````
+index.html
+````html
+...
+<script src="/static/vue.all.js"></script>
+````
 
 ### 未完待续TODO
+- jade、pug如何使用html-webpack-plugin到出文件
+- 多页面配置
+- 性能提升-多线程并行操作
+- 性能提升-别名alias
+- 资源文件缓存策略

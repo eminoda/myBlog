@@ -1,0 +1,91 @@
+---
+title: vue HTTP封装
+tags: vue
+categories:
+  - 前端
+  - vue
+thumb_img: vue.jpg
+---
+
+## [axios](https://github.com/axios/axios))
+
+## 为何选用axios做http请求
+- [尤大大推荐](https://github.com/docschina/vuejs.org/issues/186)
+- 够简单易上手，http功能全，适合我们业务逻辑
+- 浏览器兼容不错
+
+## 封装axios
+1. 编写httpService
+````js
+// 导入依赖
+import axios from 'axios';
+import qs from 'qs';
+// 创建axios对象
+var instance = axios.create({
+    baseURL: SYSTEM.BASE_URL,
+    method: 'get',
+    timeout: SYSTEM.TIMEOUT,
+    // 请求头封装
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+});
+// request拦截器
+instance.interceptors.request.use(function (config) {
+    config.url = config.url + (config.prefix ? config.prefix : SYSTEM.SUFFIX_URL);
+    if (config.method == 'get') {
+        config.params = config.data;
+    }
+    // 上传功能
+    if (config.upload) {
+        config.data = config.data;
+    } else {
+        // 参数序列化
+        config.data = qs.stringify(config.data);
+    }
+    return config;
+}, function (error) {
+    return Promise.reject(error);
+});
+// response拦截器
+instance.interceptors.response.use(function (response) {
+    if (!response.data.respCode) {
+        return response.data;
+    } else {
+        return Promise.reject(new Error(...);
+    }
+}, function (error) {
+    return Promise.reject(error);
+})
+export default {
+    install: function (Vue, Option) {
+        Object.defineProperty(Vue.prototype, "$http", {
+            value: instance
+        });
+    }
+};
+export const $http = instance;
+````
+
+2. Vue插件方式注入
+````js
+...
+Vue.use(httpService);
+...
+````
+
+3. 使用
+````
+import {
+    $http
+} from './httpService';
+
+$http.request({
+    method: 'post',
+    url: API.trade_order,
+    data: {
+        tradeId: 111
+    }
+})
+````

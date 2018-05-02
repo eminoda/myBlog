@@ -5,7 +5,9 @@ categories:
   - 前端
   - webpack
 thumb_img: webpack2.jpg
+date: 2018-05-02 22:15:17
 ---
+
 
 {% asset_img start.jpg %}
 标题写的有些博人眼球，主要解决一些项目中常见问题

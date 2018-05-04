@@ -11,7 +11,7 @@ date: 2018-05-04 15:04:26
 
 
 {% asset_img gitlab.png %}
-我们已经用了github的web hook完成了和jenkins hook的对接。还需要了解的同学请看下[jenkins自动部署（github）](http://127.0.0.1:4000/2018/04/27/jenkins-auto-deploy/)
+我们已经用了github的web hook完成了和jenkins hook的对接。还需要了解的同学请看下[jenkins自动部署（github）](/2018/04/27/jenkins-auto-deploy/)
 当然对于公司不想开源source，肯定内部需要搭建自己的版本管理平台，比如gitlab。这里讲解下配置过程，可能会解决你遇到的问题。
 
 ## 选择版本
@@ -29,7 +29,7 @@ date: 2018-05-04 15:04:26
     Requests to the local network are not allowed
     ````
     {% asset_img error-1.png %}
-    
+
     备注下，如果是默认安装gitlab，其日志输出在如下位置
     ````
     tail -f /var/log/gitlab/gitlab-rails/production.log

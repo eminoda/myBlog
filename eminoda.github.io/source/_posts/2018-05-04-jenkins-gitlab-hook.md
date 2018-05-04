@@ -29,7 +29,11 @@ date: 2018-05-04 15:04:26
     Requests to the local network are not allowed
     ````
     {% asset_img error-1.png %}
-
+    
+    备注下，如果是默认安装gitlab，其日志输出在如下位置
+    ````
+    tail -f /var/log/gitlab/gitlab-rails/production.log
+    ````
 2. 生成token，他这个比较6，还有有效期
     {% asset_img gitlab-2.png %}
 

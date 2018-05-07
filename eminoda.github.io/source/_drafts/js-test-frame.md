@@ -37,7 +37,13 @@ Behavior Driven Development，行为驱动开发。
 是测试驱动开发的延伸。是一种敏捷软件开发的技术。
 因为在TDD中，我们并不能完全保证根据设计所编写的测试就是用户所期望的功能。BDD将这一部分简单和自然化，用自然语言来描述，让开发、测试、BA以及客户都能在这个基础上达成一致。因为测试优先的概念并不是每个人都能接受的，可能有人觉得系统太复杂而难以测试，有人认为不存在的东西无法测试。所以，我们在这里试图转换一种观念，那便是考虑它的行为，也就是说它应该如何运行，然后抽象出能达成共识的规范。
 
-## 进一步了解这些框架
+## 进一步了解这些框架(TODO-等到4个框架玩过后给结论比较)
+| - | TDD | BDD | async | es6 |
+| mocha | ok | ok | | ok | ok |
+
+### mocha
+1. [es6实现方式](https://github.com/mochajs/mocha/wiki/compilers-deprecation)
+mocha --require babel-core/register test/test-mocha/test.js
 
 ## 参考
 > https://www.cnblogs.com/ustbwuyi/archive/2012/10/26/2741223.html

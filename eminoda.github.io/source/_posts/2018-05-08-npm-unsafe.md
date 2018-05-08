@@ -24,7 +24,10 @@ date: 2018-05-08 18:08:38
 
 比如：你正在使用的Node框架是express，并且通过express-cookies处理cookie功能。那它其中就引用了getcookies。
 
-### 后门原理
+### 问题有多严重？
+getcookies会通过header注入代码，然后在你服务器‘任意遨游’，获取你服务器配置信息、监控你请求、让你宕个机...
+
+### 它是怎么个原理
 1. inject 自定义的Header,获取到req.headers
 ````
 req.headers['gfeffh11i'] = 111;

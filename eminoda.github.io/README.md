@@ -19,7 +19,6 @@
 - jenkins
 
 ## TODO 文章
-- [] 总有刁民想陷害朕，试一试eslint
 - [] mocha单元测试，增强代码健壮性
 - [] 别用sublime了，试试vscode
 - [] Koa该玩起来了

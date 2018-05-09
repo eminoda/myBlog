@@ -7,22 +7,133 @@ categories:
 thumb_img: eslint.png
 ---
 
-## 为什么要对代码做校验
-1. 检查代码格式，团队统一风格format
-2. 检查变量引用等错误
+{% asset_img eslint.png %}
+eslint，和jslint等一样，都是js方向的检验工具。目标就是提前有规则的规范项目代码，提供error、warn提示，避免人为疏忽造成的错误，提升代码健壮性，稳定性。
+eslint对比其他工具，具有更强大的功能，社区有非常多的plugins，对不同脚手架的前端工具都能使用，vscode等ide也有支持插件。
+官方也给出了best practice，任何人都能简单的享受那种**安全感**
+
+## 代码校验好处
+1. 规范代码格式，统一团队format风格
+2. 提前发现代码错误
     比如：
     - 没有var声明变量，但会被全局化到window中，影响逻辑功能。
     - 没有用对es6里的let、const
+    - [下面举例说明](#那些不容易察觉的问题代码)
 3. 检查代码复杂度
-4. 避免人为错误，提升项目健壮性，安全性
+4. 帮助CI集成
+
+## [环境配置](https://eslint.org/docs/user-guide/getting-started#local-installation-and-usage)
+1. 安装eslint
+````
+npm install eslint --save-dev
+````
+2. [配置文件](https://eslint.org/docs/user-guide/configuring)
+eslint默认会读项目路径下的配置文件，根据ide的插件，就能马上投入使用
+````
+cd your project root dir
+mkdir .eslintrc(.js|.json|.yaml)
+````
+
+## 配置说明
+### [Rule](https://eslint.org/docs/rules/#best-practices)
+
+### 定义全局变量
+避免外部资源等原因，某些变量没有专门declare报的错。需要全局定义
+````
+globals: {
+    PC_URL: true
+}
+````
+
+### 有条件的跳过eslint检验
+如果使用vscode，通过以下插件可以方便更改
+{% asset_img vscode.png vscode插件 %}
+````
+// 特殊注解
+/* eslint-disable no-console */
+console.log();
+/* eslint-enable no-console */
+````
+
+### 忽略指定路径eslint的校验
+````
+mkdir .eslintignore
+
+/src/*.js
+````
+
+### [扩展配置文件](https://eslint.org/docs/user-guide/configuring#extending-configuration-files)
+参考社区最佳实践，引用需要的插件，完善eslint规则检查
+
+1. extends规则逻辑
+    - 添加额外规则
+    - 继承rule规则
+    - 覆盖rule重复规则
+
+
+2. 如何使用内置规则
+    ````
+    extends:"eslint:recommended"
+    ````
+3. 使用其他eslint package配置的规则
+    ````
+    npm install eslint-config-xxx
+    ````
+
+    ````
+    extends: standard
+    ````
+4. 使用第三方plugins提供的规则
+    ````
+    npm install eslint-plugin-xxx
+    ````
+
+    ````
+    "plugins": [
+        "react"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended"
+    ],
+    ````
+
+## 配置vue project
+1. 安装插件
+    ````
+    npm install eslint-plugin-vue -D
+    ````
+2. [未能解析vue](https://github.com/vuejs/eslint-plugin-vue#what-is-the-use-the-latest-vue-eslint-parser-error)
+    {% asset_img vue-1.png %}
+
+    eslint-plugin-vue require vue-eslint-parser
+    ````
+    npm vue-eslint-parser -D 
+    ````
+
+    .eslintrc.js
+    ````
+    {
+        "parser": "vue-eslint-parser",
+        "parserOptions": {
+            "parser": "babel-eslint",
+        },
+        extends: [
+            'plugin:vue/essential',
+        ],
+        plugins: [
+            'vue'
+        ]
+    }
+    ````
+    {% asset_img vue-2.png eslint-plugin-vue内置规则 %}
+3. error  Resolve error: unable to load resolver "node"  import/no-duplicates
+    需要安装
+    ````
+    npm install eslint-import-resolver-node -D
+    ````
 
 ## 那些不容易察觉的问题代码
-1. error  Resolve error: unable to load resolver "node"  import/no-duplicates
-需要安装
-````
-npm install eslint-import-resolver-node -D
-````
-
 ### 会引起麻烦的error（必须修改）
 1. [eslint] Unexpected trailing comma. (comma-dangle)
 {% asset_img error-1.png 不允许逗号结尾 %}
@@ -83,7 +194,7 @@ props: {
 2. [eslint] Trailing spaces not allowed. (no-trailing-spaces)
     {% asset_img warn-2.png 缺少空格 %}
 3. error  Missing space after =>     arrow-spacing
-    {% asset_img warn-4.png 缺少空格 %}
+    {% asset_img warn-4.png 多余空格 %}
 
 4. [eslint] Expected the Promise rejection reason to be an Error. (prefer-promise-reject-errors)
 {% asset_img error-3.png 需要reject error对象 %}
@@ -91,103 +202,7 @@ props: {
 5. [eslint] Redundant use of `await` on a return value. (no-return-await)
 {% asset_img warn-3.png 不能返回await %}
 
-## [环境配置](https://eslint.org/docs/user-guide/getting-started#local-installation-and-usage)
-1. 安装eslint
-````
-npm install eslint --save-dev
-````
-2. [配置文件](https://eslint.org/docs/user-guide/configuring)
-````
-cd your project root dir
-mkdir .eslintrc(.js|.json|.yaml)
-````
-
-## 配置说明
-### [Rule](https://eslint.org/docs/rules/#best-practices)
-
-### 定义全局变量
-````
-globals: {
-    PC_URL: true
-}
-````
-
-### 使eslint部分报错失效
-{% asset_img vscode.png vscode插件 %}
-````
-//提供代码提示
-/* eslint-disable no-console */
-console.log();
-/* eslint-enable no-console */
-````
-
-### 忽略指定路径eslint的校验
-````
-mkdir .eslintignore
-
-/src/*.js
-````
-
-### [扩展配置文件](https://eslint.org/docs/user-guide/configuring#extending-configuration-files)
-1. extends规则逻辑
-    - 添加额外规则
-    - 继承rule规则
-    - 覆盖rule重复规则
-
-
-2. 如何使用内置规则
-    ````
-    extends:"eslint:recommended"
-    ````
-3. 使用其他eslint package配置的规则
-    ````
-    npm install eslint-config-xxx
-    ````
-
-    ````
-    extends: standard
-    ````
-4. 使用第三方plugins提供的规则
-    ````
-    npm install eslint-plugin-xxx
-    ````
-
-    ````
-    "plugins": [
-        "react"
-    ],
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended"
-    ],
-    ````
-
-## 配置vue project
-1. 安装插件
-````
-npm install eslint-plugin-vue -D
-````
-2. [未能解析vue](https://github.com/vuejs/eslint-plugin-vue#what-is-the-use-the-latest-vue-eslint-parser-error)
-    {% asset_img vue-1.png %}
-
-    eslint-plugin-vue require vue-eslint-parser
-    ````
-    npm vue-eslint-parser -D 
-    ````
-
-    .eslintrc.js
-    ````
-    {
-        "parser": "vue-eslint-parser",
-        "parserOptions": {
-            "parser": "babel-eslint",
-        },
-        extends: [
-            'plugin:vue/essential',
-        ],
-        plugins: [
-            'vue'
-        ]
-    }
-    ````
-    {% asset_img vue-2.png eslint-plugin-vue内置规则 %}
+## 总结
+本来测试通过的代码，在eslint的帮助下，暴露了更多的安全隐患，和测试人员没有发现的问题。
+js本来就灵活多变，稍不留神就会给自己埋下大坑，如果没有提前检测机制，根本就是防不胜防。
+如果你还没用，赶紧使用起来...

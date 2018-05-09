@@ -1,11 +1,13 @@
 ---
 title: JS工程化之代码校验
 tags: eslint
-categories: 
+categories:
   - 前端
   - eslint
 thumb_img: eslint.png
+date: 2018-05-09 23:13:24
 ---
+
 
 {% asset_img eslint.png %}
 eslint，和jslint等一样，都是js方向的检验工具。目标就是提前有规则的规范项目代码，提供error、warn提示，避免人为疏忽造成的错误，提升代码健壮性，稳定性。

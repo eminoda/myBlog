@@ -69,6 +69,6 @@ date: 2018-05-04 15:04:26
 
 ## 另外撇一嘴——如何使用gitlab-hook-plugin 实现scm auto trigger
 ````
-http://your-jenkins-server/git/notifyCommit
+http://your-jenkins-server/gitlab/notifyCommit
 ````
-| https://plugins.jenkins.io/gitlab-hook
+| https://github.com/jenkinsci/gitlab-hook-plugin

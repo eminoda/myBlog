@@ -1,13 +1,15 @@
 ---
 title: 代码QA检查和单元测试
-tags: 
+tags:
   - eslint
   - test
 categories:
   - 前端
   - 工程化
 thumb_img: balance.jpg
+date: 2018-05-10 17:24:09
 ---
+
 
 ## 质量检查和测试都需要吗？
 答案是：两个都要兼得。

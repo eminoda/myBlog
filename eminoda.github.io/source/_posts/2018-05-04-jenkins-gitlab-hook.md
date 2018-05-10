@@ -63,3 +63,9 @@ date: 2018-05-04 15:04:26
 ## 放个结果
 能看到新的构建#5
 {% asset_img result.gif %}
+
+## 参考
+| https://docs.gitlab.com/ee/integration/jenkins.html
+
+## 另外撇一嘴——如何使用gitlab-hook-plugin 实现scm auto trigger
+| https://plugins.jenkins.io/gitlab-hook

@@ -68,7 +68,7 @@ date: 2018-05-04 15:04:26
 | https://docs.gitlab.com/ee/integration/jenkins.html
 
 ## 还有个其他方式
-撇一嘴，如果因为某些原因公司的gitlab版本比较低，像我们公司是，那是无法使用上面这种方式。
+撇一嘴，如果因为某些原因公司的gitlab版本比较低，像我们公司是8.8.5（运维说无法无缝升级到10，所以就凉凉了），那是无法使用上面这种方式。
 但你可以使用如下这个方式。
 
 1. jenkins下载gitlab-hook-plugin

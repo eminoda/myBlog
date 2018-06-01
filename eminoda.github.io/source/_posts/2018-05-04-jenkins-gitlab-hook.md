@@ -67,8 +67,25 @@ date: 2018-05-04 15:04:26
 ## 参考
 | https://docs.gitlab.com/ee/integration/jenkins.html
 
-## 另外撇一嘴——如何使用gitlab-hook-plugin 实现scm auto trigger
+## 还有个其他方式
+撇一嘴，如果因为某些原因公司的gitlab版本比较低，像我们公司是，那是无法使用上面这种方式。
+但你可以使用如下这个方式。
+
+1. jenkins下载gitlab-hook-plugin
+
+2. 配置gitlab
+URL配置：
+[官网写的很清楚，点击查看](https://github.com/jenkinsci/gitlab-hook-plugin#notify-commit-hook)
 ````
-http://your-jenkins-server/gitlab/notifyCommit
+http://your-jenkins-server/gitlab/notify_commit
 ````
-| https://github.com/jenkinsci/gitlab-hook-plugin
+TOKEN配置：
+{% asset_img gitlab-old.png %}
+
+3. 配置gitlab webhook
+{% asset_img gitlab-old-setting.png %}
+
+4. 设置jenkins
+勾选poll scm（Source Control Management）。注意红框内容，如果没有制定时间计划，那将根据gitlab hook自动构建。
+备注：构建跟着jenkins设置的branch走的，并非所有branch会执行。
+{% asset_img jenkins-scm.png %}

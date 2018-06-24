@@ -82,3 +82,12 @@ deploy:
   repo: git@github.com:eminoda/eminoda.github.io.git
   branch: master
   message:
+
+jwt:
+  header:
+    typ: JWT,
+    alg: HS256
+    expiresIn: 1h
+
+secretOrPrivateKey: hexo
+github_redirect: http://localhost:3000/oauth?backUrl=

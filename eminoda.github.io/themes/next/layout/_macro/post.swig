@@ -1,5 +1,4 @@
 {% macro render(post, is_index, post_extra_class) %}
-
   {% set headlessPost = Array.prototype.indexOf.call(['quote', 'picture'], post.type) > -1 %}
 
   {% set post_class = 'post post-type-' + post.type | default('normal') %}
@@ -35,16 +34,24 @@
           <{% if theme.seo %}h2{% else %}h1{% endif %} class="post-title{% if post.direction && post.direction.toLowerCase() === 'rtl' %} rtl{% endif %}" itemprop="name headline">{#
           #}{# Link posts #}{#
           #}{% if post.link %}
+          {{post.link}}
               {% if post.sticky > 0 %}
                 {{ post.sticky }}
                 <span class="post-sticky-flag" title="{{ __('post.sticky') }}">
                   <i class="fa fa-thumb-tack"></i>
                 </span>
               {% endif %}
-              <a class="post-title-link post-title-link-external" target="_blank" href="{{ url_for(post.link) }}" itemprop="url">
-                {{ post.title or post.link }}
-                <i class="fa fa-external-link"></i>
-              </a>
+              {% if post.secret %}
+                <a class="post-title-link post-title-link-external" target="_blank" href="{{ config.github_redirect + encrypt(post.link,config.jwt,config.secretOrPrivateKey) }}" itemprop="url">
+                  {{ post.title or post.link }}
+                  <i class="fa fa-external-link"></i>
+                </a>
+              {% else %}
+                <a class="post-title-link post-title-link-external" target="_blank" href="{{ url_for(post.link) }}" itemprop="url">
+                  {{ post.title or post.link }}
+                  <i class="fa fa-external-link"></i>
+                </a>
+              {% endif %}
             {% else %}{#
             #}{% if is_index %}
                 {% if post.sticky > 0 %}
@@ -52,7 +59,11 @@
                     <i class="fa fa-thumb-tack"></i>
                   </span>
                 {% endif %}
-                <a class="post-title-link" href="{{ url_for(post.path) }}" itemprop="url">{#
+                {% if post.secret %}
+                  <a class="post-title-link" href="{{config.github_redirect + encrypt(post.path,config.jwt,config.secretOrPrivateKey)}}" itemprop="url">
+                {% else %}
+                  <a class="post-title-link" href="{{ url_for(post.path) }}" itemprop="url">
+                {% endif %}{#
                 #}{{ post.title | default(__('post.untitled'))}}{#
               #}</a>{#
             #}{% else %}{{ post.title }}{% endif %}{#

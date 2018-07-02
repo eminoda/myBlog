@@ -90,4 +90,4 @@ jwt:
     expiresIn: 1h
 
 secretOrPrivateKey: hexo
-github_redirect: http://localhost:3000/oauth?backUrl=
+github_redirect: http://www.eminoda.com/oauth?backUrl=

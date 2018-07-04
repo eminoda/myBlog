@@ -74,3 +74,6 @@ utilService.getDeviceType() !== 'android' ? store.state.router.beforeUrl : windo
 
 ## 可能同样的分享代码，会出现分享朋友圈error，但是分享朋友ok。
 可能是我们代码问题，但也请改个良辰吉日再试试，说不定又好了。亲测过
+
+## errMsg: "onMenuShareAppMessage:fail, the permission value is offline verifying"
+先确定config参数正常的情况下，查看公众号等平台分享等功能是否有权限。可能账号权限过期，运营等迁移公众号主体等操作影响到了。

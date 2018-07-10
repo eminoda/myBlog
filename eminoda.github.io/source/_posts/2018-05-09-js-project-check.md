@@ -2,8 +2,8 @@
 title: JS工程化之代码QA校验
 tags: eslint
 categories:
-  - 前端
   - 工程化
+  - QA
 thumb_img: eslint.png
 date: 2018-05-09 23:13:24
 ---

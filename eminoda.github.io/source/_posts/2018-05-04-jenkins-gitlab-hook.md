@@ -4,7 +4,8 @@ tags:
   - jenkins
   - gitlab
 categories:
-  - 运维
+  - 工程化
+  - 自动化
 thumb_img: hook.jpg
 date: 2018-05-04 15:04:26
 ---

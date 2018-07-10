@@ -2,8 +2,8 @@
 title: js重复代码块检查
 tags: code-quality
 categories:
-  - 前端
   - 工程化
+  - QA
 thumb_img: copy.jpg
 date: 2018-05-15 15:38:50
 ---

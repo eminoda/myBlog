@@ -4,8 +4,8 @@ tags:
   - eslint
   - test
 categories:
-  - 前端
   - 工程化
+  - eslint
 thumb_img: balance.jpg
 date: 2018-05-10 17:24:09
 ---

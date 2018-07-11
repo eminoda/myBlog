@@ -1,13 +1,15 @@
 ---
 title: vue框架学习--基础js知识点
-secret: false
-tags: 
+tags:
   - vue
+secret: false
 categories:
   - 前端
   - vue
 no_sketch: true
+date: 2018-07-11 13:20:46
 ---
+
 
 # 前言，目标：
 - 加强js知识点巩固

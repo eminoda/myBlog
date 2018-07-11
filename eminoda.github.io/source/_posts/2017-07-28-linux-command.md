@@ -2,7 +2,6 @@
 title: linux常用命令
 tags:
   - linux
-  - nginx
 categories: linux
 no_sketch: true
 date: 2017-07-28 09:47:48

@@ -1,13 +1,14 @@
 ---
 title: git merge分支遇到的奇葩现象
-date: 2018-01-24 13:39:43
 tags:
   - git
 categories:
-    - 前端
-    - git
+  - 前端
+  - git
 comments: true
+date: 2018-01-24 13:39:43
 ---
+
 
 # 遇到的问题
 切换分支的时候，A分支新建的文件居然被B分支历史文件夹同步了。

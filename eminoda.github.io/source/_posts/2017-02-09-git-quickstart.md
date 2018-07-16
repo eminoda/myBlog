@@ -3,11 +3,12 @@ title: git 快速入门
 tags:
   - git
 categories:
-    - 前端
-    - git
+  - 前端
+  - git
 comments: true
 date: 2017-02-09 20:27:57
 ---
+
 
 ## 版本控制
 1. 集中化的版本控制系统

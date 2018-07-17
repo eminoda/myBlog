@@ -59,24 +59,26 @@ thumb_img: jenkins2.jpg
 {% asset_img example-3.jpg %}
 
 ### github设置
-    选择github权限，哪些event会触发任务
-    {% asset_img github-1.png 设置token %}
+选择github权限，哪些event会触发任务
+{% asset_img github-1.png 设置token %}
 
-    生成token，这里在jenkins需要使用，切记保存好，下次会是不同的token!
-    {% asset_img github-2.png 保存好token %}
+生成token，这里在jenkins需要使用，切记保存好，下次会是不同的token!
 
-    设置Jenkins hook，github最终调用这个Api
-    {% asset_img github-3.png 进入项目，开启jenkins服务 %}
+{% asset_img github-2.png 保存好token %}
+
+设置Jenkins hook，github最终调用这个Api
+
+{% asset_img github-3.png 进入项目，开启jenkins服务 %}
 
 ### jenkins设置
-    将github的token，配置到jenkins中
-    {% asset_img github-4.png 设置github credentials %}
+将github的token，配置到jenkins中
+{% asset_img github-4.png 设置github credentials %}
 
-    在全局设置中，测试token的链接状态
-    {% asset_img github-5.png 配置github credentials %}
+在全局设置中，测试token的链接状态
+{% asset_img github-5.png 配置github credentials %}
 
-    在job中，定义触发器
-    {% asset_img github-6.png 开始hook %}
+在job中，定义触发器
+{% asset_img github-6.png 开始hook %}
 
 ## 现在的发布会变成什么样？
 {% asset_img example-2.gif %}

@@ -5,7 +5,9 @@ categories:
   - 前端
   - js
 no_sketch: true
+date: 2018-08-03 23:37:36
 ---
+
 
 ## new Promise 如何return Promise
 ````js

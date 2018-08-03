@@ -1,6 +1,10 @@
 ---
-title: js-promise
-tags:
+title: prmoise返回遇到个问题
+tags: promise
+categories:
+  - 前端
+  - js
+no_sketch: true
 ---
 
 ## new Promise 如何return Promise

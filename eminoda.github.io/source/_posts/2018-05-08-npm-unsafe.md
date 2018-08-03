@@ -4,6 +4,7 @@ tags: node
 categories:
   - 前端
   - node
+  - npm
 thumb_img: hack.jpg
 date: 2018-05-08 18:08:38
 ---

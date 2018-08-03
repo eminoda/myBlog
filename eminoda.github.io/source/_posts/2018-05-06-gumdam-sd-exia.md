@@ -2,8 +2,8 @@
 title: SD能天使Exia 制作小记
 tags: 高达
 categories:
+  - 随记
   - 高达
-  - SD
 thumb_img: sd-exia.jpg
 date: 2018-05-06 00:36:59
 ---

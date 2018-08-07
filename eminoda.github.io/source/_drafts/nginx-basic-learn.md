@@ -1,12 +1,12 @@
 ---
 title: nginx基础学习进阶
 tags: nginx
+no_sketch: true
 ---
 
 > 内容摘自[nginx官方文档](http://nginx.org/en/docs/beginners_guide.html)，自己配合实例更细致的熟悉nginx
 
-# [开胃小菜](http://nginx.org/en/docs/beginners_guide.html)
-## 命令启动，停止，重启 配置
+# 命令启动，停止，重启 配置
 一旦nginx运行起来，通过如下方式invoking nginx的控制变更：
 ````
 nginx -s stop // 停服
@@ -15,15 +15,15 @@ nginx -s reload // 重启配置文件
 nginx -s reopen // 重新打开log文件
 ````
 
-### quit 和 stop有何区别？
+## quit 和 stop有何区别？
 quit会等最近一个request响应结束后退出进程（graceful shutdown）。
 比如一个服务会hold起数秒，即使执行了quit命令，还是会等结果处理完毕后关闭nginx。
 stop则马上停止。
 
-### 配置文件错误，reload是否会影响线上？
+## 配置文件错误，reload是否会影响线上？
 不会，如果configure错误，nginx将roll back回老的配置文件，直到配置正确才会真正reload起效。
 
-### 除了stop等，怎么停止nginx服务？
+## 除了stop等，怎么停止nginx服务？
 ````
 ps -ax | grep nginx
 26318 ?        Ss     0:00 nginx: master process nginx
@@ -33,9 +33,9 @@ ps -ax | grep nginx
 kill -s QUIT 26318
 ````
 
-### [了解更多nginx控制命令](http://nginx.org/en/docs/control.html)
+## [了解更多nginx控制命令](http://nginx.org/en/docs/control.html)
 
-## nginx配置文件的结构
+# nginx配置文件的结构
 ````js
 events {
     worker_connections 1024;
@@ -49,7 +49,7 @@ http {
 }
 ````
 
-## 文件服务
+# 文件服务
 静态文件管理也是Nginx最大的特色之一
 ````
 # prefix compared with the URI from the request
@@ -64,7 +64,7 @@ location /test/ {
 }
 ````
 
-### root 和 alias的区别？
+## root 和 alias的区别？
 | 指令 | 范围 |
 | --- | --- |
 | root | http, server, location, if in location |
@@ -83,7 +83,7 @@ location /hello/ {
 }
 ````
 
-**怎么权衡root和alias的使用？**
+## 怎么权衡root和alias的使用？
 如果location匹配路径和指令的value最后部分相同时，建议使用root。
 ````
 location /images/ {
@@ -95,7 +95,7 @@ location /images/ {
 }
 ````
 
-### alias 和 正则匹配问题？
+## alias 和 正则匹配问题？
 如果location 包含regex expression，就会匹配正则捕获内容，在alias中替换（而非替换整个location路径）。
 ````
 # file: /root/mydata/test/yuyu.jpg
@@ -110,11 +110,11 @@ location ~ ^/foo/(.*\.jpg)$ {
 }
 ````
 
-## [设置简单的代理Proxy服务](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
+# [设置简单的代理Proxy服务](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
 使用nginx代理，可能是解决我们日常开发，服务调用的最大原因
 
 在了解proxy之前，先看下location路径匹配
-### location
+## location
 | 指令 | 范围 | 语法 |
 | --- | --- | --- |
 | location | server, location | location [ = &#124; ~ &#124; ~* &#124; ^~ ] uri { ... } |
@@ -167,7 +167,7 @@ location ~* \.(gif|jpg|jpeg)$ {
 
 打开 merge_slashes 配置，将允许 //foo之类多斜杠的路径匹配
 
-### proxy_pass
+## proxy_pass
 | 指令 | 范围 |
 | --- | --- |
 | proxy_pass | location, if in location, limit_except |
@@ -199,17 +199,30 @@ location /users {
 }
 ````
 
-### rewrite
+## rewrite
 | 指令 | 范围 |
 | --- | --- |
 | rewrite | server, location, if |
 
-**rewrite regex replacement [flag];**
+rewrite regex replacement [flag];
+如果正则匹配到request URI，URI则会和replacement替换
 
-**flag几个值的区别**
+### flag几个值的区别
 - last
 - break
 - redirect
 - permanent
 
+**last**
+````
+url: http://test.eminoda.com:81/rewirte/test1
+# 注意如果此处location为 /rewirte/test1/,则：http://test.eminoda.com:81/rewirte/test1 为404
+location /rewirte/test1 {
+    # 匹配后，通过last寻找新的符合 /last/ 规则的location
+    rewrite ^/rewirte /last/ last;
+}
+location /last/ {
+    proxy_pass http://127.0.0.1:3001;
+}
+````
 ##[了解更多](http://nginx.org/en/docs/http/ngx_http_proxy_module.html)##

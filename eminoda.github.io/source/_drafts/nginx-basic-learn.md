@@ -1,6 +1,9 @@
 ---
 title: nginx基础学习进阶
 tags: nginx
+categories:
+  - 前端
+  - nginx
 no_sketch: true
 ---
 

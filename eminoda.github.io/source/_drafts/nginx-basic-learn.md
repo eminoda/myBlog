@@ -172,30 +172,55 @@ location ~* \.(gif|jpg|jpeg)$ {
 | --- | --- |
 | proxy_pass | location, if in location, limit_except |
 
-**proxy_pass 末尾跟/的区别**
-proxy_pass url分两种：
-- without a URI
-- with a URI
+**proxy_pass定义了URI的区别**
 
-如果proxy_pass is specified with a URI，URI将替换request URI匹配中的location配置（注意location 需要后面维护个/）
-如果proxy_pass is specified without a URI，URI更改为request URI
-
-来看下如下配置的不同
+**specified without a URI**
 ````
-# specified without a URI
-# 这是个普通的路径匹配，请求3001服务下 /users 地址
-location /users {
+location /users/ {
     proxy_pass http://127.0.0.1:3001;
 }
-# specified with a URI
-# 由于添加/斜杠，将替换location。相当于 location /。URI specified替换request URI
-location /users/ {
-    proxy_pass http://127.0.0.1:3001/;
+````
+request URI在location匹配后，原样传送给server
+
+**specified with a URI**
+````
+location /foo {
+    proxy_pass http://127.0.0.1:3001/users/;
 }
-# specified with a URI
-# error，实际访问 http://127.0.0.1:3001//
-location /users {
-    proxy_pass http://127.0.0.1:3001/;
+````
+如果proxy_pass is specified with a URI，当request URI在location命中，URI将替换被location匹配中的request URI的part（注意location 需要后面维护个/）
+> If the proxy_pass directive is specified with a URI, then when a request is passed to the server, the part of a normalized request URI matching the location is replaced by a URI specified in the directive
+
+访问：**http://test.eminoda.com:81/foo/**，实际请求：http://127.0.0.1:3001/users//，/users/替换/foo+剩下的请求/
+访问：**http://test.eminoda.com:81/foo**，实际请求：http://127.0.0.1:3001/users/
+
+**修改配置：注意location的/**
+````
+location /foo/ {
+    proxy_pass http://127.0.0.1:3001/users/;
+}
+````
+按照上例子的访问地址，实际请求都是：http://127.0.0.1:3001/users/
+原以为：可能访问/foo，浏览器会默认添加/，然后根据URI的规则，总会替换location匹配的request URI，到后端服务固定统一成/user/。**但是错了**。
+
+浏览器分别输入/foo，当location /foo，浏览器不会默认添加/，而 location /foo/ 则会自动添加。感觉像是location告诉浏览器你给我变的样子
+查阅location文档：
+如果location规则尾部包含斜杠（location /foo/），在响应时会发送301永久重定向，地址后面自动加上斜杠（这就是为何浏览器会有斜杠的原因）
+> If a location is defined by a prefix string that ends with the slash character, and requests are processed by one of proxy_pass, fastcgi_pass, uwsgi_pass, scgi_pass, memcached_pass, or grpc_pass, then the special processing is performed. In response to a request with URI equal to this string, but without the trailing slash, a permanent redirect with the code 301 will be returned to the requested URI with the slash appended.
+
+### proxy_pass有些其他规则，request URI不确定被替换更改
+**location定义正则，同时proxy_pass不能定义URI**
+**location定义中有rewrite break，后跟proxy_pass**
+````
+location /name/ {
+    rewrite    /name/([^/]+) /users?name=$1 break;
+    proxy_pass http://127.0.0.1;
+}
+````
+**proxy_pass使用变量**
+````
+location /name/ {
+    proxy_pass http://127.0.0.1$request_uri;
 }
 ````
 
@@ -207,22 +232,60 @@ location /users {
 rewrite regex replacement [flag];
 如果正则匹配到request URI，URI则会和replacement替换
 
-### flag几个值的区别
-- last
-- break
-- redirect
-- permanent
-
-**last**
+### last
 ````
-url: http://test.eminoda.com:81/rewirte/test1
-# 注意如果此处location为 /rewirte/test1/,则：http://test.eminoda.com:81/rewirte/test1 为404
-location /rewirte/test1 {
-    # 匹配后，通过last寻找新的符合 /last/ 规则的location
-    rewrite ^/rewirte /last/ last;
+location /rewrite/test1 {
+    rewrite ^/rewrite /last last;
 }
-location /last/ {
+location /last {
     proxy_pass http://127.0.0.1:3001;
 }
 ````
-##[了解更多](http://nginx.org/en/docs/http/ngx_http_proxy_module.html)##
+访问 **http://test.eminoda.com:81/rewrite/test1**，location，rewrite命中，发起/last请求，在location中继续寻找
+
+**修改配置：location做如下修改**
+````
+location /rewrite/test1/ {
+    rewrite ^/rewrite /last last;
+}
+````
+访问 **http://test.eminoda.com:81/rewrite/test1**，location不会命中，rewrite则不会匹配到
+访问 **http://test.eminoda.com:81/rewrite/test1/**，可以命中
+通常在location路径访问斜杠会忽视此处细节，建议如果location最后的URI是request URI则写/，不然就不要添加
+
+
+### break
+````
+location /rewrite/test2 {
+    rewrite ^/rewrite/test2/foo /break break;
+    proxy_pass http://127.0.0.1:3001;
+}
+location /break/ {
+    proxy_pass http://127.0.0.1:3001;
+}
+````
+访问 **http://test.eminoda.com:81/rewrite/test2**，location命中，rewrite未匹配，之后请求proxy_pass
+访问 **http://test.eminoda.com:81/rewrite/test2/foo**，location中rewrite命中，发起/break，由于之后是proxy_pass，则实际访问 **http://127.0.0.1:3001/break**
+
+**修改配置：结合上例，主要体现ngx_http_rewrite_module这个点**
+````
+location /rewrite/test2 {
+    rewrite ^/rewrite/test2/foo /break break;
+    return 500;
+}
+````
+访问 **http://test.eminoda.com:81/rewrite/test2**，location匹配，rewrite未匹配，直接访问return 返回500
+访问 **http://test.eminoda.com:81/rewrite/test2/foo**，location中rewrite命中，发起/break，注意**break会停止ngx_http_rewrite_module模块的指令**，则不会像上例一样，或者last寻找新的location。会在本地寻找 ooxx/break 资源，无则返回404；
+
+**ngx_http_rewrite_module**
+- break
+- if
+- return
+- rewrite
+- rewrite_log
+- set
+- uninitialized_variable_warn
+
+
+
+##[了解更多](http://nginx.org/en/docs/http/ngx_http_proxy_module.html)

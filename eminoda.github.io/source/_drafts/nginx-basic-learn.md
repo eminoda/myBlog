@@ -277,6 +277,17 @@ location /rewrite/test2 {
 访问 **http://test.eminoda.com:81/rewrite/test2**，location匹配，rewrite未匹配，直接访问return 返回500
 访问 **http://test.eminoda.com:81/rewrite/test2/foo**，location中rewrite命中，发起/break，注意**break会停止ngx_http_rewrite_module模块的指令**，则不会像上例一样，或者last寻找新的location。会在本地寻找 ooxx/break 资源，无则返回404；
 
+### redirect
+````
+rewrite ^/redirect1 / redirect ;
+rewrite ^/redirect2 http://test.eminoda.com:81 redirect ;
+````
+返回302 code，如果不以协议“http://”, “https://”, or “$scheme”开头的匹配，则替换
+
+### permanent
+> returns a permanent redirect with the 301 code.
+
+### 
 **ngx_http_rewrite_module**
 - break
 - if
@@ -286,6 +297,7 @@ location /rewrite/test2 {
 - set
 - uninitialized_variable_warn
 
-
-
 ##[了解更多](http://nginx.org/en/docs/http/ngx_http_proxy_module.html)
+
+# 设置FastCGI代理
+以后再看看cgi到底是啥

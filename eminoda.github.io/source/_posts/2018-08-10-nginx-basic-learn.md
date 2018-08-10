@@ -5,7 +5,9 @@ categories:
   - 前端
   - nginx
 no_sketch: true
+date: 2018-08-10 17:36:36
 ---
+
 
 > 内容摘自[nginx官方文档](http://nginx.org/en/docs/beginners_guide.html)，自己配合实例更细致的熟悉nginx
 

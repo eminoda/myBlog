@@ -36,3 +36,25 @@ about to fork child process, waiting until server is ready for connections.
 forked process: 18036
 ERROR: child process failed, exited with error number 100
 ````
+
+## 添加Role失败
+````
+> db.createUser({
+... user:"xxxxx",
+... pwd:"xxxxx",
+... roles:[{
+... role:"readWriteAnyDatabase",
+... db:"xxx"
+... }]})
+2018-08-14T11:37:55.993+0800 E QUERY    [thread1] Error: couldn't add user: No role named readWriteAnyDatabase@xxx :
+_getErrorWithCode@src/mongo/shell/utils.js:25:13
+DB.prototype.createUser@src/mongo/shell/db.js:1292:15
+@(shell):1:1
+````
+查看是否role定义错误，[虽然官网定义如下Role，**但是用于admin database**，具体还要辨别：](https://docs.mongodb.com/manual/reference/built-in-roles/#all-database-roles)
+- readAnyDatabase
+- readWriteAnyDatabase
+- userAdminAnyDatabase
+- dbAdminAnyDatabase
+
+[更多Role](https://docs.mongodb.com/manual/reference/built-in-roles/#database-user-roles)

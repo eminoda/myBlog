@@ -1,7 +1,13 @@
 ---
-title: mongo-problem
-tags:
+title: mongo使用问题记录
+tags: mongodb
+categories:
+  - 前端
+  - mongodb
+thumb_img: mongodb.jpg
+date: 2018-08-14 11:18:54
 ---
+
 
 ## 未维护数据库存放位置，mongod未启动起来
 ````

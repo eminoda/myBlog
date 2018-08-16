@@ -113,3 +113,27 @@ nginx: [warn] 65536 worker_connections exceed open file resource limit: 65535
 [root@iZbp18tya24l2k7vs6b7j4Z ~]# ulimit -n
 65536
 ````
+
+## 系统信息
+````
+# 操作系统内核信息
+[root@iZ2365bvzwbZ ~]# uname -a
+Linux iZ2365bvzwbZ 2.6.32-696.23.1.el6.x86_64 #1 SMP Tue Mar 13 22:44:18 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+# 操作系统版本信息
+[root@iZ2365bvzwbZ ~]# cat /proc/version
+Linux version 2.6.32-696.23.1.el6.x86_64 (mockbuild@x86-01.bsys.centos.org) (gcc version 4.4.7 20120313 (Red Hat 4.4.7-18) (GCC) ) #1 SMP Tue Mar 13 22:44:18 UTC 2018
+
+# 操作系统发行版信息
+[root@iZ2365bvzwbZ ~]# cat /etc/issue
+CentOS release 6.8 (Final)
+Kernel \r on an \m
+
+# bit类型
+[root@iZ2365bvzwbZ ~]# getconf LONG_BIT 
+64
+You have new mail in /var/spool/mail/root
+````
+
+# 参考
+1. [https://www.cnblogs.com/YangJieCheng/p/5907166.html](https://www.cnblogs.com/YangJieCheng/p/5907166.html)

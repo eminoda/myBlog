@@ -2,7 +2,7 @@
 title: 同一环境配置多个java版本
 tags: java
 categories:
-  - 后端
+  - 前端
   - java
 data: 2017-10-23 10:13:35
 ---

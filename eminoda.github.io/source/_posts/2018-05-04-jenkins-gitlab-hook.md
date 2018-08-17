@@ -1,11 +1,9 @@
 ---
 title: jenkins配置gitlab hook
-tags:
-  - jenkins
-  - gitlab
+tags: jenkins gitlab
 categories:
+  - 前端
   - 工程化
-  - 自动化
 thumb_img: hook.jpg
 date: 2018-05-04 15:04:26
 ---

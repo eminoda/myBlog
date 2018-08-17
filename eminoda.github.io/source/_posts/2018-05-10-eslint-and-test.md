@@ -1,11 +1,9 @@
 ---
 title: 代码QA检查和单元测试
-tags:
-  - eslint
-  - test
+tags: eslint
 categories:
+  - 前端
   - 工程化
-  - eslint
 thumb_img: balance.jpg
 date: 2018-05-10 17:24:09
 ---

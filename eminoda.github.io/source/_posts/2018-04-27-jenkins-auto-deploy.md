@@ -1,11 +1,9 @@
 ---
 title: jenkins自动部署（github）
-tags: 
-  - jenkins
-  - github
+tags: jenkins github
 categories:
+  - 前端
   - 工程化
-  - 自动化
 date: 2018-04-27 10:59:04
 thumb_img: jenkins2.jpg
 ---

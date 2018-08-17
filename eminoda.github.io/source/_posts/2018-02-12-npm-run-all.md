@@ -5,7 +5,6 @@ tags: node
 categories:
   - 前端
   - node
-  - npm
 no_sketch: true
 ---
 

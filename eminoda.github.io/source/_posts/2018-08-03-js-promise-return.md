@@ -1,6 +1,6 @@
 ---
 title: prmoise返回遇到个问题
-tags: promise
+tags: js promise
 categories:
   - 前端
   - js

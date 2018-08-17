@@ -2,8 +2,8 @@
 title: 初识jenkins
 tags: jenkins
 categories:
+  - 前端
   - 工程化
-  - 自动化
 date: 2018-04-27 10:58:57
 thumb_img: jenkins.png
 ---

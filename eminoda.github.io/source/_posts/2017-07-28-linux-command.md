@@ -2,7 +2,9 @@
 title: linux常用命令
 tags:
   - linux
-categories: linux
+categories: 
+  - 前端
+  - linux
 no_sketch: true
 date: 2017-07-28 09:47:48
 ---

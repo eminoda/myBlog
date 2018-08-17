@@ -4,7 +4,6 @@ tags: node
 categories:
   - 前端
   - node
-  - buffer
 thumb_img: endianess.jpg
 date: 2018-05-08 00:36:45
 ---

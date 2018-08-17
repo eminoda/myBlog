@@ -1,8 +1,6 @@
 ---
 title: 提升接口API的安全等级
-tags:
-  - api
-  - http
+tags: http
 categories:
   - 前端
   - http

@@ -1,10 +1,9 @@
 ---
 title: 使用cordova接触混合开发大门
-tags:
-  - cordova
+tags: cordova
 categories:
   - 前端
-  - cordova
+  - 混合开发
 thumb_img: cordova.png
 date: 2018-07-01 23:53:53
 ---

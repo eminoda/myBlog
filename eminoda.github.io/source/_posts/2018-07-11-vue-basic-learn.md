@@ -1,7 +1,6 @@
 ---
 title: vue框架学习--基础js知识点
-tags:
-  - vue
+tags: vue
 secret: false
 categories:
   - 前端

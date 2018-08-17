@@ -3,7 +3,9 @@ title: linux开机自启动服务
 tags:
   - linux
   - cmd
-categories: linux
+categories: 
+  - 前端
+  - linux
 no_sketch: true
 date: 2018-07-11 10:32:22
 ---

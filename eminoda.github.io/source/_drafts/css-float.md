@@ -11,10 +11,121 @@ no_sketch: true
 
 ## 什么是Float
 Float是CSS用于定位的属性。为了彻底明白它意图和来源，可以参考印刷设计。在印刷布局中，通常图片会有被包裹在文本里的需求。这通常称之为“图文混排（字体环绕）”，如下图：
+
 {% asset_img print-layout.png %}
 
-在页面布局程序设计中，可以告知保存文本的框以遵循文本换行，或忽略它。忽略文本换行将允许单词在图像上方流动，就像它甚至不存在一样。这是该图像是页面流的一部分（或不是）的区别。网页设计非常相似。
+在页面布局程序设定中，页面的框子可以控制文本是否遵循字体环绕。忽略字体环绕将使得单词在图片上方流过，就像它甚至不存在一样。这是图片是否是流动于页面一部分的区别。网页设计非常相似。
 
 {% asset_img web-text-wrap.png %}
 
-在网页设计中，页面元素依托css的float属性，使得图片被排版在文字里。浮动的元素依旧是网页流式的一部分。和绝对定位是有区别的。
+在网页设计中，页面元素依托css的float属性，使得图片被排版在文字里。**浮动的元素依旧是网页流式的一部分**。和绝对定位是有区别的。绝对定位的元素脱离页面流式布局，如同排版布局中告诉程序页面去忽略文字。绝对定位的元素不会影响其他元素，无论是否紧挨着接触。
+
+浮动代码示例：
+````
+#sidebar {
+  float: right;			
+}
+````
+通常float有四个合法值，left、right更别是元素方向定位。none(默认值)定义元素不适用float，inherit跟随父元素的浮动值。
+
+## Float使用场景？
+除了之前说的字体环绕图片，float通常用于web页面的布局。
+
+{% asset_img web-layout.png %}
+
+float在小范围的布局也非常使用。拿页面一个小区域举例：如果我们需要浮动图像，当图片尺寸改变时该区域盒子内的文字将重新渲染自适应。
+
+{% asset_img reflow-example-1.png %}
+
+当然同样的效果relative定位和absolute定位也可以实现，但是该区域内的文本不会重新渲染并自适应。
+
+{% asset_img reflow-example-2.png %}
+
+## 清除浮动
+float的类似元素是clear。设置了clear的元素不会随意移动到浮动元素周边，而是会绕过浮动元素，如下图：
+
+{% asset_img unclearedfooter.png %}
+
+如上图，侧边栏定义right float 并且比内容局域短。页脚则会移动到浮动元素后的空缺位置。为了修复这个问题，定义clear使得页脚待到内容和侧边栏之下这个位置。
+````
+#footer {
+  clear: both;			
+}
+````
+{% asset_img clearedfooter.png %}
+
+clear也有四个值。both是最为常用，可以清楚任意方向的浮动。left,right用于清楚指定方向的浮动。none默认值，无清除效果。inherit在IE中支持不友好。
+
+{% asset_img directionalclearing.png %}
+
+## 高度塌陷
+使用float最容易疑惑的问题是怎么让包裹浮动元素的父元素有效。如果父元素不含其它元素但只有浮动元素，其高度将一定塌陷。如果没有明显的背景色等参照很难发现这个问题。
+
+{% asset_img collapse.png %}
+
+塌陷现象有点反人类，如下例子可能更为糟糕：
+
+{% asset_img whywecollapse.png %}
+
+block元素如果已经自适应float元素，我们将遇到两个段落之间不自然的空隙，没有什么好方法修复。遇到这样的问题，我们的设计师将崩溃。
+
+塌陷现象在浏览器布局问题中是极其常见的，需要在容器中的浮动元素之后和容器闭合之前来解决处理此类问题。
+
+## 清楚浮动的技巧
+如果你处理这类问题当提前知道随后元素是什么，你可以使用clear:both来解决问题。这样不需要特殊修改和额外的标签处理。当然万事不会那样顺利，我们需要更多的清除浮动的工具类。
+
+### 使用空的Div清空元素
+一个空的div，**<div style="clear: both;"></div>**，当然你可以使用其他标签如<br>，但是div是最为常见的，浏览器也没有针对它有特殊样式，指定功能，同时我们也不会对其做全局css处理。这个方法会被语义“信徒”认为是可笑的，在页面中无任何含义。虽然不能说他们错，但是我们这样做没有对页面造成影响。
+
+### 使用Overflow
+在父元素上定义overflow溢出属性。如果将其设置为auto、hidden，包含浮动的父元素将立竿见影地清除浮动。堪称优雅的方式，不需要添加额外标签。而然如果你发现如果在原有页面基础上又添加一个div来运用此方法，将等同于非语义的div方式，并且效果不会很好。记住overflow不是专门用来清除浮动的，当心不要隐藏内容或者触发非预期的滚动条。
+
+### 伪类
+添加一个css伪元素(pseudo selector)，如：:after。相比添加overflow在父元素上，你可以添加“.clearfix”来使用这个方法。
+````css
+.clearfix:after { 
+   content: "."; 
+   visibility: hidden; 
+   display: block; 
+   height: 0; 
+   clear: both;
+}
+````
+这将用一个很小的真实存在的内容区域放在需要解决浮动问题的父元素中。当然这不是全部代码，如果你想兼容一些其他版本的浏览器。
+
+## 场景分析
+不同场景需要不同的清除浮动的方法，如下（处理不同类型的网格块）：
+
+{% asset_img grid-blocks.png %}
+
+为了更好的展示相同的块，我们想要每个颜色相同则重启一行。对于这个需求，当颜色改变时，我们可以使用overflow、伪类方式。或者在每个颜色相同的组下使用div方式，当然不管添加三个充当父类的div或者额外添加的三个div，你自己决定那个更好？
+
+{% asset_img grid-blocks-cleared.png %}
+
+## float问题（浏览器兼容）
+float总是会因为没考虑周全而显得解决地很鸡肋。这种脆弱性通常来自ie6和浮动相关的bug。全世界都在放弃ie6的支持，可能你不关心，但对于关心的人来说会出现很多问题。
+
+### 顶掉其他元素
+发生在当一个元素在一个比他更窄的浮动元素内部（图片居多）。绝大多数浏览器将渲染这个图片到浮动元素外，但不会差得很多。ie将扩展浮动元素包裹其中的图片，这就会影响布局。会把其他元素往下挤掉
+
+{% asset_img pushdown2.png %}
+
+解决这个问题：你可以使用**overflow:hidden**来解除多余的部分。
+
+### 边距扩大
+使用ie6另一件事是，如果在float同一方向上使用margin，将使得双倍的margin。
+解决这个问题：设置**display:inline**在浮动元素上，它依旧保持block元素特性。
+
+### 3px坑
+当文字旁是浮动元素，其间的3px将被神奇的抹去。
+解决这个问题：浮动元素上额外设置长宽。
+
+### 底部margin bug
+ie7上，父浮动元素内包含子浮动元素，子元素的bottom margin将失效。
+解决这个问题：更为换padding。
+
+## 更多
+如果想实现图文混排，float外没有第二选择。当然你可以查看[rather clever technique](http://blog.ideashower.com/post/15139639050/css-text-wrapper)，将文本包裹在非规则的形状内。对于页面局部当然还有其他方案，可查看[Faux Absolute Positioning](https://alistapart.com/article/fauxabsolutepositioning)，关于css3实现更好的布局方式
+[Template Layout Module](https://www.w3.org/TR/2009/WD-css3-layout-20090402/)
+
+[作者的视频截图](https://css-tricks.com/video-screencasts/42-all-about-floats-screencast/)

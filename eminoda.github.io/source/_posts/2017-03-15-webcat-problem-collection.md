@@ -1,7 +1,6 @@
 ---
 title: 微信JS-SDK开发中的问题
 tags:
-  - vue
   - 微信
 categories:
   - 前端

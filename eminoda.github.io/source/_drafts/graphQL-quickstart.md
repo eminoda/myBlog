@@ -180,67 +180,249 @@ graphql(schema,
 });
 ````
 
-# API进阶
-## [Schemas and Types](http://graphql.github.io/learn/schema/)
-经过我们上面的例子，基本已经了解GraphQL的query方式
-````
-type Message{
-  name:String,
-  reads:[String]!
-  setMessage(content:String):String,
-  setType(type:Episode)
-}
-enum Episode {
-    NEWHOPE
-    EMPIRE
-    JEDI
-}
-````
-常用 
-- GraphQL Object Type: Message
-- fields: name、reads
-- Lists and Non-Null: String! [String] [String]!
-- Scalar types: Int,Float,String,Boolean,ID
-- 参数列表(Arguments)：**setMessage(content:String):String**
-- Enumeration types：Episode
+# Queries and Mutations 查询和转变
+## Fields 字段（像是定义一个对象）
+在query定义fields，来告诉GraphQL该查询什么数据与之对应。
+每个fields有自己的name，和字符串的type（对象中属性）
 
-还能和其他对象语言一样，支持接口方式**Interfaces**
+{% asset_img fields.png %}
 ````
-interface Character {
-  id: ID!
-  name: String!
-  friends: [Character]
-  appearsIn: [Episode]!
+let schema = buildSchema(`
+    type Query{
+        hexo:Hexo
+    }
+    type Hexo{
+        name:String,
+        age:Int
+    }
+`)
+function Hexo(name, age) {
+    this.name = name;
+    this.age = age;
 }
-type Human implements Character {
-  id: ID!
-  name: String!
-  friends: [Character]
-  appearsIn: [Episode]!
-  starships: [Starship]
-  totalCredits: Int
-}
+var root = {
+    hexo: () => {
+        return new Hexo('abc', 12);
+    }
+};
 ````
 
-唯一值**Union types**
+**注意：**
+fields中的属性可以按需定义，但是前提是schema要维护好。在这个前提下，query可以任意增减属性，相当于数据过滤效果
 ````
-union SearchResult = Human | Droid | Starship
-{
-  search(text: "an") {
-    ... on Human {
-      name
-      height
+query{
+  hexo{
+    name
+    country
+  }
+}
+"message": "Cannot query field \"country\" on type \"Hexo\"."
+````
+## Arguments 参数
+在query定义参数列表，供root解析处理。
+
+{% asset_img arguments.png %}
+````
+let schema = buildSchema(`
+    type Query{
+        hexo(id:ID):Hexo
     }
-    ... on Droid {
-      name
-      primaryFunction
+    type Hexo{
+        id:ID,
+        name:String,
+        age:Int
     }
-    ... on Starship {
-      name
-      length
+`)
+function Hexo(id, name, age) {
+    this.id = id;
+    this.name = name;
+    this.age = age;
+}
+var root = {
+    hexo: ({
+        id
+    }) => {
+        return new Hexo(id, 'abc', 12);
     }
+};
+````
+
+**注意：**
+在query参数列表也要和schema定义一致；同时root中获取传入的参数需要通过**解构**来获取
+````
+type Query{
+    hexo(ids:ID):Hexo
+}
+"message": "Unknown argument \"id\" on field \"hexo\" of type \"Query\". Did you mean \"ids\"?"
+````
+
+## Aliases 别名
+query通过类似泛型的说明（不知是否恰当），自定义返回数据的对象字段。
+{% asset_img alias.png %}
+
+**注意**
+对象，字段属性都是可以起别名的
+
+## Fragments 片段
+类似上面那个需求，可能我们都很多复杂的字段，可以通过这种片段的方式简化gql代码。同时fragments又是依托于对象，理解query更为快速
+{% asset_img fragment.png %}
+
+## Inline Fragments
+query中，行内片段。多用于interface的数据
+
+
+## Operation name 操作说明
+用于**query, mutation, or subscription and describes**，说明本次操作的意图。当然像query，也可以省略operation name（类似匿名查询）。
+主要作用，更语义的说明query是干啥的，也在调试服务端时，分析gql logger。
+{% asset_img operationName.png %}
+
+## Variables 变量
+上些例子，都是在query的fields上配置参数，并且参数是写死的。通常在实际应用上，我们需要动态可变的参数。
+可以看下图中$input:
+{% asset_img variables.png %}
+- 在query中，使用**$variableName**类似占位符一样，定义静态值
+- 在query上，声明**$variableName**。
+- 维护请求字段variableName，传入数据
+
+**注意**
+- 声明参数，**需要用$前缀说明**
+- $episode: Episode = JEDI 方式定义输入参数默认值
+
+## Directives 指令
+可以制定fields中字段的显示，如果field中某个字段是对象，可以在指令后面继续和field定义字段方式一样，定义属性
+````
+  hexo(id:$input){
+    id
+    name
+  	friend @skip(if: $ignoreAge){
+      id
+      name
+    }
+  }
+````
+- @include(if: Boolean)  Only include this field in the result if the argument is true
+- @skip(if: Boolean) Skip this field if the argument is true.
+{% asset_img directives.png %}
+**注意**
+query上的参数，需要指定**!**
+
+## Mutations 行为改变
+GrapQL是查询语句，但是避免不了某些查询会持久化数据或者更改，像crud里面的create，update，delete等情况。为区别query，可以使用mutations，就是体现这种约定。
+{% asset_img mutations.png %}
+````
+let schema = buildSchema(`
+    type Hexo{
+        id:ID,
+        name:String,
+        age:Int,
+        friend:Hexo
+    }
+    type Mutation{
+        createHexo:Hexo
+    }
+`)
+var root = {
+    createHexo: () => {
+        return new Hexo(444, 'bbb', 44);
+    }
+};
+````
+**注意**
+搞清mutation和query区别，通常mutation也有自己的mutation fields。**mutation fields是依次执行，而query的fields是并列**
+
+## Meta fields
+query增加**_typename**，将返回schema的type
+{% asset_img meta.png %}
+
+# [Schemas and Types](http://graphql.github.io/learn/schema/)
+## Type system
+这是个简单的query语句，但能看到如下特点：
+- 定义一个根对象，如果你隐去query 和 operation name
+- 设置一个hexo，当做fields
+- 根据查询的数据对象，将包含id、name fields
+
+````
+query queryHexo{
+  hexo{
+    id
+    name
   }
 }
 ````
+## Object types and fields
+在schems中,定义Hexo这样一个type，在Query中会使用到这个type
+````
+type Hexo{
+    id:ID,
+    name:String,
+    age:Int
+}
+type Query{
+    hexo(id:ID):Hexo
+}
+````
+- **Hexo** GraphQL Object Type
+- id,name,age 作为fields，在Type里
+- 每个field将对应有scalar types
 
-输入值类型Input types：多用于Mutation传值
+## Scalar types
+fields在解析时，会有对应的类型作为区分。
+- Int: A signed 32‐bit integer.
+- Float: A signed double-precision floating-point value.
+- String: A UTF‐8 character sequence.
+- Boolean: true or false.
+- ID: The ID scalar type represents a unique identifier, often used to refetch an object or as the key for a cache. The ID type is serialized in the same way as a String; however, defining it as an ID signifies that it is not intended to be human‐readable.
+
+## Enumeration types
+枚举类型，有个好处：对于已知的后台枚举数据，可以预先控制
+````
+enum Action{
+    superman,
+    people
+}
+type Hexo{
+    id:ID,
+    name:String,
+    age:Int,
+    action:Action
+}
+````
+
+## Lists and Non-Null
+定义数据列表、非空类型
+````
+type Hexo{
+    name:String!,
+    friends:[Hexo]
+}
+````
+
+## Interfaces
+了解面向对象，基本知道抽象，实现之类的概念。
+这里GraphQL也有这样的思想，如下：
+可以定义一个Animal，然后Hexo，People分别对Animal实现，并且扩展，有什么好处？
+**在不同查询结果中，可以维护不同的type**，来获取指定的对象数据。
+````
+type Query{
+    hexo(id:ID):People
+}
+interface Animal{
+    id:ID
+}
+type Hexo implements Animal{
+    id:ID,
+    name:String,
+    age:Int,
+    friends:[Hexo]!
+}
+type People implements Animal{
+    id:ID,
+    name:String
+}
+````
+
+## Union types
+要疯了已经，因为没有测出来
+直接转到下一内容
+
+# 来看下JS实际运用

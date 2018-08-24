@@ -1,11 +1,13 @@
 ---
-title: 初识 graphQL
+title: 初识 GraphQL
 tags: graphQL node
 categories:
   - 前端
   - node
 thumb_img: graphQL.png
+date: 2018-08-22 15:57:48
 ---
+
 
 # [graphQL](http://graphql.github.io/)
 > A query language for your API
@@ -422,7 +424,3 @@ type People implements Animal{
 ````
 
 ## Union types
-要疯了已经，因为没有测出来
-直接转到下一内容
-
-# 来看下JS实际运用

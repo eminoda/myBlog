@@ -1,16 +1,15 @@
 ---
-title: graphQL能代替restful吗
-tags: node graphQL restful
+title: Restful 最佳实践
+tags: node restful
 categories:
   - 前端
-  - node
-no_sketch: true
+  - restful
+thumb_img: restful.png
+date: 2018-08-24 15:58:11
 ---
 
-# GraphQL 和 Restful哪个好？
-在微信看到一篇文章，[REST将会过时，而GraphQL则会长存](https://mp.weixin.qq.com/s/F55uPAKLI1c78ccsK23ubw)。前段时间，我们的后端同学主推restful方式构建api服务，难道以后会被graphQL干掉？我也不知道，借这个话题介绍下graphQL，权衡两者特点来更完善服务端设计。
 
-# 先来看看Restful的最佳实践
+# 前言
 restful（Representational State Transfer）近年来听到的次数逐渐增多，自打前后端分离开始流行，服务端越来越侧重提供API的质量和方式。
 不谈restful巴拉巴拉的概念，但从实际落地的效果，看下几个常见的best practice
 
@@ -84,7 +83,5 @@ HATEOAS(hypermedia as the engine of application state)
 }
 ````
 
-## [GraphQL](https://graphql.org/)
-一种查询语言API，很多语言支持GraphQL，当然这里我们只说[GraphQL.js](https://github.com/graphql/graphql-js)
 ## 扩展阅读
 [rest action](https://github.com/waylau/rest-in-action)

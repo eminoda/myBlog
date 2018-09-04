@@ -1,13 +1,15 @@
 ---
 title: vue minuti 分页实现
-tags: 
+tags:
   - vue
-  - minu-ti
+  - mint-ui
 categories:
   - 前端
   - vue
 no_sketch: true
+date: 2018-09-04 16:09:35
 ---
+
 
 来谈下使用 **vue+minuti** 如何实现上拉，下拉分页数据加载操作。
 分两块内容：

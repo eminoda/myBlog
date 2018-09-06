@@ -42,5 +42,21 @@ function myFunc () {
 }
 ````
 
-# 参考
+# void 0 和 undefined
+一定会忽略的知识点，红宝书肯定有讲到。我问你，**undefined是js的保留关键字吗？**
+
+[有哪些reserved—word?](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Reserved_words)
+
+所以在部分浏览器比如IE，就会出现undefined被复写的可能，多人合作，鬼知道谁会有这样神奇的操作。
+
+同样再抛个问题：**void是干什么的？**
+> 这个运算符能向期望一个表达式的值是undefined的地方插入会产生副作用的表达式。
+
+说白了就是用于定义undefined，可以void(0),void 0
+
+这样一方面避免了使用undefined，第二简化书写，代码变得更加语义好理解，提升了逼格
+
+# 参考来源
 [逗号操作符 & (0, function)()](https://www.jianshu.com/p/cd188bda72df)
+
+[void 0 & undefined](https://github.com/hanzichi/underscore-analysis/issues/1)

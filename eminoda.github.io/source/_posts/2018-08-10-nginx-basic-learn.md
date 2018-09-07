@@ -55,38 +55,59 @@ http {
 ````
 
 # 文件服务
-静态文件管理也是Nginx最大的特色之一
+静态文件管理也是Nginx最大的特色之一（托管图片资源，静态HTML文件）
+
+## 使用场景
+比如如下是个存放静态资源的路径
 ````
-# prefix compared with the URI from the request
-# url: http://test.eminoda.com:81/hello/yuyu.jpg
+/root/mydata/test/www  # 存放html
+/root/mydata/test/images # 存放资源
+````
+
+**访问静态页面**
+location指定以 **/** 为前缀（prefix），匹配请求地址的URI，匹配到的URI将添加到root指令的地址后。
+访问：http://test.eminoda.com:81/test.html
+nginx按照：/root/mydata/test/www/test.html 输出文件
+````
 location / {
-    root /root/mydata; # 根据URI地址，寻找/data/www下匹配的静态资源
-}
-# 匹配/test路径，并在设置root下，寻找URI资源
-# url: http://test.eminoda.com:81/test/yuyu.jpg
-location /test/ {
-    root /root/mydata/; # 对value后添加/斜杠不敏感
+    root   /root/mydata/test/www;
 }
 ````
 
+**访问图片等资源**
+匹配以 **/images/** 开始的资源请求地址，**注意，location / 也是可以匹配到的，但会根据实际路径有优先关系**
+访问：http://test.eminoda.com:81/images/yuyu.jpg
+nginx按照：/root/mydata/test/images/yuyu.jpg 输出文件
+````
+location /images/ {
+    root /root/mydata/test;
+}
+````
 ## root 和 alias的区别？
 | 指令 | 范围 |
 | --- | --- |
 | root | http, server, location, if in location |
 | alias | location |
 
+访问：http://test.eminoda.com:81/versionChange/yuyu.jpg
+nginx按照：/root/mydata/test/images/yuyu.jpg 输出文件
 ````
-# url: http://test.eminoda.com:81/hello/yuyu.jpg
-location /hello/ {
-    alias  /root/mydata/test/; # ok
-}
-location /hello {
-    alias  /root/mydata/test; # ok
-}
-location /hello/ {
-    alias  /root/mydata/test; # error 会对斜杠进行匹配替换，需注意。
+# 模拟一种常见，因为某些需求，更改了资源路径，但不能影响原有资源的输出访问
+location /versionChange/ {
+    alias /root/mydata/test/images/;
 }
 ````
+
+**注意：斜杠问题**，结合上例，比较有何不同
+````
+location /versionChange/ {
+    alias /root/mydata/test/images; #error /root/mydata/test/imagesyuyu.jpg
+}
+location /versionChange {
+    alias /root/mydata/test/images; #ok
+}
+````
+
 
 ## 怎么权衡root和alias的使用？
 如果location匹配路径和指令的value最后部分相同时，建议使用root。
@@ -101,17 +122,18 @@ location /images/ {
 ````
 
 ## alias 和 正则匹配问题？
-如果location 包含regex expression，就会匹配正则捕获内容，在alias中替换（而非替换整个location路径）。
+如果location 包含regex expression，就会匹配正则捕获内容，在alias中替换**（而非替换整个location路径）**。
+访问：http://test.eminoda.com:81/yuyu.jpg
 ````
-# file: /root/mydata/test/yuyu.jpg
-# url: http://test.eminoda.com:81/yuyu.jpg ok
-# url：http://test.eminoda.com:81/foo/yuyu.jpg error $1实际访问/root/mydata/test/foo/yuyu.jpg
 location ~ ^/(.+\.(?:gif|jpg|png))$ {
-    alias /root/mydata/test/$1;
+    alias /root/mydata/test/images/$1;
 }
-# url: http://test.eminoda.com:81/foo/yuyu.jpg
-location ~ ^/foo/(.*\.jpg)$ {
-    alias /root/mydata/test/$1;
+````
+
+访问：http://test.eminoda.com:81/foo/yuyu.jpg
+````
+location ~ ^/foo/(.+\.(?:gif|jpg|png))$ {
+    alias /root/mydata/test/images/$1; #error /root/mydata/test/images/foo/yuyu.jpg
 }
 ````
 
@@ -126,7 +148,7 @@ location ~ ^/foo/(.*\.jpg)$ {
 
 location依赖request的URI。按优先级排序。
 =: 绝对匹配，exact match
-~*：正则，case-insensitive matching
+~*：正则（忽略大小写），case-insensitive matching
 ~：正则，case-sensitive matching
 ^~：不能和uri定义的配置重复，prefix match
 uri：路径URI匹配，uri match
@@ -179,38 +201,47 @@ location ~* \.(gif|jpg|jpeg)$ {
 
 **proxy_pass定义了URI的区别**
 
-**specified without a URI**
+http://127.0.0.1:9000/users 提供服务
+
+**specified without a URI**（忽略URI）
+访问：http://test.eminoda.com:81/users
 ````
-location /users/ {
+location /users {
     proxy_pass http://127.0.0.1:3001;
 }
 ````
 request URI在location匹配后，原样传送给server
 
-**specified with a URI**
+**specified with a URI** （指定URI）
+访问：http://test.eminoda.com:81/withinURI/users
 ````
-location /foo {
-    proxy_pass http://127.0.0.1:3001/users/;
+location /withinURI/ {
+    proxy_pass http://127.0.0.1:9000/;
 }
 ````
 如果proxy_pass is specified with a URI，当request URI在location命中，URI将替换被location匹配中的request URI的part（注意location 需要后面维护个/）
 > If the proxy_pass directive is specified with a URI, then when a request is passed to the server, the part of a normalized request URI matching the location is replaced by a URI specified in the directive
 
-访问：**http://test.eminoda.com:81/foo/**，实际请求：http://127.0.0.1:3001/users//，/users/替换/foo+剩下的请求/
-访问：**http://test.eminoda.com:81/foo**，实际请求：http://127.0.0.1:3001/users/
-
-**修改配置：注意location的/**
+**注意：location 需要后面维护个/**
+访问：http://test.eminoda.com:81/withinURIusers 注意这里故意没有写 **/**
 ````
-location /foo/ {
-    proxy_pass http://127.0.0.1:3001/users/;
+location /withinURI {
+    proxy_pass http://127.0.0.1:9000/;
 }
 ````
-按照上例子的访问地址，实际请求都是：http://127.0.0.1:3001/users/
-原以为：可能访问/foo，浏览器会默认添加/，然后根据URI的规则，总会替换location匹配的request URI，到后端服务固定统一成/user/。**但是错了**。
 
-浏览器分别输入/foo，当location /foo，浏览器不会默认添加/，而 location /foo/ 则会自动添加。感觉像是location告诉浏览器你给我变的样子
+**修改配置：注意location的/**
+访问：http://test.eminoda.com:81/users
+````
+location /users/ {
+    proxy_pass http://127.0.0.1:3001;
+}
+````
+**注意：**浏览器 http://test.eminoda.com:81/users 会自动变成 http://test.eminoda.com:81/users/。原以为浏览器会默认添加，但是错了。
+
+浏览器分别输入/users，当location /users，浏览器不会默认添加/，而 location /users/ 则会自动添加。感觉像是location告诉浏览器你给我变的样子
 查阅location文档：
-如果location规则尾部包含斜杠（location /foo/），在响应时会发送301永久重定向，地址后面自动加上斜杠（这就是为何浏览器会有斜杠的原因）
+如果location规则尾部包含斜杠（location /users/），在响应时会发送301永久重定向，地址后面自动加上斜杠（这就是为何浏览器会有斜杠的原因）
 > If a location is defined by a prefix string that ends with the slash character, and requests are processed by one of proxy_pass, fastcgi_pass, uwsgi_pass, scgi_pass, memcached_pass, or grpc_pass, then the special processing is performed. In response to a request with URI equal to this string, but without the trailing slash, a permanent redirect with the code 301 will be returned to the requested URI with the slash appended.
 
 ### proxy_pass有些其他规则，request URI不确定被替换更改

@@ -269,9 +269,12 @@ rewrite regex replacement [flag];
 如果正则匹配到request URI，URI则会和replacement替换
 
 ### last
+> stops processing the current set of ngx_http_rewrite_module directives and starts a search for a new location matching the changed URI;
+
 ````
 location /rewrite/test1 {
-    rewrite ^/rewrite /last last;
+    rewrite ^/rewrite /last last; #跳出本location，到新的location查找/last
+    return 404; #并不会输出
 }
 location /last {
     proxy_pass http://127.0.0.1:3001;
@@ -280,30 +283,33 @@ location /last {
 访问 **http://test.eminoda.com:81/rewrite/test1**，location，rewrite命中，发起/last请求，在location中继续寻找
 
 **修改配置：location做如下修改**
+访问 **http://test.eminoda.com:81/rewrite/test1**，location不会命中，rewrite则不会匹配到
+访问 **http://test.eminoda.com:81/rewrite/test1/**，可以命中
 ````
 location /rewrite/test1/ {
     rewrite ^/rewrite /last last;
 }
 ````
-访问 **http://test.eminoda.com:81/rewrite/test1**，location不会命中，rewrite则不会匹配到
-访问 **http://test.eminoda.com:81/rewrite/test1/**，可以命中
-通常在location路径访问斜杠会忽视此处细节，建议如果location最后的URI是request URI则写/，不然就不要添加
-
+和本例无关，只是平时书写location，要增强路径/的判断。请求地址包含/，则在location的规则上写上/，不然就不要添加
 
 ### break
+> stops processing the current set of ngx_http_rewrite_module directives as with the break directive
+
 ````
 location /rewrite/test2 {
     rewrite ^/rewrite/test2/foo /break break;
     proxy_pass http://127.0.0.1:3001;
 }
-location /break/ {
+# 不会执行
+location /break {
     proxy_pass http://127.0.0.1:3001;
 }
 ````
 访问 **http://test.eminoda.com:81/rewrite/test2**，location命中，rewrite未匹配，之后请求proxy_pass
 访问 **http://test.eminoda.com:81/rewrite/test2/foo**，location中rewrite命中，发起/break，由于之后是proxy_pass，则实际访问 **http://127.0.0.1:3001/break**
+**和last不同，rewrite匹配后，不会重新寻找location**
 
-**修改配置：结合上例，主要体现ngx_http_rewrite_module这个点**
+修改配置：结合上例，主要体现 **ngx_http_rewrite_module这个点**
 ````
 location /rewrite/test2 {
     rewrite ^/rewrite/test2/foo /break break;
@@ -323,8 +329,7 @@ rewrite ^/redirect2 http://test.eminoda.com:81 redirect ;
 ### permanent
 > returns a permanent redirect with the 301 code.
 
-### 
-**ngx_http_rewrite_module**
+### ngx_http_rewrite_module
 - break
 - if
 - return
@@ -334,6 +339,3 @@ rewrite ^/redirect2 http://test.eminoda.com:81 redirect ;
 - uninitialized_variable_warn
 
 ##[了解更多](http://nginx.org/en/docs/http/ngx_http_proxy_module.html)
-
-# 设置FastCGI代理
-以后再看看cgi到底是啥

@@ -13,7 +13,7 @@ Nginx基础，可以参考 [http://eminoda.github.io/2018/08/10/nginx-basic-lear
 
 以下列出一些使用心得，如果有错误欢迎 issue
 
-## 后端API接口统一代理
+## API接口统一代理
 比如有个3000端口的node云服务，为了更好的管理接口，前端统一以 **/api** 作为接口前缀。
 
 http://test.eminoda.com:81/api/getUsers => http://127.0.0.1:3000/getUsers
@@ -64,11 +64,10 @@ server {
 }
 ````
 
-
 ## 指定默认域名
 通常会在nginx维护多个server_name，当访问的host不存在，但服务器ip又被解析，nginx根据它的机制给出默认的请求域名（可能根据配置文件的排序等）
 
-使用 **default_server**
+使用 **default_server** 指定默认server
 ````
 server {
   listen          80 default_server;
@@ -149,7 +148,7 @@ server {
 ````
 
 ## 配置SSL——https
-市面上有很多免费的证书提供商，给出阿里云的默认配置
+市面上有很多免费的证书提供商，以下给出阿里云的默认配置
 
 https://www.eminoda.com
 ````
@@ -171,8 +170,8 @@ server {
 }
 ````
 
-## 如果访问http自动跳转https站点
-google对https站的seo会更好，安全性等好处不展开
+## 自动跳转https站点
+google对https站的seo会更好，像安全性等好处这里不做展开
 
 ````
 server {
@@ -190,11 +189,40 @@ server {
 ````
 
 ## 多端的适配
+
+实现在移动端访问PC页面，重定向到手机页面
 ````
 if ($http_user_agent ~* "(Mobile|Android|iPad|iPhone|iPod|BlackBerry|Windows Phone)") {
     rewrite ^/ http://h5.eminoda.com redirect;
 }
 ````
 
-## 条件判断
-[查看doc](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#if)
+## IP限制
+````
+if ( $http_x_forwarded_for ~ "106.120.121.128$|106.120.121.129$|106.120.121.1[3-5][0-9]$") {
+    rewrite ^/ http://limit.eminoda.com/limit.html rewrite;
+}
+````
+
+## 短连接
+
+可能因为短信运营商的字符数量限制、业务需要，要尽可能缩短链接长度。
+
+http://l.em.com/123456789/987654321 ==> http://www.eminoda.com/aaa/bbb/123456789?id=987654321
+
+````
+server {
+  listen          80;
+  server_name     l.em.com;
+  rewrite ^/(\d+)/(\d+) http://www.eminoda.com/aaa/bbb/$1?id=$2  rewrite; 
+}
+````
+
+## 异常错误页面的指定
+服务器宕机、发布，网页的超时等因素，默认nginx的错误页面可能令用户产生疑惑。需要指定error page，提升体验。
+
+````
+error_page 404 = http://m.eminoda.com/404;
+error_page 405 = http://m.eminoda.com/405;
+error_page 500 = http://m.eminoda.com/500;
+````

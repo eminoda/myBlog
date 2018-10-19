@@ -338,4 +338,7 @@ rewrite ^/redirect2 http://test.eminoda.com:81 redirect ;
 - set
 - uninitialized_variable_warn
 
-##[了解更多](http://nginx.org/en/docs/http/ngx_http_proxy_module.html)
+[了解更多](http://nginx.org/en/docs/http/ngx_http_proxy_module.html)
+
+
+## [条件判断](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#if)

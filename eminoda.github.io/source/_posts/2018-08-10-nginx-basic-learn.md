@@ -340,5 +340,73 @@ rewrite ^/redirect2 http://test.eminoda.com:81 redirect ;
 
 [了解更多](http://nginx.org/en/docs/http/ngx_http_proxy_module.html)
 
+# ngx_http_rewrite_module
+有如下指令：
+- break
+- if
+- return
+- rewrite
+- set
+- [...](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
 
-## [条件判断](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#if)
+再次强调
+- location根据request URI来匹配
+- 以上这些 directives 在location中将顺序执行
+- 如果请求被rewrite多次，次数至多10次 
+
+## break
+停止 **ngx_http_rewrite_module** 语句
+
+如果在 location 中，则会继续执行之后语句。上面rewrite的break已经说明过。
+
+## [if 条件判断](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#if)
+比较变量
+````
+if ($test = 1){
+
+}
+if ($test !=1 ){
+
+}
+````
+
+正则匹配
+
+- ~ 匹配大小写；~* 忽略大小写
+- !~，!~*：否定判断
+- 如果正则包含 **} ;** 等结尾符号，需要用引号包裹
+- 文件判断（file existence）：-f !-f
+- 目录判断（directory existence）：-d !-d
+- 文件、目录、超链（file, directory, or symbolic link existence）：-e !-e
+- 可执行文件（executable file）：-x !-x
+
+http://test.eminoda.com:82/user
+http://test.eminoda.com:82/userrr
+http://test.eminoda.com:82/id/123
+````
+set $test 0;
+if ( $request_uri !~ \/admin){
+    set $test 1;
+}
+if ( $request_uri ~ '(\/use)r{2,3}$'){
+    set $test 2;
+}
+if ( $request_uri ~* \/id\/[1-9]+){
+    set $test 3;
+}
+location / {
+    proxy_pass http://127.0.0.1:9000/$test;
+}
+````
+结果
+````
+GET /1 404 4.039 ms - 1215
+GET /2 404 4.609 ms - 1215
+GET /3 404 4.540 ms - 1215
+````
+
+## return
+- return http_status
+- return http_status URL
+- return URL
+

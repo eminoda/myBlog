@@ -60,3 +60,5 @@ function myFunc () {
 [逗号操作符 & (0, function)()](https://www.jianshu.com/p/cd188bda72df)
 
 [void 0 & undefined](https://github.com/hanzichi/underscore-analysis/issues/1)
+
+[apply call bind](http://web.jobbole.com/83642/)

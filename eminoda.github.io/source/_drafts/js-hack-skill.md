@@ -56,6 +56,34 @@ function myFunc () {
 
 这样一方面避免了使用undefined，第二简化书写，代码变得更加语义好理解，提升了逼格
 
+# [对象属性的merge，Object.assign()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
+> The Object.assign() method is used to copy the values of all enumerable own properties from one or more source objects to a target object. It will return the target object.
+
+````
+Object.assign(target, ...sources)
+````
+用于copy对象的 **简单属性**，如果已存在属性则会覆盖。
+
+注意：通常对于对象引用的deep copy 不建议使用此方法。
+````
+
+````
+
+# 保留小数位
+Math 对象提供简单的数学计算，但对于保留小数做四舍五入等操作，却不行。我们可以通过如下方式，变相实现：
+````js
+function round(num,digit=2){
+  let unit = 10;
+  let extend = 10;
+  for(var i=1;i<digit;i++){
+    extend = extend*unit;
+  }
+  return Math.round(num*extend)/extend;
+}
+round(1.12945,2); //1.13
+````
+相同 **ceil，floor** 也可以类似实现
+
 # 参考来源
 [逗号操作符 & (0, function)()](https://www.jianshu.com/p/cd188bda72df)
 

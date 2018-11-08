@@ -85,6 +85,7 @@ node直连数据库
 ````
 
 参数说明：
+
 | 指标 | 数值 | 说明 |
 | --- | --- | --- |
 | Concurrency Level | 1000 | 并发数量 |
@@ -107,6 +108,7 @@ net.ipv4.tcp_syncookies = 0
 
 ### socket: Too many open files (24)
 > ulimit用来限制系统用户对shell资源的访问
+
 ````
 # 注意到open files限制1024
 [root@localhost pressure_analysis]# ulimit -a

@@ -19,7 +19,6 @@ var dom = document.getElementById("container");
 var myChart = echarts.init(dom);
 var app = {};
 option = null;
-
 app.title = '堆叠柱状图';
 
 function titleDesc(){
@@ -39,7 +38,7 @@ function xAxisData(cpu){
 
 option = {
     title: {
-        text: 'Java&Node（满核）-请求总耗时(sec)测试',
+        text: '满核下Java&Node-请求总耗时(sec)测试',
         subtext:'总请求数1w'
     },
     tooltip : {
@@ -49,7 +48,8 @@ option = {
         }
     },
     legend: {
-        data:['请求总耗时(sec)','单个请求平均耗时(ms)','平均温度']
+        left: 'right',
+        data:['java','node']
     },
     grid: {
         left: '3%',
@@ -79,7 +79,7 @@ option = {
             data:xAxisData(cpu8_node)
         }
     ]
-};;
+};;;
 if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }

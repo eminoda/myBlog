@@ -50,7 +50,7 @@ option = {
         }
     },
     legend: {
-        data:['请求总耗时(sec)','单个请求平均耗时(ms)']
+        data:['cpu1核','cpu2核','cpu4核','cpu8核']
     },
     grid: {
         left: '3%',
@@ -71,28 +71,27 @@ option = {
     ],
     series : [
         {
-            name:'node 1核',
+            name:'cpu1核',
             type:'bar',
             data:xAxisData(cpu1)
         },
         {
-            name:'node 2核',
+            name:'cpu2核',
             type:'bar',
             data:xAxisData(cpu2)
         },
         {
-            name:'node 4核',
+            name:'cpu4核',
             type:'bar',
             data:xAxisData(cpu4)
         },
         {
-            name:'node 8核',
+            name:'cpu8核',
             type:'bar',
             data:xAxisData(cpu8)
         }
     ]
-};
-;
+};;
 if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }

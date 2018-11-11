@@ -116,6 +116,15 @@ nginx: [warn] 65536 worker_connections exceed open file resource limit: 65535
 65536
 ````
 
+## [wc](http://www.runoob.com/linux/linux-comm-wc.html)
+> 会从标准输入设备读取数据。
+
+| 参数 | 说明 |
+| - | --- |
+| -c --bytes --chars | 只显示Bytes数 |
+| -l --lines | 只显示行数 |
+| -w --words | 只显示字数 |
+
 ## 系统信息
 ````
 # 操作系统内核信息
@@ -125,6 +134,17 @@ Linux iZ2365bvzwbZ 2.6.32-696.23.1.el6.x86_64 #1 SMP Tue Mar 13 22:44:18 UTC 201
 # 操作系统版本信息
 [root@iZ2365bvzwbZ ~]# cat /proc/version
 Linux version 2.6.32-696.23.1.el6.x86_64 (mockbuild@x86-01.bsys.centos.org) (gcc version 4.4.7 20120313 (Red Hat 4.4.7-18) (GCC) ) #1 SMP Tue Mar 13 22:44:18 UTC 2018
+
+# 系统cpu信息
+[root@iZbp17s23bov6rawl02chjZ ~]# cat /proc/cpuinfo
+[root@iZbp17s23bov6rawl02chjZ ~]# cat /proc/cpuinfo| grep "processor"| wc -l
+4 //4个逻辑核
+# 每个cpu逻辑核数
+[root@iZbp17s23bov6rawl02chjZ ~]# cat /proc/cpuinfo| grep "cpu cores"| uniq
+2 //每个cpu有2个物理核
+# 物理cpu个数
+[root@iZbp17s23bov6rawl02chjZ ~]# cat /proc/cpuinfo| grep "physical id"| sort| uniq| wc -l
+1 //1个物理cpu
 
 # 操作系统发行版信息
 [root@iZ2365bvzwbZ ~]# cat /etc/issue

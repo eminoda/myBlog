@@ -4,7 +4,7 @@ tags: nginx
 categories:
   - 前端
   - nginx
-no_sketch: true
+thumb_img: keepalived.png
 ---
 
 # [什么是高可用](https://zh.wikipedia.org/zh-hans/%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7)

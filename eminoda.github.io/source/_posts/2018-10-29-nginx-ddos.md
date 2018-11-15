@@ -4,7 +4,7 @@ tags: nginx
 categories:
   - 前端
   - nginx
-no_sketch: true
+thumb_img: nginx.jpg
 date: 2018-10-29 17:27:30
 ---
 

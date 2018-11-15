@@ -7,6 +7,7 @@ categories:
   - 前端
   - test
 date: 2018-11-08 17:33:36
+thumb_img: node.png
 ---
 
 

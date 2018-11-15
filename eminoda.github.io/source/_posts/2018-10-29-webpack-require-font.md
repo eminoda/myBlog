@@ -4,7 +4,7 @@ tags: webpack
 categories:
   - 前端
   - webpack
-no_sketch: true
+thumb_img: webpack.png
 date: 2018-10-29 17:27:44
 ---
 

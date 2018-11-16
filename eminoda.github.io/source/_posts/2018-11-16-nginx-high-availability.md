@@ -5,7 +5,9 @@ categories:
   - 前端
   - nginx
 thumb_img: keepalived.png
+date: 2018-11-16 17:03:49
 ---
+
 
 # [什么是高可用](https://zh.wikipedia.org/zh-hans/%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7)
 > 高可用性（英语：high availability，缩写为 HA），IT术语，指系统无中断地执行其功能的能力，代表系统的可用性程度。是进行系统设计时的准则之一。高可用性系统与构成该系统的各个组件相比可以更长时间运行

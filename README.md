@@ -15,4 +15,5 @@
 - :thought_balloon: 通过issues参与讨论交流（暂时未开通）
 - :email: 邮箱245978782@qq.com。(如果2019年有不错的工作机会请@我。base：上海）
 - :herb: 微信公众号@前端雨爸（后期会同步文章、方便交流）
+
 ![qrcode](https://github.com/eminoda/myBlog/blob/master/imgs/webcat-qrcode.jpg?raw=true)

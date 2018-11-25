@@ -75,3 +75,45 @@ var user2 = new User('bbbb',22);
 
 console.log(user1.say==user2.say);//true
 ````
+
+## 构造函数+原型模式
+> 可以说是一种创建对象的最佳模式，结合了两者的短长
+- 利用原型的共享特性，解决重复创建对象属性的问题，节省内存
+- 依旧支持对象传参
+
+````js
+function User(name){
+    this.name = name;
+}
+User.prototype.say = function(){}
+````
+
+## 其他模式
+### 动态原型模式
+基本同 **构造函数+原型模式**，只是为了更好的只通过构造函数来创建对象，这样符合OO面向对象开发者的习惯，或者是疑惑（原型）
+````js
+function User(name){
+    this.name = name;
+    if(typeof this.say != "function"){
+        User.prototype.say = function(){}
+    }
+}
+````
+
+### 寄生构造函数模式
+和工厂模式类似，只是在构造函数内部创建一个空对象，最后返回
+
+### 稳妥构造函数模式
+不知道哪些框架会用这个，或者上面那个，个人感觉没什么意义（打个疑问）
+目的：构造函数内部避免使用 **this,new**，防止环境污染等问题
+````js
+function User(name){
+    var o = new Object();
+    o.name = name;
+    o.say = function(){}
+    return 0;
+}
+var user = User('aaaa');
+````
+
+over

@@ -123,3 +123,5 @@ var user2 = new User();
 user1.girls.push('cccc');
 user2.girls;//["cccc"] user2被污染了
 ````
+
+over

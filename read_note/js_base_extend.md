@@ -16,6 +16,7 @@ instance.age//11
 instance.name//parent
 ````
 原型之间的引用如下：
+
 ![extend_proto](https://github.com/eminoda/myBlog/blob/master/imgs/js_base/extend_proto.png?raw=true)
 
 
@@ -56,7 +57,7 @@ var instance2 = new Child();
 console.log(instance2.books);//["parent", "instance1"]
 ````
 
-# 借用构造函数
+# 借用构造函数继承
 **借用 call、apply** 重新创建函数执行环境，这样就会重新使用Parent，避免了共享的污染问题。
 ````js
 function Parent(){
@@ -78,17 +79,20 @@ console.log(instance2.books);//["parent"]
 缺点：对复用性无从谈起。
 
 # 组合继承
-原型链继承+借用构造函数，取长补短。
+原型链继承+借用构造函数继承，取长补短。但也有其不足之处，调用2次父类的构造函数。
 ````js
 function Parent(name){
-  this.name = name;
-  this.books = ['parent']
+    console.log('init');// 2次
+    this.name = name;
+    this.books = ['parent']
 }
 
 function Child(name,nickName){
-  Parent.call(this,name);
-  this.nickName = nickName;
+    // 第一次
+    Parent.call(this,name);
+    this.nickName = nickName;
 }
+// 第二次
 Child.prototype = new Parent();
 
 var instance1 = new Child('aa','bb');
@@ -97,4 +101,41 @@ console.log(instance1);//{name: "aa", books: Array(2), nickName: "bb"}
 
 var instance2 = new Child();
 console.log(instance2.books);//["parent"]
+````
+
+# 原型式继承
+在函数方法内部创建全新的构造方法，将需要继承对象赋值于原型，从而达到该方式效果
+````js
+function object(o){
+    // 相当于child
+    function F(){};
+    F.prototype = o;
+    return new F();
+}
+````
+
+值得注意ES5的 **Object.create()** 规范了原型式继承
+
+# 寄生组合式继承
+````js
+function Parent(name){
+  this.name = name;
+  this.books = ['parent']
+}
+function Child(name,nickName){
+    //借用构造函数继承
+    Parent.call(this,name);
+    this.nickName = nickName;
+}
+function inherits(Child,Parent){
+    // 没有像组合继承那样 new Parent,而是通过原型对象来创建一个新的原型对象
+    var prototype = Object.create(Parent.prototype);
+    // 重新设定引用，Child而非Parent或其他
+    prototype.contructor = Child;
+    Child.prototype = prototype;
+}
+// 对于不支持Object.create的浏览器，还是用组合继承。参考：https://github.com/isaacs/inherits/blob/master/inherits_browser.js
+inherits(Child,Parent);
+var instance  = new Child('aa','bb')
+console.log(instance);
 ````

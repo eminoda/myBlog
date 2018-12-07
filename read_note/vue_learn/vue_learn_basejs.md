@@ -4,7 +4,7 @@ vue 学习--js相关基础
 
 因为是 Vue 框架源码，会涉及大量平时业务代码没有使用过的 js 相关 api、或一些 **最佳实践** 的方法。
 
-这里做记录并写 demo 实践
+这里做记录并写 [demo 实践](https://github.com/eminoda/myBlog/tree/master/read_note/vue_learn/demo)
 
 # dom
 

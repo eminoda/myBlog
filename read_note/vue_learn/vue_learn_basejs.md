@@ -38,13 +38,14 @@ htmlStr
 
 ## remove-splice
 
-移除数组元素
+移除数组元素，参考：
 
 [https://github.com/eminoda/myBlog/issues/9-splice](https://github.com/eminoda/myBlog/issues/9)
 
 ## hasOwn-hasOwnProperty
 
-判断对象属性是否存在
+判断对象属性是否存在，参考：
+
 [https://github.com/eminoda/myBlog/issues/4-hasOwnProperty(key)](https://github.com/eminoda/myBlog/issues/4)
 
 ## cached
@@ -105,4 +106,17 @@ console.log(camelize(str2)); //appList
 console.log(camelize(str3)); //appList_item
 ```
 
-关于正则参考[https://github.com/eminoda/myBlog/issues/10--实例属性](https://github.com/eminoda/myBlog/issues/10)
+关于正则，参考：[https://github.com/eminoda/myBlog/issues/10--实例属性](https://github.com/eminoda/myBlog/issues/10)
+
+## Object.defineProperty
+
+定义对象属性，参考: [https://github.com/eminoda/myBlog/issues/2--访问器属性](https://github.com/eminoda/myBlog/issues/2)
+
+```js
+var opts = {};
+Object.defineProperty(opts, "passive", {
+  get: function get() {
+    supportsPassive = true;
+  }
+});
+```

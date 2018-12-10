@@ -45,3 +45,45 @@ function remove(arr, item) {
 console.log(remove(arr, "a")); //[ 'a' ]
 console.log(arr); //[ 2, 'b', 3, 4, 1 ]
 ```
+
+## slice
+
+根据设置的开始和结束索引，返回一个新数组对象。**原数组不变**
+
+```js
+arrayObject.slice([begin], [end]);
+```
+
+- begin 默认 0 开始
+- end 结束索引，如果为负数，则倒序获取。超出 length，则返回 length
+
+```js
+var arr = [2, 3, 4, 9, 6, 7];
+// 从索引2开始
+console.log(arr.slice(2)); //[ 4, 9, 6, 7 ];
+// 原数组不变
+console.log(arr); //[ 2, 3, 4, 9, 6, 7 ]
+
+// 结束索引为负数，倒序获取
+console.log(arr.slice(1, -3)); //[ 3, 4 ]
+console.log(arr.slice(3, -3)); //[]
+
+var objArr = [
+  {
+    name: "aaa"
+  },
+  {
+    name: "bbb"
+  }
+];
+```
+
+浅拷贝
+
+````js
+var newObjArr = objArr.slice(); //copy
+newObjArr[1].name = "ccc";
+
+console.log(objArr); //[ { name: 'aaa' }, { name: 'ccc' } ]
+```
+````

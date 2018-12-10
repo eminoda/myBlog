@@ -706,6 +706,7 @@
 	 * A dep is an observable that can have multiple
 	 * directives subscribing to it.
 	 */
+	// TODO #Dep
 	var Dep = function Dep() {
 		this.id = uid++;
 		this.subs = [];
@@ -3170,6 +3171,7 @@
 	 * and fires callback when the expression value changes.
 	 * This is used for both the $watch() api and directives.
 	 */
+	// TODO #Watch
 	var Watcher = function Watcher(
 		vm,
 		expOrFn,
@@ -4737,19 +4739,19 @@
 			}
 			// expose real self
 			vm._self = vm;
-			// TODO #initMixin #Vue.prototype._init #initLifecycle
+			// TODO #initMixin #Vue.prototype._init #initLifecycle ok
 			initLifecycle(vm);
-			// TODO #initMixin #Vue.prototype._init #initEvents
+			// TODO #initMixin #Vue.prototype._init #initEvents ok
 			initEvents(vm);
-			// TODO #initMixin #Vue.prototype._init #initRender
+			// TODO #initMixin #Vue.prototype._init #initRender ok
 			initRender(vm);
-			// TODO #initMixin #Vue.prototype._init #callHook
+			// TODO #initMixin #Vue.prototype._init #callHook ok
 			callHook(vm, 'beforeCreate');
-			// TODO #initMixin #Vue.prototype._init #initInjections
+			// TODO #initMixin #Vue.prototype._init #initInjections ok
 			initInjections(vm); // resolve injections before data/props
-			// TODO #initMixin #Vue.prototype._init #initState
+			// TODO #initMixin #Vue.prototype._init #initState ok
 			initState(vm);
-			// TODO #initMixin #Vue.prototype._init #initProvide
+			// TODO #initMixin #Vue.prototype._init #initProvide ok
 			initProvide(vm); // resolve provide after data/props
 			callHook(vm, 'created');
 

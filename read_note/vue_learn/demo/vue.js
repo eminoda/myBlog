@@ -4718,6 +4718,7 @@
 			// a flag to avoid this being observed
 			vm._isVue = true;
 			// merge options
+			// TODO #initMixin #Vue.prototype._init initInternalComponent?
 			if (options && options._isComponent) {
 				// optimize internal component instantiation
 				// since dynamic options merging is pretty slow, and none of the

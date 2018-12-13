@@ -63,7 +63,7 @@ normalizeDirectives(child)
 - [inject：Array<string> | { [key: string]: string | Symbol | Object }](https://cn.vuejs.org/v2/api/#provide-inject)
 - [directives：转换成Vue.directive范式](https://cn.vuejs.org/v2/api/#Vue-directive)
 
-## 合并策略
+## 合并的开始 mergeField
 既然这个大方法是mergeOptions，则会对Vue的选项Options做特定的merge处理。
 
 首先在正式 merge 之前，会对 parent 和 child 进行一个Field的创建，里面按照定义 **merge strages** 的规则进行执行。
@@ -86,6 +86,7 @@ function mergeField (key) {
 }
 ````
 
+## 几个策略方法
 先熟悉几个merge工具方法：
 
 **默认策略**：parent 和 child 两者取一
@@ -160,7 +161,7 @@ function mergeData (to: Object, from: ?Object): Object {
 const strats = config.optionMergeStrategies// 空对象
 ````
 
-**默认属性（选项）策略实现**
+## 默认属性（选项）策略
 
 可以看到strats下挂了一系列属性策略，在执行strat(parent[key], child[key], vm, key) 时被调用。
 
@@ -281,3 +282,15 @@ strats[hook] = function mergeHook(){
     : parentVal
 }
 ````
+
+## 最后
+绕了那么一大圈，终于：
+````
+vm.$options = mergeOptions(
+    resolveConstructorOptions(vm.constructor),
+    options || {},
+    vm
+)
+````
+
+因为 vm 是指向 this的，所以你可以在console中，输出 **vueInstance.$options** 来看merge后的参数。

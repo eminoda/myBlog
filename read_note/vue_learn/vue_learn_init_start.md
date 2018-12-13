@@ -36,6 +36,8 @@ vm._self = vm
 ...
 ````
 
+同样也能知道 [实例属性](https://cn.vuejs.org/v2/api/#%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7) 这些API是怎么回事了。
+
 ## 性能检测
 // TODO Chrome性能检测，及其API调查
 

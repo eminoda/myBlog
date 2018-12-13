@@ -1,9 +1,9 @@
 ---
-vue_learn 初始化initMixin--Vue.prototype._init
+vue_learn--init初始化 开始
 ---
 
 # Vue.prototype._init
-
+## 从构造函数开始
 在Vue构造函数中调用，定义在initMixin中。算是整个Vue的开始。
 ````js
 function Vue (options) {
@@ -36,8 +36,9 @@ vm._self = vm
 ...
 ````
 
-**性能检测**
+## 性能检测
 // TODO Chrome性能检测，及其API调查
+
 符合如下条件，就会在程序首位处执行检测注入的代码。打开Chrome开发者工具，在performance中就能看到程序在不同阶段的消耗。
 ````js
 let startTag, endTag
@@ -65,15 +66,7 @@ var app = new Vue({
 })
 ````
 
-Vue是怎么同步我们设置的值呢？看下全局初始化API：
-````js
-export function initGlobalAPI (Vue: GlobalAPI) {
-  // config
-  const configDef = {}
-  configDef.get = () => config
-  Object.defineProperty(Vue, 'config', configDef)
-}
-````
-给个[参考Demo Code](./demo/base_get.js)
+## Vue全局配置
+条件判断if中定义了 **&&config.performance&&**，那 Vue 是怎么关联我们设置的值呢？
 
-
+参考 [js扩展--defineProperty使用场景](https://github.com/eminoda/myBlog/issues/13)

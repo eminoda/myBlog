@@ -46,7 +46,7 @@ vue_learn 框架结构一览
 |  ├─vue.runtime.js
 |  └vue.runtime.min.js
 ├─src                           # 我们要关心的目录
-|  ├─shared                     # 全局一些方法
+|  ├─shared                     # 全局的常量、方法
 |  |   ├─constants.js
 |  |   └util.js
 |  ├─sfc

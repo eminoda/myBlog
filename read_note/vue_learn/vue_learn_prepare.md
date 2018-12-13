@@ -23,3 +23,7 @@ vue_learn 准备工作
 - npm/node
 
     我们不涉及服务端功能，但npm需要熟悉，毕竟在package.json中的script中要分清脚本的含义。
+
+- vue API
+
+    起码是用过Vue，通读过 [官方文档](https://cn.vuejs.org/v2)

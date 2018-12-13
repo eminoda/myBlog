@@ -8,6 +8,7 @@
 </head>
 <body>
     <div id="app">{{ message }}</div>
+    <div id="app2">{{ message }}</div>
     <script src="./vue.js"></script>
     <script>
        Vue.config.performance = true;
@@ -15,6 +16,12 @@
             el: '#app',
             data: {
                 message: '页面加载于 ' + new Date().toLocaleString()
+            },
+            components:{
+                el: '#app2',
+  created: function () {
+    console.log('child component created')
+  }
             }
         })
     </script>

@@ -10,6 +10,7 @@
     <div id="app">{{ message }}</div>
     <script src="./vue.js"></script>
     <script>
+       Vue.config.performance = true;
         var app = new Vue({
             el: '#app',
             data: {

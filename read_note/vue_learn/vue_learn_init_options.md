@@ -1,14 +1,14 @@
-<!-- vue_learn--init初始化 options合并 -->
+<!-- vue_learn--init初始化 选项合并 -->
 
-# options 属性合并
-入口处：
+# 属性合并 vm.$options
+进到 mergeOptions 方法里，我们应该没有主动设置过 _isComponent，所以只看 else 中的 **mergeOptions**
 ````js
 // merge options
 if (options && options._isComponent) {
     // optimize internal component instantiation
     // since dynamic options merging is pretty slow, and none of the
     // internal component options needs special treatment.
-    // TODO 到底有什么用？虽然平时我们也用不到
+    // TODO 到底有什么用？
     initInternalComponent(vm, options)
 } else {
     vm.$options = mergeOptions(
@@ -19,7 +19,7 @@ if (options && options._isComponent) {
 }
 ````
 
-只看 else 中的 **mergeOptions**
+mergeOptions 接受三个参数
 ````js
 export function mergeOptions (parent,child,vm?) {}
 ````
@@ -51,19 +51,20 @@ function validateComponentName (name: string) {
 ````
 
 ## 属性（选项）标准化
-对指定属性进行二次加工，虽然在API上提供不同的写法，但在Vue层做统一化。
+对指定属性进行二次加工，虽然在API上提供不同的写法，但需要在Vue层做统一化。
 ````js
 normalizeProps(child, vm)
 normalizeInject(child, vm)
 normalizeDirectives(child)
 ````
+
+可以在 Vue 官网看到不同调用方式：
 - [props：Array<string> | Object](https://cn.vuejs.org/v2/api/#props)
 - [inject：Array<string> | { [key: string]: string | Symbol | Object }](https://cn.vuejs.org/v2/api/#provide-inject)
 - [directives：转换成Vue.directive范式](https://cn.vuejs.org/v2/api/#Vue-directive)
 
-## 合并的开始 mergeField
-既然这个大方法是mergeOptions，则会对Vue的选项Options做特定的merge处理。
-
+## 定义合并的开始 mergeField
+Vue 对特殊的选项定义了不同的 merge 策略。
 首先在正式 merge 之前，会对 parent 和 child 进行一个Field的创建，里面按照定义 **merge strages** 的规则进行执行。
 ````js
 const options = {}
@@ -154,14 +155,13 @@ function mergeData (to: Object, from: ?Object): Object {
   return to
 }
 ````
+
+## 默认属性（选项）策略
 初始化策略对象
 ````js
 const strats = config.optionMergeStrategies// 空对象
 ````
-
-## 默认属性（选项）策略
-
-可以看到strats下挂了一系列属性策略，在执行strat(parent[key], child[key], vm, key) 时被调用。
+可以看到 strats 下挂了一系列属性合并方法的实现方式，在执行strat(parent[key], child[key], vm, key) 时被调用。
 
 - strats.el = strats.propsData
 - strats.data

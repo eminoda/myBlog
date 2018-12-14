@@ -1,6 +1,4 @@
----
-vue_learn--init初始化 options合并
----
+<!-- vue_learn--init初始化 options合并 -->
 
 # options 属性合并
 入口处：

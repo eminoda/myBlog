@@ -1,6 +1,5 @@
----
-vue_learn 前言
----
+<!-- vue_learn--前言 -->
+
 # vue 源码学习
 
 ## 初衷:heart:

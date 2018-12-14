@@ -1,6 +1,4 @@
----
-vue_learn--init初始化 开始
----
+<!-- vue_learn--init初始化 开始 -->
 
 # Vue.prototype._init
 ## 从构造函数开始

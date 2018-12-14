@@ -28,7 +28,10 @@
 - [初始化-选项合并](./vue_learn_init_options.md)
 - [初始化-渲染代理](./vue_learn_init_renderProxy.md)
 - [初始化-生命周期](./vue_learn_init_life.md)
+- [初始化-事件](./vue_learn_init_events.md)
+- [初始化-生命周期 钩子](./vue_learn_lifeHook.md)
 - [-](-)
+- [附录 生命周期图示](./vue_learn_appendix_life.md)
 - demo
 
     - **base\_** 基础工具方法。

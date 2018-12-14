@@ -29,11 +29,11 @@ export function createElement (context: Component,tag: any,data: any,children: a
 }
 ````
 
-来看下本体 **_createElement** ，首先接受5个参数
+来看下本体 **_createElement**
 
-[参数说明](https://cn.vuejs.org/v2/guide/render-function.html#createElement-%E5%8F%82%E6%95%B0)
+首先接受5个参数 "vm, a, b, c, d, true/false"，[参数说明](./imgs/createElement.png)
 
-![举个例子](https://github.com/eminoda/myBlog/blob/master/read_note/vue_learn/imgs/createElement.png?raw=true)
+<!-- https://cn.vuejs.org/v2/guide/render-function.html#createElement-%E5%8F%82%E6%95%B0 -->
 ````js
 export function _createElement (
   context: Component,
@@ -44,4 +44,69 @@ export function _createElement (
 ): VNode | Array<VNode> {
     ...
 }
+````
+
+然后会对参数做判断，让然目前处于定义阶段，到调用时看赋了什么值。
+
+// TODO VNode怎么渲染Dom
+![先大致看下](https://github.com/eminoda/myBlog/blob/master/read_note/vue_learn/imgs/createElement.png?raw=true)
+
+````js
+if (isDef(data) && isDef((data: any).__ob__)) {
+    return createEmptyVNode()
+}
+if (!tag) {
+    return createEmptyVNode()
+}
+...
+let vnode, ns
+if (typeof tag === 'string') {
+    let Ctor
+    ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
+    if (config.isReservedTag(tag)) {
+        // platform built-in elements
+        vnode = new VNode(
+        config.parsePlatformTagName(tag), data, children,
+        undefined, undefined, context
+        )
+    } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
+        // component
+        vnode = createComponent(Ctor, data, context, children, tag)
+    } else {
+        // ...
+        vnode = new VNode(
+        tag, data, children,
+        undefined, undefined, context
+        )
+    }
+} else {
+    // direct component options / constructor
+    vnode = createComponent(tag, data, context, children)
+}
+if (Array.isArray(vnode)) {
+    return vnode
+} else if (isDef(vnode)) {
+    if (isDef(ns)) applyNS(vnode, ns)
+    if (isDef(data)) registerDeepBindings(data)
+    return vnode
+} else {
+    return createEmptyVNode()
+}
+````
+
+无非两种情况，要么返回 createEmptyVNode ，要么新建一个 VNode 返回
+
+之后要看下 **defineReactive** ，根据意思是定义动态可变的参数，这里作用属性 $attrs，$listeners
+````js
+if (process.env.NODE_ENV !== 'production') {
+    defineReactive(vm, '$attrs', parentData && parentData.attrs || emptyObject, () => {
+      !isUpdatingChildComponent && warn(`$attrs is readonly.`, vm)
+    }, true)
+    defineReactive(vm, '$listeners', options._parentListeners || emptyObject, () => {
+      !isUpdatingChildComponent && warn(`$listeners is readonly.`, vm)
+    }, true)
+  } else {
+    defineReactive(vm, '$attrs', parentData && parentData.attrs || emptyObject, null, true)
+    defineReactive(vm, '$listeners', options._parentListeners || emptyObject, null, true)
+  }
 ````

@@ -1,6 +1,6 @@
 <!-- vue_learn--observer 定义响应式对象 -->
-# 定义响应式对象 defineReactive
-在 Vue.prototype.init 已经看到好几处使用了 defineReactive，现在具体看下什么作用？
+## defineReactive
+定义响应式对象。在 Vue.prototype.init 已经看到好几处使用了 defineReactive，现在具体看下什么作用？
 
 ````
 defineReactive(vm, key, result[key], () => {
@@ -19,7 +19,7 @@ export function defineReactive (
 ) {
 ````
 
-判断监听对象 obj 是否可修改
+判断监听对象 obj 是否可修改，不可修改直接结束。
 ````js
 const dep = new Dep()
 
@@ -29,7 +29,7 @@ if (property && property.configurable === false) {
 }
 ````
 
-如果参数只有3个（obj,key,val），未定义getter，则预先对 val 进行设置
+如果参数只有3个（obj,key,val），属性中未定义访问属性 getter 但有 setter ，则预先对 val 进行设置赋值。
 ````js
 const getter = property && property.get
 const setter = property && property.set
@@ -43,7 +43,8 @@ if ((!getter || setter) && arguments.length === 2) {
 let childOb = !shallow && observe(val)
 ````
 
-**observe** 观察模型，根据条件返回一个观察者 Observer，监听 value
+## observe
+**observe** 观察模型，检查是否 value 中是否存在 **__ob__** ，根据条件返回一个监听 value 的 观察者 Observer。
 
 ````js
 export function observe (value: any, asRootData: ?boolean): Observer | void {
@@ -70,6 +71,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 }
 ````
 
+## Observer
 **Observer** 观察者对象
 ````js
 export class Observer {

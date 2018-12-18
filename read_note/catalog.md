@@ -11,6 +11,8 @@
 - [js 基础--函数表达式 闭包](https://github.com/eminoda/myBlog/issues/6)
 - [js 基础--数组 常用方法](https://github.com/eminoda/myBlog/issues/9)
 - [js 基础--正则表达式](https://github.com/eminoda/myBlog/issues/10)
+- [js 扩展--defineProperty 使用场景](https://github.com/eminoda/myBlog/issues/13)
+- [js 扩展--bind call apply 那些事](https://github.com/eminoda/myBlog/issues/14)
 
 ## js es6
 

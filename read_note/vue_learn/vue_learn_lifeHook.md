@@ -34,7 +34,7 @@ export function callHook (vm: Component, hook: string) {
 
 结合 Vue 生命周期的图谱，就能大概知道为何此处调用，参见[附录 生命周期图示](./vue_learn_appendix_life.md)
 
-到此为止，初始化 **Vue.prototype._init** 算是告一段落了，你应该注意到并没有结束（放在新的单元介绍），还缺少如下内容：
+到此为止，初始化 **Vue.prototype._init beforeCreate** 之前的代码算是告一段落了，你应该注意到并没有结束，还剩两大块内容：
 
 ````js
 initInjections(vm) // resolve injections before data/props

@@ -24,12 +24,18 @@
 ## 目录介绍 :bookmark_tabs:
 - [准备工作](./vue_learn_prepare.md)
 - [框架结构一览](./vue_learn_frame.md)
+
 - [初始化-开始](./vue_learn_init_start.md)
 - [初始化-选项合并](./vue_learn_init_options.md)
 - [初始化-渲染代理](./vue_learn_init_renderProxy.md)
 - [初始化-生命周期](./vue_learn_init_life.md)
 - [初始化-事件](./vue_learn_init_events.md)
-- [初始化-生命周期 钩子](./vue_learn_lifeHook.md)
+- [初始化-生命周期 钩子](./vue_learn_init_lifeHook.md)
+- [初始化-initInjections](./vue_learn_init_initInjections.md)
+- [初始化-initState](./vue_learn_init_initState.md)
+- [初始化-initProvide](./vue_learn_init_initProvide.md)
+- [初始化-总结](./vue_learn_init_end.md)
+
 - [-](-)
 - [附录 生命周期图示](./vue_learn_appendix_life.md)
 - demo

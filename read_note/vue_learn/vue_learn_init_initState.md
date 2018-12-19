@@ -75,3 +75,61 @@ function initData (vm: Component) {
 }
 
 ````
+
+## initComputed
+````js
+function initComputed (vm: Component, computed: Object) {
+  // $flow-disable-line
+  const watchers = vm._computedWatchers = Object.create(null)
+  ...
+
+  for (const key in computed) {
+    // 获取定义的执行函数，放到getter中
+    const userDef = computed[key]
+    const getter = typeof userDef === 'function' ? userDef : userDef.get
+    if (process.env.NODE_ENV !== 'production' && getter == null) {
+      warn(...)
+    }
+    // TODO 为何要创建一个 Watcher 对象
+    if (!isSSR) {
+      // create internal watcher for the computed property.
+      watchers[key] = new Watcher(
+        vm,
+        getter || noop,
+        noop,
+        computedWatcherOptions
+      )
+    }
+    if (!(key in vm)) {
+      // TODO 为何要判断不在 vm 的 key
+      defineComputed(vm, key, userDef)
+    } else if (process.env.NODE_ENV !== 'production') {
+      warn(...)
+    }
+  }
+}
+````
+
+## initWatch
+根据条件创建 Watch 对象
+````js
+function initWatch (vm: Component, watch: Object) {
+  for (const key in watch) {
+    const handler = watch[key]
+    ...
+    createWatcher(vm, key, handler)
+  }
+}
+````
+调用 vm.$watch
+````js
+function createWatcher (
+  vm: Component,
+  expOrFn: string | Function,
+  handler: any,
+  options?: Object
+) {
+  ...
+  return vm.$watch(expOrFn, handler, options)
+}
+````

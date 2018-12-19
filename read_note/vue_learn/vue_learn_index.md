@@ -36,6 +36,10 @@
 - [初始化-initProvide](./vue_learn_init_initProvide.md)
 - [初始化-总结](./vue_learn_init_end.md)
 
+- [响应式-创建观察者对象](./vue_learn_reactive_observe.md)
+- [响应式-观察者对象](./vue_learn_reactive_Observer.md)
+- [响应式-定义响应方法](./vue_learn_reactive_defineReactive.md)
+
 - [-](-)
 - [附录 生命周期图示](./vue_learn_appendix_life.md)
 - demo

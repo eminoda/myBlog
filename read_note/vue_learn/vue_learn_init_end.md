@@ -43,3 +43,5 @@ Vue.prototype._init = function (options?: Object) {
 - 初始化 **组件** 等场景指定的 inject provide
 - 特定在 prop data watch 初始化了 **动态响应**
 - 穿插在上面几个步骤，定义了 beforeCreate，created 两个生命周期
+
+下一篇：[响应式-创建观察者对象](./vue_learn_reactive_observe.md)

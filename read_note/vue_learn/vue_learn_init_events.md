@@ -1,7 +1,8 @@
-<!-- vue_learn--init初始化 事件 -->
+<!-- vue_learn--初始化-事件 -->
 
-# 初始化事件 initEvents
-看下方法
+# 初始化-事件
+看下方法定义
+
 ````js
 export function initEvents (vm: Component) {
   vm._events = Object.create(null)
@@ -40,3 +41,5 @@ if (options && options._isComponent) {
     )
 }
 ````
+
+下一篇：[初始化-生命周期 钩子](./vue_learn_init_lifeHook.md)

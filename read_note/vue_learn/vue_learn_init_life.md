@@ -1,5 +1,5 @@
-<!-- vue_learn--init初始化 生命周期 -->
-# 生命周期 初始化
+<!-- vue_learn--初始化-生命周期 -->
+# 初始化-生命周期
 这个简单，对一些 vm 属性统一做初始化赋值。
 
 当然虽然这叫 initLifecycle，却没有我们生命周期的那些方法。
@@ -30,3 +30,5 @@ export function initLifecycle (vm: Component) {
   vm._isBeingDestroyed = false
 }
 ````
+
+下一篇：[初始化-事件](./vue_learn_init_events.md)

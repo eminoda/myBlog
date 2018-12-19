@@ -1,8 +1,8 @@
-<!-- vue_learn--init初始化 生命周期钩子 -->
+<!-- vue_learn--初始化-生命周期 钩子 -->
 
-# callHook
+# 初始化-生命周期 钩子
 
-在初始化的时候，一共调用2个钩子 beforeCreate & created
+在初始化 init 的时候，一共调用2个钩子 beforeCreate & created
 ````js
 callHook(vm, 'beforeCreate')
 ...
@@ -47,3 +47,5 @@ if (vm.$options.el) {
     vm.$mount(vm.$options.el)
 }
 ````
+
+下一篇：[初始化-initInjections](./vue_learn_init_initInjections.md)

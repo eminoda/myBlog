@@ -1,13 +1,19 @@
-<!-- vue_learn--init初始化 选项合并 -->
+<!-- vue_learn--初始化-选项合并 -->
 
-# 属性合并 vm.$options
-进到 mergeOptions 方法里，我们应该没有主动设置过 _isComponent，所以只看 else 中的 **mergeOptions**
+# 初始化-选项合并
+
+从 Vue.prototype._init 开始：
+````js
+Vue.prototype._init = function (options?: Object) {
+  ...
+}
+````
+
+## mergeOptions
+看到如下 merge options 主要逻辑代码块，我们应该没有主动设置过 _isComponent，所以只看 else 中的 **mergeOptions**
 ````js
 // merge options
 if (options && options._isComponent) {
-    // optimize internal component instantiation
-    // since dynamic options merging is pretty slow, and none of the
-    // internal component options needs special treatment.
     // TODO 到底有什么用？
     initInternalComponent(vm, options)
 } else {
@@ -19,14 +25,27 @@ if (options && options._isComponent) {
 }
 ````
 
+进到 mergeOptions 方法里之前，先看下 resolveConstructorOptions。
+大意是会看 vm.constructor 上有没有父类对象，如果有就会对内部部分属性做继承等操作。我们没有类似代码，所以暂跳过。
+````js
+export function resolveConstructorOptions (Ctor: Class<Component>) {
+  let options = Ctor.options
+  if (Ctor.super) {
+    ...
+    // TODO 具体什么操作
+  }
+  return options
+}
+````
+
 mergeOptions 接受三个参数
 ````js
 export function mergeOptions (parent,child,vm?) {}
 ````
 参数列表：
-- this.constructor(parent)
-- new Vue({...})的options(child)
-- this(vm)
+- parent（this.constructor）
+- child（new Vue({...})的options）
+- vm（this）
     这个很重要，在 [Vue.extends时 vm作为区分](https://cn.vuejs.org/v2/api/#Vue-extend)
 // TODO !vm ==true 时的场景确认
 
@@ -50,8 +69,8 @@ function validateComponentName (name: string) {
 }
 ````
 
-## 属性（选项）标准化
-对指定属性进行二次加工，虽然在API上提供不同的写法，但需要在Vue层做统一化。
+## normalize 标准化（选项）
+对指定属性（**props、inject、directives**）进行二次标准化加工，虽然在 API 上提供不同的写法，但需要在 Vue 层做统一化。
 ````js
 normalizeProps(child, vm)
 normalizeInject(child, vm)
@@ -63,13 +82,13 @@ normalizeDirectives(child)
 - [inject：Array<string> | { [key: string]: string | Symbol | Object }](https://cn.vuejs.org/v2/api/#provide-inject)
 - [directives：转换成Vue.directive范式](https://cn.vuejs.org/v2/api/#Vue-directive)
 
-## 定义合并的开始 mergeField
+## mergeField 定义合并的开始
 Vue 对特殊的选项定义了不同的 merge 策略。
 首先在正式 merge 之前，会对 parent 和 child 进行一个Field的创建，里面按照定义 **merge strages** 的规则进行执行。
 ````js
 const options = {}
 let key
-// 创建 parent 规则
+// 定义 parent 中的 选项
 for (key in parent) {
     mergeField(key)
 }
@@ -85,8 +104,8 @@ function mergeField (key) {
 }
 ````
 
-## 几个策略方法
-先熟悉几个merge工具方法：
+## strats 策略定义
+先熟悉几个 merge 策略工具方法：
 
 **默认策略**：parent 和 child 两者取一
 ````js
@@ -132,6 +151,8 @@ mergeDataOrFn (parentVal: any,childVal: any,vm?: Component
 }
 ````
 **mergeData** 最后的 mix 式的重写操作，返回 child
+
+层层遍历父（from）子（to）对象的属性 key，做 overwrite 操作
 ````js
 function mergeData (to: Object, from: ?Object): Object {
   if (!from) return to
@@ -141,6 +162,7 @@ function mergeData (to: Object, from: ?Object): Object {
     key = keys[i]
     toVal = to[key]
     fromVal = from[key]
+    // child 不存在 parent的key，就设置
     if (!hasOwn(to, key)) {
       set(to, key, fromVal)
     } else if (
@@ -148,7 +170,7 @@ function mergeData (to: Object, from: ?Object): Object {
       isPlainObject(toVal) &&
       isPlainObject(fromVal)
     ) {
-        // 递归
+      // 递归
       mergeData(toVal, fromVal)
     }
   }
@@ -156,8 +178,7 @@ function mergeData (to: Object, from: ?Object): Object {
 }
 ````
 
-## 默认属性（选项）策略
-初始化策略对象
+**strats 策略对象**
 ````js
 const strats = config.optionMergeStrategies// 空对象
 ````
@@ -292,3 +313,5 @@ vm.$options = mergeOptions(
 ````
 
 因为 vm 是指向 this的，所以你可以在console中，输出 **vueInstance.$options** 来看merge后的参数。
+
+下一篇：[初始化-渲染代理](./vue_learn_init_renderProxy.md)

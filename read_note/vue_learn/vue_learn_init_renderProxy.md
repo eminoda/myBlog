@@ -1,5 +1,6 @@
-<!-- vue_learn--init初始化 渲染代理 -->
-# 渲染代理 vm._renderProxy
+<!-- vue_learn--初始化-渲染代理 -->
+# 初始化-渲染代理
+
 接着 mergeOptions 后赋值给 vm.$options ，将看到如下代码：
 ````js
 if (process.env.NODE_ENV !== 'production') {
@@ -26,7 +27,7 @@ initProxy = function initProxy (vm) {
 }
 ````
 
-render 和 render._withStripped 哪里定义先放放，因为从头扫过来没有发现这两个属性，不过重点可以放在后面两个方法：
+render 和 render._withStripped 哪里定义先放放，因为从头扫过来没有发现这两个属性，重点可以放在后面两个方法：
 
 **getHandler**
 
@@ -46,7 +47,7 @@ const getHandler = {
 }
 ````
 
-get 能看出是一个 getter 作用的函数，方法作用是从 target 里查询 key 合不合法，然后给予警告。
+get 能看出是一个 getter 作用的函数，方法作用是从 target 里查询 key 合不合法，然后给予警告，返回 target 的 value。
 
 哪里调用 vm._renderProxy？target 是哪个对象参数？
 
@@ -75,9 +76,9 @@ function Vue (options) {
 ...
 renderMixin(Vue)
 ````
-一开始在 函数声明 的时候就初始化了这些方法。这里做个备注。
+一开始在 **函数声明** 的时候就初始化了这些方法，只不过我这边阅读代码的顺序不可能那么跳跃，这里做个备注。
 
-**hasHandler** 暂时跳过，作用其实和 getHandler 类似，只是出发点不同。
+**hasHandler** 暂时跳过，作用其实和 getHandler 类似，只是方法名和使用场景不同。
 
 ````js
 const hasHandler = {
@@ -94,3 +95,5 @@ const hasHandler = {
     }
 }
 ````
+
+下一篇：[初始化-生命周期](./vue_learn_init_life.md)

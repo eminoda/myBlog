@@ -1,7 +1,7 @@
-<!-- vue_learn--initState 初始化状态 -->
-# initState 初始化状态
+<!-- vue_learn--initState -->
+# initState
 
-对 vm.$options 上挂在的 **props methods data computed watch** 进行初始化，同样也会进行 defineReactive 的定义。
+对 vm.$options 上挂在的 **props，methods，data，computed，watch** 进行初始化，同样也会进行 defineReactive 的定义。
 
 ````js
 export function initState (vm: Component) {
@@ -133,3 +133,5 @@ function createWatcher (
   return vm.$watch(expOrFn, handler, options)
 }
 ````
+
+下一篇：[初始化-initProvide](./vue_learn_init_initProvide.md)

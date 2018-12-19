@@ -1,5 +1,5 @@
-<!-- vue_learn--initInjections 初始化状态 -->
-# initInjections 初始化状态
+<!-- vue_learn--initInjections -->
+# initInjections
 方法定义
 ````js
 export function initInjections (vm: Component) {
@@ -74,3 +74,5 @@ if (result) {
     toggleObserving(true)
   }
 ````
+
+下一篇：[初始化-initState](./vue_learn_init_initState.md)

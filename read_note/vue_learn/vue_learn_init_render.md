@@ -1,6 +1,6 @@
-<!-- vue_learn--init初始化 渲染 -->
+<!-- vue_learn--初始化 渲染 -->
 
-# 渲染 initRender
+# 初始化 渲染
 初始化 vm 一些内部属性
 ````js
 vm._vnode = null // the root of the child tree

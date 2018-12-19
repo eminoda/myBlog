@@ -1,6 +1,6 @@
-<!-- vue_learn--initProvide 初始化状态 -->
-# initProvide 初始化状态
-方法定义
+<!-- vue_learn--initProvide -->
+# initProvide
+方法定义，和 initInjections 呼应
 ````js
 export function initProvide(vm: Component) {
   const provide = vm.$options.provide
@@ -12,3 +12,5 @@ export function initProvide(vm: Component) {
   }
 }
 ````
+
+下一篇：[初始化-总结](./vue_learn_init_end.md)

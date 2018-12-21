@@ -19,6 +19,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     // 校验 value 是否是 Observer对象，是则 取__ob__属性
     if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
         ob = value.__ob__
+        // shouldObserve 默认 true
     } else if (
         shouldObserve &&
         !isServerRendering() &&
@@ -36,6 +37,6 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 }
 ````
 
-一开始肯定没有 **__ob__** 属性，所以之后看下 Observer 观察者对象怎么封装响应模型的。
+一开始肯定没有 **__ob__** 属性，然后进入 **else if** 创建 Observer，所以之后看下 Observer 观察者对象怎么封装响应模型的。
 
 下一篇：[响应式-观察者对象](./vue_learn_reactive_Observer.md)

@@ -23,6 +23,7 @@ if (property && property.configurable === false) {
 ````
 
 对 val 做初始化赋值，如果 参数列表有 obj，key，并且访问属性有setter无getter
+// TODO 这里对于参数的问题，看下issue
 ````js
 if ((!getter || setter) && arguments.length === 2) {
     val = obj[key]

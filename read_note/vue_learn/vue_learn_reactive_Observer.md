@@ -41,6 +41,7 @@ if (Array.isArray(value)) {
     } else {
     copyAugment(value, arrayMethods, arrayKeys)
     }
+    // 内部 再调用 observe
     this.observeArray(value)
 } else {
     this.walk(value)

@@ -39,6 +39,8 @@
 - [响应式-创建观察者对象](./vue_learn_reactive_observe.md)
 - [响应式-观察者对象](./vue_learn_reactive_Observer.md)
 - [响应式-定义响应方法](./vue_learn_reactive_defineReactive.md)
+- [响应式-观察订阅 dep](./vue_learn_reactive_dep.md)
+- [响应式-监听 watcher](./vue_learn_reactive_watcher.md)
 
 - [-](-)
 - [附录 生命周期图示](./vue_learn_appendix_life.md)
@@ -52,4 +54,4 @@
 如果觉得需要更多 权威、正确的参考，可以看下以下链接：
 - [Vue技术内幕--hcysun](http://hcysun.me/vue-design/) 超详细的解读，基本看他就够了
 - [ECMAScript 6 入门--阮一峰](http://es6.ruanyifeng.com/)
-
+- [停止学习框架](https://juejin.im/post/5c1a839f518825780008537d) 觉得很有意思，你懂我的意思吧

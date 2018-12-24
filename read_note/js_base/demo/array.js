@@ -18,3 +18,13 @@ var newObjArr = objArr.slice(); //copy
 newObjArr[1].name = 'ccc';
 
 console.log(objArr); //[ { name: 'aaa' }, { name: 'ccc' } ]
+
+var popArr = [1, 2, 3, 4, 5, 6];
+
+popArr.pop();
+
+console.log(popArr); //[ 1, 2, 3, 4, 5 ]
+
+popArr.push(7);
+
+console.log(popArr); //[ 1, 2, 3, 4, 5, 7 ]

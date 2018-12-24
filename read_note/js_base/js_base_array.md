@@ -87,3 +87,20 @@ newObjArr[1].name = "ccc";
 console.log(objArr); //[ { name: 'aaa' }, { name: 'ccc' } ]
 ```
 ````
+
+## pop & push
+
+> pop 从数组中删除最后一个元素，并返回该元素的值。此方法更改数组的长度。
+
+> push 和 pop 相反，添加元素
+
+对应就是队列的出栈和进栈操作。
+
+```js
+var popArr = [1, 2, 3, 4, 5, 6];
+//数组 popArr 最后位元素被移除，数组长度 -1
+popArr.pop();
+console.log(popArr); //[ 1, 2, 3, 4, 5 ]
+popArr.push(7);
+console.log(popArr); //[ 1, 2, 3, 4, 5, 7 ]
+```

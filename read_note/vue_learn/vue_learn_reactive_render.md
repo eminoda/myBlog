@@ -35,10 +35,7 @@ export function initMixin (Vue: Class<Component>) {
 
 ```js
 // src\platforms\web\runtime\index.js
-Vue.prototype.$mount = function(
-	el?: string | Element,
-	hydrating?: boolean
-): Component {
+Vue.prototype.$mount = function(el?: string | Element, hydrating?: boolean): Component {
 	el = el && inBrowser ? query(el) : undefined;
 	return mountComponent(this, el, hydrating);
 };
@@ -105,7 +102,7 @@ const { compile, compileToFunctions } = createCompiler(baseOptions);
 export { compile, compileToFunctions };
 ```
 
-**createCompiler** 其实就是 createCompilerCreator 的变量
+而 **createCompiler** 其实就是 createCompilerCreator 的变量
 
 ```js
 // src\compiler\index.js
@@ -144,7 +141,7 @@ export function createCompilerCreator (baseCompile: Function): Function {
       ...
       return compiled
     }
-
+    // 这里要注意了，返回2个函数，其中一个便是 template 使用的 compileToFunctions
     return {
       compile,
       compileToFunctions: createCompileToFunctionFn(compile)
@@ -152,3 +149,95 @@ export function createCompilerCreator (baseCompile: Function): Function {
   }
 }
 ```
+
+在看看最终调用的 **createCompileToFunctionFn**
+
+```js
+export function createCompileToFunctionFn(compile: Function): Function {
+	const cache = Object.create(null);
+
+	return function compileToFunctions(
+		template: string,
+		options?: CompilerOptions,
+		vm?: Component
+	): CompiledFunctionResult {
+        options = extend({}, options);
+        ...
+		const key = options.delimiters
+			? String(options.delimiters) + template
+			: template;
+		if (cache[key]) {
+			return cache[key];
+		}
+		// compile
+        const compiled = compile(template, options);
+        ...
+		return (cache[key] = res);
+	};
+}
+```
+
+和起点入口的 **compileToFunctions** 放在一起做个关联比较，绕了那么多全，终于走到头了（原来高阶函数该这么玩）。之后就要看 render 中细节怎么做渲染的。
+
+```js
+const { render, staticRenderFns } = compileToFunctions(
+	template,
+	{
+		shouldDecodeNewlines,
+		shouldDecodeNewlinesForHref,
+		delimiters: options.delimiters,
+		comments: options.comments
+	},
+	this
+);
+```
+
+熟悉代码的执行“路径”后，接下来拎出几个方法，看下如何和响应式扯上关系
+
+compileToFunctions 内部会运行传入的方法 compile
+
+```js
+function compile(template: string, options?: CompilerOptions): CompiledResult {
+    ...
+    return compiled;
+}
+```
+
+简单看下编译后的结果：
+
+![compiled](./imgs/compiled.png)
+
+这里的 ast 暂时当做类似浏览器引擎解析做的语法解析，主要这里定义了 render 方法，并且用 with 把执行域放在了 this 下。
+
+既然有了 render ，就能在第一次声明 \$mount 中执行相关逻辑（runtime 中那个）
+
+```js
+return mount.call(this, el, hydrating)
+...
+Vue.prototype.$mount = function (
+  el?: string | Element,
+  hydrating?: boolean
+): Component {
+  el = el && inBrowser ? query(el) : undefined
+  return mountComponent(this, el, hydrating)
+}
+...
+export function mountComponent (
+  vm: Component,
+  el: ?Element,
+  hydrating?: boolean
+): Component {
+    ...
+    updateComponent = () => {
+      vm._update(vm._render(), hydrating)
+    }
+    new Watcher(vm, updateComponent, noop, {...}, true /* isRenderWatcher */)
+  ...
+}
+```
+
+再回到 Watch，其实定义的 updateComponent 在其内部执行了 this.get()，即运行了 render()
+
+在 \_update 中还会执行 **Vue.prototype.\_\_patch\_\_** ，将渲染后的模板替换到页面上。
+
+响应化好像也没输出太多内容，在模板具体如何解析的章节，再细看。

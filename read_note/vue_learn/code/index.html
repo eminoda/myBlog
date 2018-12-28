@@ -14,18 +14,18 @@
 		<script src="./vue.js"></script>
 		<script>
 			Vue.config.performance = true;
-			var childComponent = Vue.component("child", {
-				template: "<div>child:{{messageChild}} {{foo}}</div>",
-				data: function() {
-					return {
-						messageChild: "child"
-					};
-				},
-				//inject: ['foo']
-				props: {
-					propA: Number
-				}
-			});
+			// var childComponent = Vue.component("child", {
+			// 	template: "<div>child:{{messageChild}} {{foo}}</div>",
+			// 	data: function() {
+			// 		return {
+			// 			messageChild: "child"
+			// 		};
+			// 	},
+			// 	//inject: ['foo']
+			// 	props: {
+			// 		propA: Number
+			// 	}
+			// });
 			var app = new Vue({
 				el: "#app",
 				data: function() {

@@ -1,10 +1,41 @@
-<!-- vue_learn--响应式-渲染 render -->
+<!-- vue_learn--渲染 render -->
 
 # 渲染 render
 
 看了之前的 reactive 响应相关内容，大致了解几个方法是干嘛的，但还不知道哪里开始，具体怎么做的。
 
 这里拎出响应入口 render，按照这个起点看下程序怎么把这些串起来的。
+
+## 简易版
+
+```js
+// compile 方法函数
+var createCompileToFunctionFn = function createCompileToFunctionFn(compile) {
+	const cache = Object.create(null);
+	return function compileToFunctions() {
+		const compiled = compile(template, options);
+		res.render = createFunction(compiled.render, fnGenErrors);
+		return (cache[key] = res);
+	};
+};
+// compile 创建器
+var createCompilerCreator = function createCompilerCreator() {
+	return function createCompiler() {
+		function compile() {}
+		return {
+			compile: compile,
+			compileToFunctions: createCompileToFunctionFn(compile)
+		};
+	};
+};
+var createComiler = createCompilerCreator(function baseCompile() {});
+var baseOptions = {};
+// 拿到 compileToFunctions 属性
+var { compileToFunctions } = createComiler(baseOptions);
+// render 入口
+var options = {};
+var { render } = compileToFunctions(template, options, this);
+```
 
 ## 入口
 
@@ -239,5 +270,7 @@ export function mountComponent (
 再回到 Watch，其实定义的 updateComponent 在其内部执行了 this.get()，即运行了 render()
 
 在 \_update 中还会执行 **Vue.prototype.\_\_patch\_\_** ，将渲染后的模板替换到页面上。
+
+// TODO 再细看下 Watch 的作用
 
 响应化好像也没输出太多内容，在模板具体如何解析的章节，再细看。

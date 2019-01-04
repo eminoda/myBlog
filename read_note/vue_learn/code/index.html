@@ -7,7 +7,8 @@
 		<title>vue learn</title>
 	</head>
 	<body>
-		<div id="app">
+		<div id="app" v-if="message">
+			<!-- 我是注释 -->
 			<div>parent:{{ message }}</div>
 			<!-- <div><child></child></div> -->
 		</div>

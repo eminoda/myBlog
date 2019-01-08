@@ -1,13 +1,28 @@
-<!-- vue_learn--渲染 基础编译 baseCompile -->
+<!-- vue_learn--渲染 模板编译器 createCompiler -->
 
-# 基础编译 baseCompile
+# 模板编译器 createCompiler
 
-**compile** 在 render 中贯彻从头至尾，看下如果作用于 template
+compileToFunctions 是由 **createCompilerCreator** 编译器工厂方法所创建的属性之一。
 
-## parse
+该工厂方法依赖一个基础编译方法 **baseCompile** ，其包含 ast 解析和最后在使用的 render 方法。
 
 ```js
-//E:\github\vue\src\compiler\index.js
+export const createCompiler = createCompilerCreator(function baseCompile(template: string, options: CompilerOptions): CompiledResult {
+	const ast = parse(template.trim(), options);
+	...
+	const code = generate(ast, options);
+	return {
+		ast,
+		render: code.render,
+		staticRenderFns: code.staticRenderFns
+	};
+});
+```
+
+## AST parse
+
+```js
+//\compiler\index.js
 const ast = parse(template.trim(), options);
 ```
 
@@ -30,6 +45,8 @@ function parse(template,options){
 ```
 
 **parseHTML**
+
+进入 while 循环，会有一波波正则匹配，其实就是判断不同种类的 html 标签针对做不同的处理。相关正则可以 [点击这链接](https://github.com/eminoda/myBlog/issues/10) 做个简单的入门。
 
 ```js
 function parseHTML(html, options) {
@@ -57,8 +74,11 @@ function parseHTML(html, options) {
             if (endTagMatch) {
                 ...
             }
+            const startTagMatch = parseStartTag();
             if(startTagMatch){
+                handleStartTag(startTagMatch);
                 ...
+                continue;
             }
         }
     }
@@ -67,7 +87,7 @@ function parseHTML(html, options) {
 }
 ```
 
-忽略注释等解析，先来看 startTagMatch，其是由 **parseStartTag** 解析 html 的 **开始标签**，赋值给 **startTagMatch**
+忽略注释、doctype 等解析，先来看 startTagMatch，它是由 **parseStartTag** 解析 **开始标签** 的 html，赋值给 **startTagMatch**
 
 ```js
 const startTagMatch = parseStartTag();
@@ -86,6 +106,8 @@ const startTagMatch = parseStartTag();
 	unarySlash: ""
 }
 ```
+
+具体看 **parseStartTag** 怎么解析开始标签
 
 ```js
 function parseStartTag() {
@@ -113,7 +135,7 @@ function parseStartTag() {
 }
 ```
 
-对于 html 来说，它经历了一次“剃头”
+简单来说，对于 html 最终的处理结果，就像经历了一次“剃头”
 
 ```html
 <div id="app">content</div>
@@ -126,7 +148,7 @@ function parseStartTag() {
 </div>
 ```
 
-拿着 startTagMatch 做进一步处理
+通过 **handleStartTag** 做进一步处理
 
 ```js
 if (startTagMatch) {
@@ -136,7 +158,7 @@ if (startTagMatch) {
 }
 ```
 
-**handleStartTag**
+**handleStartTag** 使用 match 参数，标准化 attr ，并且运行 parseHTML.start
 
 ```js
 function handleStartTag(match) {
@@ -148,23 +170,70 @@ function handleStartTag(match) {
 	const l = match.attrs.length;
 	const attrs = new Array(l);
 	for (let i = 0; i < l; i++) {
-		const args = match.attrs[i];
+        const args = match.attrs[i];
+        // [" id="app"", "id", "=", "app", undefined, undefined, index: 0, input: "html"]
+        // 获取当前属性的value
 		const value = args[3] || args[4] || args[5] || "";
         ...
         // 将 attrs 从 regex 的结果进行标准化
         attrs[i] = {
 			name: args[1],
-			value: decodeAttr(value, shouldDecodeNewlines)
+			value: decodeAttr(value, shouldDecodeNewlines) //这里会对IE特殊 quirks
 		};
 	}
-
-	if (!unary) {
-		stack.push({ tag: tagName, lowerCasedTag: tagName.toLowerCase(), attrs: attrs });
-		lastTag = tagName;
-	}
-
+    ...
 	if (options.start) {
 		options.start(tagName, attrs, unary, match.start, match.end);
 	}
 }
 ```
+
+**start** 实现：
+
+```js
+start (tag, attrs, unary) {
+    ...
+    // 定义 AST格式的 element
+    let element: ASTElement = createASTElement(tag, attrs, currentParent)
+    ...
+    // apply pre-transforms
+    for (let i = 0; i < preTransforms.length; i++) {
+        // class style module 指令的转换
+        // 具体看下 options.modules src\platforms\web\compiler\modules\index.js
+        element = preTransforms[i](element, options) || element
+    }
+    ...
+    // vue 结构化的指令标签
+    if (inVPre) {
+        processRawAttrs(element)
+    } else if (!element.processed) {
+        // structural directives
+        processFor(element)
+        processIf(element)
+        processOnce(element)
+        // element-scope stuff
+        processElement(element, options)
+    }
+    ...
+    // 经历一系列的处理，得到最新的 element
+}
+```
+
+就这样层层解析 html 标签，直到最后处理 html 结尾标签。**endTagMatch**
+
+## code render
+
+```js
+export function generate(ast: ASTElement | void, options: CompilerOptions): CodegenResult {
+	const state = new CodegenState(options);
+	const code = ast ? genElement(ast, state) : '_c("div")';
+	return {
+		render: `with(this){return ${code}}`,
+		staticRenderFns: state.staticRenderFns
+	};
+}
+```
+
+通过 with ，把 this 对象注入到 code 中使用，作为最后的 render function
+
+// TODO 代码 codegen 相关逻辑需要看下（E:\github\vue\src\compiler\codegen\index.js）

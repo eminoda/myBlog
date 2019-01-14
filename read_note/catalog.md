@@ -2,7 +2,7 @@
 
 ## [前言](https://github.com/eminoda/myBlog/issues/1)
 
-## js 基础
+## js
 
 -   [js 基础--面向对象 1.描述对象属性的属性特征](https://github.com/eminoda/myBlog/issues/2)
 -   [js 基础--面向对象 2.对象创建](https://github.com/eminoda/myBlog/issues/3)
@@ -14,12 +14,9 @@
 -   [js 基础--this](https://github.com/eminoda/myBlog/issues/16)
 -   [js 扩展--defineProperty 使用场景](https://github.com/eminoda/myBlog/issues/13)
 -   [js 扩展--bind call apply 那些事](https://github.com/eminoda/myBlog/issues/14)
+-   [js es6--proxy](https://github.com/eminoda/myBlog/issues/11)
 
-## js es6
-
--   [es6--proxy](https://github.com/eminoda/myBlog/issues/11)
-
-## nodejs
+## Node.js
 
 -   [node 基础--exports 和 module.exports 的区别？](https://github.com/eminoda/myBlog/issues/7)
 -   [node 基础--npm install --save-dev 和 --save 的区别](https://github.com/eminoda/myBlog/issues/8)

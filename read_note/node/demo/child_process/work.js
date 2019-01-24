@@ -4,8 +4,11 @@ process.send({
 	to: 'master'
 });
 
-process.on('exit', function(code) {
-	console.log('work disconnect::' + code);
-});
-
-// process.exit(1);
+setTimeout(function() {
+	process.send({
+		action: `work 88 ${process.pid}`,
+		from: 'work',
+		to: 'master'
+	});
+	process.exit(1);
+}, 3000);

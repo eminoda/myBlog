@@ -34,7 +34,7 @@ forkCmd.once('error', err => {
 });
 // spawn process bye,will emited
 forkCmd.on('disconnect', function() {
-	console.log('disconnect');
+	console.log('disconnect::forkCmd');
 });
 
 // spawn process bye,will emited
@@ -56,5 +56,9 @@ cluster.on('fork', worker => {
 	console.log(`fork::${worker.id}`);
 });
 cluster.on('message', (worker, message) => {
-	console.log(`${worker.id}::${message}`);
+	console.log(`worker.id::${worker.id}::message::${JSON.stringify(message)}`);
+});
+
+cluster.on('exit', (code, signal) => {
+	console.log({ event: 'exit', workerId: code.id, pId: code.process.pid });
 });

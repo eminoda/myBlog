@@ -6,6 +6,7 @@ categories:
     - 前端
     - node
 thumb_img: egg.png
+date: 2019-02-11 13:32:13
 ---
 
 egg **为企业级框架和应用而生**。在国内，像我们这种小创业公司如果需要 Node 服务端的支持，egg 是不错的框架选型（不吹不黑，很省力）。
@@ -94,16 +95,16 @@ agent.ready(err => {
 
 可能就会产生这几个疑问：
 
--   process.send 肯定会把 agent-start 发送出去，master 怎么接收到 agent-start 事件？
+-   process.send 肯定会把 **agent-start** 发送出去，master 怎么接收到 **agent-start** 事件？
 -   agent_worker fork 完后是不是默认就加载 ready 方法了？
 
 ## EventEmitter
 
 先来看第一个问题
 
-> master 怎么接收到 agent-start 事件？
+> master 怎么接收到 **agent-start** 事件？
 
-Master 继承 EventEmitter，初始化时会监听一系列方法，这里就定义了 agent-start 事件的监听，并且只执行一次。
+Master 继承 EventEmitter，初始化时会监听一系列方法，这里就定义了 **agent-start** 事件的监听，并且只执行一次。
 
 ```js
 // master.js
@@ -146,7 +147,7 @@ forkAgentWorker(){
 }
 ```
 
-目前还没有说明 agent.ready() 这个方法的执行逻辑，只是解释了 agent 可能和 master 交互方式的“猜测”。
+如果没弄清 agent.ready() 这个方法，上面这些都只属于“合理”的猜测。
 
 ## get-ready
 
@@ -154,9 +155,9 @@ forkAgentWorker(){
 
 > agent_worker fork 完后是不是默认就加载 ready 方法了？
 
-这里会涉及 **get-ready** 和 **ready-callback** 阿里大佬写的 npm 工具包，这是解决这个疑问的关键之处。
+这里开始会涉及 **get-ready** 和 **ready-callback** 阿里大佬写的 npm 工具包，这是解决这个疑问的 **关键之处**。
 
-应该注意到整个 egg 到处都有 ready(...) 式的方法定义。
+应该注意到整个 egg 到处都有 ready(...) 式的方法。
 
 首先来看下 [**get-ready**](https://www.npmjs.com/package/get-ready) 有什么用？
 
@@ -164,7 +165,7 @@ forkAgentWorker(){
 -   定义 obj.ready(fn)，将 fn 推到 READY_CALLBACKS 队列中
 -   传入指定的 flagOrFunction 类型（true），来执行 ready 中预定义好的 READY_CALLBACKS 队列
 
-来细看下 agent 相关整个链路怎么做的：
+来看下 agent 相关整个链路怎么做的：
 
 实例化 Agent 对象，调用父类 ready 方法
 
@@ -217,7 +218,7 @@ class Lifecycle extends EventEmitter {
 }
 ```
 
-这个链路算是走到底了，但是没有发现哪里触发 ready 中定义的 READY_CALLBACKS，即 ready(true) 类似这句话。这就和另一个模块 ready-callback 有关了。
+这个链路算是走到底了，但是没有发现那里触发 ready 中定义的 READY_CALLBACKS，即 ready(true) 类似这句话。这就和另一个模块 ready-callback 有关了。
 
 ## ready-callback
 

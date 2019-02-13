@@ -2,7 +2,7 @@
 title: 如何配置vscode debugger能力
 tags: vscode
 categories:
-  - 前端
+  - 开发
   - vscode
 no_sketch: true
 date: 2018-01-26 14:38:38

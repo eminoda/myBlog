@@ -2,7 +2,7 @@
 title: mongo使用问题记录
 tags: mongodb
 categories:
-  - 前端
+  - 开发
   - mongodb
 thumb_img: mongodb.jpg
 date: 2018-08-14 11:18:54

@@ -6,7 +6,7 @@ tags:
   - karma
   - jest
 categories:
-  - 前端
+  - 开发
   - test
 thumb_img: test.png
 ---

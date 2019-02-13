@@ -2,7 +2,7 @@
 title: vscode设置配置
 tags: vscode
 categories:
-  - 前端
+  - 开发
   - vscode
 no_sketch: true
 date: 2018-05-24 11:23:18

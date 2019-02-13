@@ -2,12 +2,11 @@
 title: rollup 5分钟入门
 tags: rollup
 categories:
-  - 前端
-  - rollup
+    - 开发
+    - node
 thumb_img: rollup.png
 date: 2018-12-11 16:31:01
 ---
-
 
 # Rollup
 
@@ -19,17 +18,17 @@ date: 2018-12-11 16:31:01
 
 和 webpack 一样，是一种“模块”构建工具，但和 webpack 有什么区别？这仁者见智了。起码我刚用 rollup 有以下几个体会：
 
-- 更容易上手。
+-   更容易上手。
 
-  可能有 webpack 经验，但简约的配置让一个新手能快速构建项目。
+    可能有 webpack 经验，但简约的配置让一个新手能快速构建项目。
 
-- 指定 lib 输出环境，更适合编译**框架 js**
+-   指定 lib 输出环境，更适合编译**框架 js**
 
-  通过**--format**，可以指定输出 cmd，umd...等最终文件。
+    通过**--format**，可以指定输出 cmd，umd...等最终文件。
 
-- Tree-shaking
+-   Tree-shaking
 
-  没有测试过，但上手 Demo 给的第一感觉就是构件速度稍快些。
+    没有测试过，但上手 Demo 给的第一感觉就是构件速度稍快些。
 
 以上这些**纯属个人感受**。但不管怎么样，至少是被社区认可的（比如：Vue 就是用 Rollup）
 
@@ -45,12 +44,12 @@ date: 2018-12-11 16:31:01
 
     ```js
     export default {
-      input: "./src/main.js",
-      output: {
-        file: "./packages/bundle.js",
-        format: "cjs",
-        name: "test"
-      }
+    	input: './src/main.js',
+    	output: {
+    		file: './packages/bundle.js',
+    		format: 'cjs',
+    		name: 'test'
+    	}
     };
     ```
 
@@ -109,21 +108,21 @@ date: 2018-12-11 16:31:01
     bundle.js
 
     ```js
-    "use strict";
+    'use strict';
 
-    console.log("foo init");
+    console.log('foo init');
     class Foo {
-      constructor() {
-        this.name = "foo";
-      }
-      say() {
-        console.log("say...");
-      }
+    	constructor() {
+    		this.name = 'foo';
+    	}
+    	say() {
+    		console.log('say...');
+    	}
     }
 
     function main() {
-      console.log("load");
-      console.log(new Foo().say());
+    	console.log('load');
+    	console.log(new Foo().say());
     }
 
     module.exports = main;

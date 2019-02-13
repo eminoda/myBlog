@@ -2,7 +2,7 @@
 title: 初涉 nginx 高可用
 tags: nginx
 categories:
-  - 前端
+  - 开发
   - nginx
 thumb_img: keepalived.png
 date: 2018-11-16 17:03:49

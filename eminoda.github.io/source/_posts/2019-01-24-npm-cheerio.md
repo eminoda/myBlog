@@ -1,15 +1,13 @@
 ---
 title: npm cheerio 模块
 tags:
-  - npm
-  - node
+    - npm
 categories:
-  - 前端
-  - node
+    - 开发
+    - node
 thumb_img: npm.png
 date: 2019-01-24 14:51:46
 ---
-
 
 昨天在爬禅道页面的数据，用到了 cheerio ，觉得不错，这里简单介绍下
 

@@ -1,8 +1,9 @@
 ---
-title: npm发布公共包
-tags: node npm
+title: npm 发布公共包
+tags:
+    - npm
 categories:
-    - 前端
+    - 开发
     - node
 thumb_img: npm.png
 date: 2018-08-03 23:36:57

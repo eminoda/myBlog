@@ -3,7 +3,7 @@ title: egg agent 怎么通知 master 我准备好了
 tags:
     - egg
 categories:
-    - 前端
+    - 开发
     - node
 thumb_img: egg.png
 date: 2019-02-11 13:32:13

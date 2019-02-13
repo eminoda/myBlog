@@ -2,7 +2,7 @@
 title: 使用 nginx 防刷
 tags: nginx
 categories:
-  - 前端
+  - 开发
   - nginx
 thumb_img: nginx.jpg
 date: 2018-10-29 17:27:30

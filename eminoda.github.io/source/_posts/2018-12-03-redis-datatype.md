@@ -2,7 +2,7 @@
 title: redis 数据类型说明
 tags: redis
 categories:
-  - 前端
+  - 开发
   - redis
 thumb_img: redis.png
 date: 2018-12-03 16:05:20

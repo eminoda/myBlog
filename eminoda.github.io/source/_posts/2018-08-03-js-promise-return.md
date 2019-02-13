@@ -1,25 +1,28 @@
 ---
-title: prmoise返回遇到个问题
-tags: js promise
+title: prmoise 返回遇到个问题
+tags:
+    - js
 categories:
-  - 前端
-  - js
+    - 开发
+    - js
 no_sketch: true
 date: 2018-08-03 23:37:36
 ---
 
+## new Promise 如何 return Promise
 
-## new Promise 如何return Promise
-````js
+```js
 test('book>>saveBook', () => {
-    expect.assertions(1);
-    return spiderService.getBookBasicInfo().then(data => {
-        expect(data).not.toBeNull();
-    })
-})
-````
-在用Jest时候，发现无论怎么设置timeout总是超时，然后发现如下代码是有问题的：
-````js
+	expect.assertions(1);
+	return spiderService.getBookBasicInfo().then(data => {
+		expect(data).not.toBeNull();
+	});
+});
+```
+
+在用 Jest 时候，发现无论怎么设置 timeout 总是超时，然后发现如下代码是有问题的：
+
+```js
 getBookBasicInfo: function () {
     // create new Promise
     return new Promise((resolve, reject) => {
@@ -36,9 +39,11 @@ getBookBasicInfo: function () {
             });
     });
 }
-````
-其实应该把 **bookService.saveBook(books)** 获取到promise的resolve和reject,给新的Promise使用
-````js
+```
+
+其实应该把 **bookService.saveBook(books)** 获取到 promise 的 resolve 和 reject,给新的 Promise 使用
+
+```js
 getBookBasicInfo: function () {
     return new Promise((resolve, reject) => {
         spider
@@ -59,4 +64,4 @@ getBookBasicInfo: function () {
             });
     });
 }
-````
+```

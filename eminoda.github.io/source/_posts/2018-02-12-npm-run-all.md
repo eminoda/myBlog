@@ -3,7 +3,7 @@ title: 前端npm多script任务合并执行
 date: 2018-02-12 12:01:03
 tags: node
 categories:
-  - 前端
+  - 开发
   - node
 no_sketch: true
 ---

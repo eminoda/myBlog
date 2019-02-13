@@ -2,7 +2,7 @@
 title: nginx 线上那些实用的最佳实践
 tags: nginx
 categories:
-  - 前端
+  - 开发
   - nginx
 thumb_img: nginx.jpg
 date: 2018-10-19 15:28:50

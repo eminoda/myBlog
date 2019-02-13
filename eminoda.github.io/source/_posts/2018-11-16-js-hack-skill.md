@@ -2,7 +2,7 @@
 title: js 那些"奇技淫巧"
 tags: js
 categories:
-  - 前端
+  - 开发
   - js
 thumb_img: javascript.jpg
 date: 2018-11-16 17:07:14

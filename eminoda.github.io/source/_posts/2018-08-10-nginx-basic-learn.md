@@ -2,7 +2,7 @@
 title: nginx基础学习进阶
 tags: nginx
 categories:
-  - 前端
+  - 开发
   - nginx
 no_sketch: true
 date: 2018-08-10 17:36:36

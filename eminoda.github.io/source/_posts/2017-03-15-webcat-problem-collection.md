@@ -3,7 +3,7 @@ title: 微信JS-SDK开发中的问题
 tags:
   - 微信
 categories:
-  - 前端
+  - 开发
   - 微信
 thumb_img: webcat-dev.png
 date: 2017-03-15 14:54:45

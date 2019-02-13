@@ -2,7 +2,7 @@
 title: mongodb 快速入门
 tags: mongodb
 categories:
-  - 前端
+  - 开发
   - mongodb
 thumb_img: mongodb.jpg
 date: 2017-11-15 17:50:12

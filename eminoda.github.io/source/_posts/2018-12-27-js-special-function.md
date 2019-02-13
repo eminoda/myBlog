@@ -2,7 +2,7 @@
 title: js 里不平凡的函数
 tags: js
 categories:
-  - 前端
+  - 开发
   - js
 thumb_img: javascript.jpg
 date: 2018-12-27 17:48:43

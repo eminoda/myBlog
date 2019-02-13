@@ -2,7 +2,7 @@
 title: Vue-SSR 服务器渲染实践
 tags: vue
 categories:
-  - 前端
+  - 开发
   - vue
 thumb_img: vue2.jpg
 date: 2018-11-25 23:18:14

@@ -2,7 +2,7 @@
 title: 微信开发指南
 tags: 微信
 categories:
-  - 前端
+  - 开发
   - 微信
 date: 2017-02-16 18:42:41
 thumb_img: webcat.png

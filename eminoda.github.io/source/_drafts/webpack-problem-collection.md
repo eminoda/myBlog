@@ -2,7 +2,7 @@
 title: webpack-problem-collection
 tags: webpack
 categories:
-  - 前端
+  - 开发
   - webpack
 no_sketch: true
 ---

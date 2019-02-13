@@ -2,7 +2,7 @@
 title: readInt16BE 和 readInt16LE的区别
 tags: node
 categories:
-  - 前端
+  - 开发
   - node
 thumb_img: endianess.jpg
 date: 2018-05-08 00:36:45

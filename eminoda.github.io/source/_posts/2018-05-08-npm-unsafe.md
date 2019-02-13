@@ -2,7 +2,7 @@
 title: npm模块别乱下载，说不好就出事了
 tags: node
 categories:
-  - 前端
+  - 开发
   - node
 thumb_img: hack.jpg
 date: 2018-05-08 18:08:38

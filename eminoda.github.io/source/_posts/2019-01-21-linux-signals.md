@@ -2,7 +2,7 @@
 title: linux signals 标识
 tags: linux
 categories:
-  - 前端
+  - 开发
   - linux
 no_sketch: true
 date: 2019-01-21 18:02:08

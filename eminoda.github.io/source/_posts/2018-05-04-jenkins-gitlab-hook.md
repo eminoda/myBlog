@@ -1,5 +1,5 @@
 ---
-title: jenkins配置gitlab hook
+title: jenkins 配置 gitlab hook
 tags: jenkins
 categories:
     - 开发

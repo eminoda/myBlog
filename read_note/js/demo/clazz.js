@@ -1,16 +1,3 @@
----
-es6--class
----
-
-# class
-
-class 是什么鬼，具体看下[阮老师的文章](http://es6.ruanyifeng.com/#docs/class)
-
-## 语法糖和原生 js 的实现
-
-只是揣摩 class 的实现，不一定正确，但总得有个理解过程。
-
-```js
 class Parent {
 	constructor() {
 		this.name = 'Parent';
@@ -28,9 +15,7 @@ class Child extends Parent {
 
 const instance = new Child();
 console.log(instance);
-```
 
-```js
 function ParentES5() {
 	this.name = 'Parent';
 }
@@ -47,4 +32,3 @@ ChildES5.prototype = prototype;
 
 var instanceES5 = new ChildES5();
 console.log(instanceES5);
-```

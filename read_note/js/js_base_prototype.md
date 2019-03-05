@@ -8,7 +8,7 @@ js基础--面向对象 原型那些事
 
 ```js
 function User() {}
-User.prototype.name = "aaaa";
+User.prototype.name = 'aaaa';
 User.prototype.age = 11;
 ```
 
@@ -36,7 +36,7 @@ User.prototype.isPrototypeOf(user1); //true
 
 ```js
 Object.getPrototypeOf(user1) == User.prototype; //true
-user1.name = "bbbb";
+user1.name = 'bbbb';
 user1.name; //bbbb
 Object.getPrototypeOf(user1).name; //"aaaa"
 ```
@@ -45,10 +45,10 @@ Object.getPrototypeOf(user1).name; //"aaaa"
 
 ```js
 function User() {}
-User.prototype.name = "aaaa";
+User.prototype.name = 'aaaa';
 var user = new User();
 console.log(user.name); //aaaa
-user.name = "bbbb";
+user.name = 'bbbb';
 console.log(user.name); //bbbb
 delete user.name;
 console.log(user.name); //aaaa
@@ -62,16 +62,16 @@ console.log(user.name); //undefined
 
 ## hasOwnProperty(key)
 
-判断实例对象是否有自己的属性
+判断实例对象是否有自己的属性（**不包括原型链上的属性**）
 
 ```js
 function User() {}
 var user = new User();
-User.prototype.name = "aaaa";
-user.hasOwnProperty("name"); //false
-user.name = "bbbb";
-user.hasOwnProperty("name"); //true
-user.hasOwnProperty("sex"); //false
+User.prototype.name = 'aaaa';
+user.hasOwnProperty('name'); //false
+user.name = 'bbbb';
+user.hasOwnProperty('name'); //true
+user.hasOwnProperty('sex'); //false
 ```
 
 追加 demo，vue 判断属性是否存在
@@ -80,17 +80,17 @@ user.hasOwnProperty("sex"); //false
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 function hasOwn(obj, key) {
-  return hasOwnProperty.call(obj, key);
+	return hasOwnProperty.call(obj, key);
 }
 
 function User() {
-  this.name = "aaaa";
+	this.name = 'aaaa';
 }
-User.prototype.nickName = "a";
+User.prototype.nickName = 'a';
 
 var user = new User();
-console.log(hasOwn(user, "name")); //true
-console.log(hasOwn(user, "nickName")); //false
+console.log(hasOwn(user, 'name')); //true
+console.log(hasOwn(user, 'nickName')); //false
 ```
 
 ## in
@@ -99,8 +99,8 @@ console.log(hasOwn(user, "nickName")); //false
 
 ```js
 // 结合上例
-console.log("sex" in user); //false
-console.log("name" in user); //true
+console.log('sex' in user); //false
+console.log('name' in user); //true
 ```
 
 ## 遍历对象上的属性
@@ -132,7 +132,7 @@ Object.getOwnPropertyNames(User.prototype); //["constructor", "name"]
 function User() {}
 var user = new User();
 User.prototype.say = function() {
-  console.log("call");
+	console.log('call');
 };
 user.say(); //call
 ```
@@ -141,9 +141,9 @@ user.say(); //call
 
 ```js
 User.prototype = {
-  say: function() {
-    console.log("call");
-  }
+	say: function() {
+		console.log('call');
+	}
 };
 user.say(); //error
 ```
@@ -158,8 +158,10 @@ var user = new User();
 User.prototype.girls = [];
 var user1 = new User();
 var user2 = new User();
-user1.girls.push("cccc");
+user1.girls.push('cccc');
 user2.girls; //["cccc"] user2被污染了
 ```
+
+[查看更多 Demo](https://github.com/eminoda/myBlog/blob/master/read_note/js/demo/prototype.js)
 
 over

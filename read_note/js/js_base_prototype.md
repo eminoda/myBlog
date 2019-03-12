@@ -12,19 +12,25 @@ User.prototype.name = 'aaaa';
 User.prototype.age = 11;
 ```
 
-当创建一个 User 函数，就会生成一个 prototype 属性，其指向函数的 **原型对象**。
+应以一个对象（函数、构造函数），这个对象就会有个 **prototype 属性**，并且这个属性指向 **原型对象**。
 
-函数的 **原型对象** 会包含一个 **constructor** 构造函数属性，并指向 User 函数。
+该 **原型对象** 会包含一个 **constructor** 构造函数属性，并指向 **构造函数**。
 
-每个实例化的对象 user1 将有一个 \***\*proto\*\***（不是显示可见的），指向构造函数的原型对象。
+每个根据构造函数创建的 **新实例** ，实例 **内部** 会有一个 **[[Prototype]] 指针** ，指向原型对象。某些浏览器提供的 **\_\_proto\_\_ 属性**（不是显示可见的）
+
+大致如图：
 
 ![prototype](https://github.com/eminoda/myBlog/blob/master/imgs/js_base/prototype.png?raw=true)
 
 ![说明constructor和__proto__](https://github.com/eminoda/myBlog/blob/master/imgs/js_base/prototype1.png?raw=true)
 
-## isPrototypeOf(instance)
+## isPrototypeOf()
 
-**isPrototypeOf** 用于确认实例对象内部的**proto**属性，是否调用 User 对象的 prototype 属性的引用 。
+```js
+prototypeObj.isPrototypeOf(object);
+```
+
+由于 **proto** 属于非显性属性，根据 **isPrototypeOf** 来判断 object 中的原型指针 是否是 prototypeObj 中的。
 
 ```js
 User.prototype.isPrototypeOf(user1); //true

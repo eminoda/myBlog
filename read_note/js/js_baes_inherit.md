@@ -2,9 +2,15 @@
 js基础--面向对象 4.几种继承方式
 ---
 
+# 继承
+
+对于面向对象语言，继承是个很重要的特性。js 由于他的语言特性只能通过原型链来完成继承。
+
 时间久了，又都忘记了，再次加强印象和理解。
 
 # 原型链继承
+
+首先可以看下之前的 [js 基础--面向对象 3.原型那些事](https://raw.githubusercontent.com/eminoda/myBlog/issues/4) 了解原型链
 
 ## 示例
 
@@ -46,15 +52,17 @@ instance.littleSay(); // child is called
 Child.prototype = new Parent();
 ```
 
-上面这句其实就是原型继承的实现的核心：重写 Child 原型对象 **Child.prototype** 的引用（原来 constructor 指向 Child 构造函数），现在指向 Parent 实例对象，这样 Child 实例就能拿到 Parent 实例属性和原型对象的属性了。
+上面这句其实就是原型继承的实现的核心：重写 Child 原型对象 **Child.prototype** 的引用（原来 constructor 指向 Child 构造函数），现在指向 Parent，这样 Child 实例就能拿到 Parent 实例属性和原型对象的属性了。
 
 再看下 instance 控制台的打印核实下：
 
-![inherit](../../imgs/js_base/inherit/inherit_prototype.png)
+![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/js_base/inherit/inherit_prototype.png?raw=true)
 
 ## 缺点
 
 虽然每次会新创建父类实例，但还是共享了 Parent 的原型对象。
+
+不能友好的支持传参给父类
 
 ```js
 function Parent() {}
@@ -94,7 +102,7 @@ var instance2 = new Child();
 console.log(instance2.books); // ["red", "green"]
 ```
 
-![inherit](../../imgs/js_base/inherit/inherit_call.png)
+![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/js_base/inherit/inherit_call.png?raw=true)
 
 ## 优点
 
@@ -145,7 +153,9 @@ console.log(instance2.pbooks); // ["red", "green", "yellow"]
 
 但也有其不足之处，**调用 2 次父类的构造函数**。
 
-同时原型共享的问题依旧存在，但可以通过 Parent.prototype 有意识定义方法，而非引用类型的数据。
+在原型属性重写时，定义 Parent 属性副本；Child 借用构造时，又会创建次，总共 2 分属性副本。
+
+同时原型共享的问题依旧存在，但可以通过 Parent.prototype 有意识定义方法，而非引用类型的数据。（这点意识很重要，我本以为这些继承实现会解决这问题，而然是错的。）
 
 # 原型式继承
 
@@ -176,7 +186,7 @@ var instance2 = object(new Parent());
 instance2.pbooks; // ["red", "green", "yellow"]
 ```
 
-![inherit](../../imgs/js_base/inherit/inherit_create.png)
+![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/js_base/inherit/inherit_create.png?raw=true)
 
 值得注意 ES5 的 **Object.create()** 规范了原型式继承
 
@@ -205,9 +215,15 @@ function inherits(Child, Parent) {
 inherits(Child, Parent);
 var instance = new Child();
 console.log(instance);
+instance.books.push('yellow');
+instance.pbooks.push('yellow');
+
+var instance2 = new Child();
+console.log(instance2.books); // ["red", "green"]
+console.log(instance2.pbooks); // ["red", "green", "yellow"]
 ```
 
-![inherit](../../imgs/js_base/inherit/inherit_final.png)
+![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/js_base/inherit/inherit_final.png?raw=true)
 
 ## 特点
 

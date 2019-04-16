@@ -20,11 +20,15 @@ Filebeat 作为一个轻量级的日志数据收集和发送工具。安装在�
 
 {% asset_img filebeat.png %}
 
-[kibana](1)
-
 [logstash](2)
 
+[kibana](1)
+
+[Elasticsearch Service 云服务（阿里云的产品）](https://www.elastic.co/cn/cloud/elasticsearch-service)
+
 ## 下载和启动
+
+官网上已有很每一步的安装说明，如果有其他问题可以参照本文 **附录**
 
 - [Download elasticsearch](https://www.elastic.co/downloads/elasticsearch)
 - [Download kibana](https://www.elastic.co/downloads/kibana)
@@ -32,190 +36,111 @@ Filebeat 作为一个轻量级的日志数据收集和发送工具。安装在�
 - [Download Filebeat](https://www.elastic.co/cn/downloads/beats/filebeat)
 
 ```
+# 以下非守护模式
 [elker@localhost elasticsearch-6.7.0]$ bin/elasticsearch
 [root@localhost kibana-6.7.0-linux-x86_64]# ./bin/kibana
-bin/logstash -f logstash.conf
+[root@localhost logstash-6.7.0]# ./bin/logstash -f logstash.conf
 ```
 
-# 环境安装
+# Demo
 
-# Filebeat 配置
+Elasticsearch、logstash、kibana 为了方便测试都在一台测试机上
 
-[下载地址 https://www.elastic.co/cn/downloads/beats/filebeat](https://www.elastic.co/cn/downloads/beats/filebeat)
+## 配置 nginx
 
-## 配置 yml
-
-- [路径地址变量](https://www.elastic.co/guide/en/beats/filebeat/current/directory-layout.html)
-
-- [filebeat.yml 参数解释](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-reference-yml.html)
+由于默认 elasticsearch、kibana 只开放 localhost 权限（可能我配置问题），所以通过 nginx 反向代理对外暴露服务。
 
 ```
-[root@station74 filebeat-6.7.1-linux-x86_64]# vi ./filebeat.yml
+# elk elasticsearch
+server {
+	listen          9201;
+	location / {
+		proxy_set_header Host $host;
+		proxy_pass  http://localhost:9200;
+	}
+}
 
-# 设置数据来源
-filebeat.inputs:
-- type: log
-  enabled: true
-  # 这里选择 nginx 的日志
-  paths:
-    - /var/log/nginx/*.log
-
-# 设置数据输出方向，交给 elasticsearch 搜索处理
-output.elasticsearch:
-  hosts: ["192.168.1.65:9201"]
-```
-
-## 启动
-
-- -e 堆栈信息的输出
-- -c 指定配置文件路径(default "filebeat.yml")
-
-```
-[root@station74 filebeat-6.7.1-linux-x86_64]# ./filebeat -e -c filebeat.yml
-```
-
-配置都 ok，就能在 kibana 管理界面看到 filebeat 输出过来的 log
-
-{% asset_img filebeat-indexcreate.png 索引创建 %}
-
-## 开启 filebeat dashboards
-
-默认 kibana dashboards 是没有开箱即用的仪表盘信息，但可以设置 filebeat 设置。
-
-{% asset_img filebeat-dashboards.png 初始化状态 %}
-
-提前需要设置 kibana 的地址
-
-```
-setup.kibana:
-  host: "192.168.1.65:5602"
-```
-
-```
-[root@station74 filebeat-6.7.1-linux-x86_64]# ./filebeat setup --dashboards
-Loading dashboards (Kibana must be running and reachable)
-Loaded dashboards
-```
-
-{% asset_img filebeat-dashboards-setup.png 开启后 %}
-
-## 通过 modules 快速“拆解”日志
-
-[提供三种方式](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-filebeat-modules.html#configuration-filebeat-modules) ，这里拿 nginx 来举例（预设的 modules 还有 system、mysql 等）
-
-可以在安装目录下的 /module 中看到其他 modules
-
-1.  设置 modules.d 预设模块
-
-    可以对正在运行中 filebeat 生效
-
-    ```
-    # 开启
-    ./filebeat modules enable nginx
-    # 关闭
-    ./filebeat modules disable nginx
-    # 查看状态
-    ./filebeat modules list
-    ```
-
-2.  配置启动参数 --modules
-
-    ```
-    [root@station74 filebeat-6.7.1-linux-x86_64]# ./filebeat --modules nginx
-    ```
-
-3.  修改 filebeat.yml 文件
-
-    [特殊变量的设置](https://www.elastic.co/guide/en/beats/filebeat/current/specify-variable-settings.html)
-
-    ```
-    # 开启 modules，自定义 nginx 日志位置
-    filebeat.modules:
-      - module: nginx
-        access:
-          var.paths: ["/var/log/nginx/access.log*"]
-    ```
-
-## 其他设置
-
-[安全验证](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-configuration.html)
-
-[Elasticsearch Service 云服务（阿里云的产品）](https://www.elastic.co/cn/cloud/elasticsearch-service)
-
-# kibana
-
-[时间单位](https://www.elastic.co/guide/en/elasticsearch/reference/6.7/common-options.html#date-math)
-
-# logstash
-
-## 简单介绍
-
-配置数据读取输出规则
-
-```
-bin/logstash -e 'input { stdin { } } output { stdout {} }'
-```
-
-启动后在控制台输入 **helloworld** 看下输出内容
-
-```
-[root@localhost logstash-6.7.0]# bin/logstash -e 'input { stdin { } } output { stdout {} }'
-...
-helloworld
-/mydata/ELK/logstash-6.7.0/vendor/bundle/jruby/2.5.0/gems/awesome_print-1.7.0/lib/awesome_print/formatters/base_formatter.rb:31: warning: constant ::Fixnum is deprecated
-{
-      "@version" => "1",
-       "message" => "helloworld",
-    "@timestamp" => 2019-04-09T02:30:45.390Z,
-          "host" => "localhost"
+# elk kibana
+server {
+	listen          5602;
+	location / {
+		proxy_set_header Host $host;
+		proxy_pass  http://localhost:5601;
+	}
 }
 ```
 
-## nginx 日志解析
+## 启动 Elasticsearch 和 Kibana
 
-配置 logstash 解析规则，定义数据来源等信息
+## 配置 logstash
 
-```
-input {
-  file {
-    path => "/var/log/nginx/access.log"
-    start_position => "beginning"
-    type => "my-nginx-log"
-  }
-}
-# log_format main
-#   $remote_addr
-#   $http_x_forwarded_for
-#   [$time_local]
-#   $request
-#   $status
-#   $body_bytes_sent
-#   $request_time
-#   $http_user_agent';
-filter {
-  grok {
-    match => { "message" => "%{IPORHOST:remote_addr} - \[%{HTTPDATE:time_local}\] %{NOTSPACE:method} %{NOTSPACE:request_url} HTTP/%{NUMBER:httpversion} %{INT:status} %{INT:body_bytes_sent} %{NUMBER:request_time:float} %{GREEDYDATA:http_user_agent}" }
-  }
-}
-output {
-  elasticsearch { hosts => ["localhost:9200"] }
-  stdout { codec => rubydebug }
-}
-```
+1. 先了解数据 input、output 解析结果
 
-在 logstash 安装目录下，启动
+   通过控制台键入数据，已 debug 的方式查看 logstash 输出结果：
 
-```
-[root@localhost logstash-6.7.0]# bin/logstash -f logstash.conf
-```
+   ```
+   ./bin/logstash -e 'input { stdin { } } output { stdout {} }'
+   ```
 
-日志数据被 logstash 规则都命中后，就会体现在 kabana 主页面上
+   启动后在控制台输入 **helloworld** 看下输出内容
 
-{% asset_img elk-nginx-discover.png %}
+   ```
+   [root@localhost logstash-6.7.0]# bin/logstash -e 'input { stdin { } } output { stdout {} }'
+   ...
+   helloworld
+   /mydata/ELK/logstash-6.7.0/vendor/bundle/jruby/2.5.0/gems/awesome_print-1.7.0/lib/awesome_print/formatters/base_formatter.rb:31: warning: constant ::Fixnum is deprecated
+   {
+         "@version" => "1",
+         "message" => "helloworld",
+       "@timestamp" => 2019-04-09T02:30:45.390Z,
+             "host" => "localhost"
+   }
+   ```
+
+2. nginx 日志解析
+
+   将 input 数据替换成本地的 nginx 访问日志，修改 **logstash.conf**
+
+   通过 gork 自定义匹配 log 数据，一一映射。并将 output 挂到 elasticsearch 节点
+
+   ```
+   input {
+     file {
+       path => "/var/log/nginx/access.log"
+       start_position => "beginning"
+       type => "my-nginx-log"
+     }
+   }
+   # nginx 日志格式
+   # log_format main
+   #   $remote_addr $http_x_forwarded_for [$time_local]
+   #   $request $status $body_bytes_sent $request_time $http_user_agent';
+   filter {
+     grok {
+       match => { "message" => "%{IPORHOST:remote_addr} - \[%{HTTPDATE:time_local}\] %{NOTSPACE:method} %{NOTSPACE:request_url} HTTP/%{NUMBER:httpversion} %{INT:status} %{INT:body_bytes_sent} %{NUMBER:request_time:float} %{GREEDYDATA:http_user_agent}" }
+     }
+   }
+   output {
+     elasticsearch { hosts => ["localhost:9200"] }
+     stdout { codec => rubydebug }
+   }
+   ```
+
+3. 在 logstash 安装目录下，启动
+
+   ```
+   [root@localhost logstash-6.7.0]# bin/logstash -f logstash.conf
+   ```
+
+## 结果
+
+如果日志数据被 logstash 定义的规则命中后，就会输出给 Elasticsearch，最后体现在 kibana 主页面上
+
+{% asset_img elk-nginx-discover.png logstash.log %}
 
 同时也能绘制简单的图标，用来分析数据
 
-{% asset_img elk-visualize.png %}
+{% asset_img elk-visualize.png 接口耗时 %}
 
 # 附录
 

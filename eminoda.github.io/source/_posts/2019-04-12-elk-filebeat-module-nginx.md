@@ -4,9 +4,9 @@ tags: elk
 categories:
   - 开发
   - elk
+thumb_img: elastic.png
 date: 2019-04-12 13:39:18
 ---
-
 
 相比于直接使用 logstash，filebeat **开箱即用** 的 modules 方式，可以直接几分钟的设置能看到分析图表。
 
@@ -36,7 +36,7 @@ http {
 
    vi ./filebeat-6.7.1-linux-x86_64/module/nginx/access/ingest/default.json
 
-   这里不（wo）改（pa）破（wan）坏（huai）已有 pattarn，只在规则末尾添加需求字段。
+   这里不（wo）敢（pa）破（wan）坏（huai）已有 pattarn，只在规则末尾添加需求字段。
 
    能看到 patterns 和 nginx format 对应，在最后同样添加的解析，新命名为 nginx.access.request_time，并设置 **数据类型**
 

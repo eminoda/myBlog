@@ -107,3 +107,7 @@ Loaded dashboards
 ## 其他设置
 
 [安全验证](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-configuration.html)
+2019-04-17T17:45:54.428+0800	ERROR	instance/beat.go:802	Exiting: Error importing Kibana dashboards: fail to import the dashboards in Kibana: Error importing directory /mydata/filebeat-7.0.0-linux-x86_64/kibana: Failed to import dashboard: Failed to load directory /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard:
+  error loading /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard/Filebeat-Zeek-Overview.json: returned 400 to import file: <nil>. Response: {"statusCode":400,"error":"Bad Request","message":"Document \"7cbb5410-3700-11e9-aa6d-ff445a78330c\" has property \"dashboard\" which belongs to a more recent version of Kibana (7.0.0)."}
+Exiting: Error importing Kibana dashboards: fail to import the dashboards in Kibana: Error importing directory /mydata/filebeat-7.0.0-linux-x86_64/kibana: Failed to import dashboard: Failed to load directory /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard:
+  error loading /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard/Filebeat-Zeek-Overview.json: returned 400 to import file: <nil>. Response: {"statusCode":400,"error":"Bad Request","message":"Document \"7cbb5410-3700-11e9-aa6d-ff445a78330c\" has property \"dashboard\" which belongs to a more recent version of Kibana (7.0.0)."}

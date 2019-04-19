@@ -25,7 +25,7 @@ Elasticsearch 是高度可伸缩的开源全文搜索和分析引擎。 你可�
 ### Cluster 健康状态检查
 
 ```
-http://192.168.1.65:9201/_cat/health?v
+GET /_cat/health?v
 
 epoch      timestamp cluster       status node.total node.data shards pri relo init unassign pending_tasks max_task_wait_time active_shards_percent
 1555385352 03:29:12  elasticsearch yellow          1         1     13  13    0    0       11             0                  -                 54.2%
@@ -34,7 +34,7 @@ epoch      timestamp cluster       status node.total node.data shards pri relo i
 ### Indices 索引列表
 
 ```
-http://192.168.1.65:9201/_cat/indices?v
+GET /_cat/indices?v
 
 health status index                     uuid                   pri rep docs.count docs.deleted store.size pri.store.size
 green  open   .kibana_1                 3KNILZS5QeK5s_a-LlXfPQ   1   0         10            1      109kb          109kb
@@ -346,7 +346,7 @@ GET /eminoda/_search
 ### 通过 help 查看输出的列字段
 
 ```
-http://192.168.1.65:9201/_cat/master?help
+GET /_cat/master?help
 
 id   |   | node id
 host | h | host name
@@ -357,7 +357,7 @@ node | n | node name
 ### Node 状态
 
 ```
-http://192.168.1.65:9201/_cat/nodes?v
+GET /_cat/nodes?v
 
 ip        heap.percent ram.percent cpu load_1m load_5m load_15m node.role master name
 127.0.0.1           30          99   0    0.10    0.05     0.01 mdi       *      JurI_Du
@@ -368,7 +368,7 @@ ip        heap.percent ram.percent cpu load_1m load_5m load_15m node.role master
 > Each of the commands accepts a query string parameter h which forces only those columns to appear
 
 ```
-http://192.168.1.65:9201/_cat/nodes?v&h=ip,port,heapPercent,name
+GET /_cat/nodes?v&h=ip,port,heapPercent,name
 
 ip        port heapPercent name
 127.0.0.1 9300          31 JurI_Du
@@ -377,8 +377,49 @@ ip        port heapPercent name
 ### 主节点信息
 
 ```
-http://192.168.1.65:9201/_cat/master?v
+GET /_cat/master?v
 
 id                     host      ip        node
 JurI_DuhSuGGL0rJPqlpJA 127.0.0.1 127.0.0.1 JurI_Du
+```
+
+# Document API
+
+[index Date format](https://www.elastic.co/guide/en/elasticsearch/reference/current/date-math-index-names.html)
+
+## Index API
+
+### GET
+
+```
+GET /<cfniu-6.7.1-{now}>/_doc/_ektMWoB3Cyw7jMv7kyk
+```
+
+### 重建索引
+
+```
+PUT /eminoda1/_doc/1
+{
+  "version":1,
+  "name":"eminoda1"
+}
+```
+
+```
+POST \_reindex
+{
+  "source": {
+  "index": "eminoda1"
+},
+  "dest":{
+  "index":"eminoda2"
+}
+```
+
+```
+PUT /eminoda2/_doc/1
+{
+  "version":1,
+  "name":"eminoda1"
+}
 ```

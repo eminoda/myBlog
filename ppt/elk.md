@@ -52,11 +52,11 @@ ELK 其实并不是一款软件，而是一整套解决方案，是三个软件�
 
 ingest gork(nginx)
 
-```
+```shell {.animated.fadeInUp}
 66.249.79.242 - - [18/Apr/2019:18:21:22 +0800] GET / HTTP/1.1 200 24299 0.501 - Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html) Googlebot
 ```
 
-```javascript
+```shell
 "grok": {
     "field": "message",
     "patterns": [
@@ -89,6 +89,7 @@ logstash.conf
 
 ---
 
+<slide class="bg-black-blue aligncenter">
 ## Kibana
 
 视图界面
@@ -116,13 +117,3 @@ Elasticsearch 是高度可伸缩的开源全文搜索和分析引擎。 你可�
 <slide class="bg-black-blue aligncenter">
 
 ---
-
-<slide class="bg-black-blue aligncenter">
-
----
-
-<slide class="bg-black-blue aligncenter">
-
----
-
-<slide class="bg-black-blue aligncenter">

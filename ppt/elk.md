@@ -1,14 +1,14 @@
-title: elk 实践
+title: elk 分享
 speaker: shixinghao
 plugins: echarts
 
 <slide class="bg-black-blue aligncenter" image="./images/elk/index.png .dark">
 
-# ELK 实战 {.text-landing.text-shadow}
+# ELK 分享 {.text-landing.text-shadow}
 
 By shixinghao {.text-intro}
 
-[:fa-github: Github](https://github.com/ksky521/nodeppt){.button.ghost}
+[:fa-github: Github nodeppt](https://github.com/ksky521/nodeppt){.button.ghost}
 
 ---
 
@@ -20,7 +20,7 @@ By shixinghao {.text-intro}
 
 ELK 其实并不是一款软件，而是一整套解决方案，是三个软件产品的首字母缩写，Elasticsearch，Logstash 和 Kibana. {.text-intro}
 
-这样种集合现在称为 Elastic Stack
+这样种集合称为 Elastic Stack
 
 ---
 
@@ -56,7 +56,7 @@ ingest gork(nginx)
 66.249.79.242 - - [18/Apr/2019:18:21:22 +0800] GET / HTTP/1.1 200 24299 0.501 - Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html) Googlebot
 ```
 
-```shell
+```json
 "grok": {
     "field": "message",
     "patterns": [
@@ -73,7 +73,7 @@ ingest gork(nginx)
 ---
 
 <slide class="bg-black-blue aligncenter">
-## Logstash
+## Logstash（可选）
 
 集中、转换和存储数据
 
@@ -116,4 +116,8 @@ Elasticsearch 是高度可伸缩的开源全文搜索和分析引擎。 你可�
 
 <slide class="bg-black-blue aligncenter">
 
----
+## 看下实际效果
+
+<slide class="bg-black-blue aligncenter">
+
+## over

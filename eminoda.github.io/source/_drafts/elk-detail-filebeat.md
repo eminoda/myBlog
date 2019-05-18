@@ -2,8 +2,8 @@
 title: Filebeat 配置详解
 tags: elk
 categories:
-  - 开发
-  - elk
+    - 开发
+    - elk
 thumb_img: elastic.png
 ---
 
@@ -13,9 +13,9 @@ thumb_img: elastic.png
 
 ## 配置 yml
 
-- [路径地址变量](https://www.elastic.co/guide/en/beats/filebeat/current/directory-layout.html)
+-   [路径地址变量](https://www.elastic.co/guide/en/beats/filebeat/current/directory-layout.html)
 
-- [filebeat.yml 参数解释](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-reference-yml.html)
+-   [filebeat.yml 参数解释](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-reference-yml.html)
 
 ```
 [root@station74 filebeat-6.7.1-linux-x86_64]# vi ./filebeat.yml
@@ -35,8 +35,8 @@ output.elasticsearch:
 
 ## 启动
 
-- -e 堆栈信息的输出
-- -c 指定配置文件路径(default "filebeat.yml")
+-   -e 堆栈信息的输出
+-   -c 指定配置文件路径(default "filebeat.yml")
 
 ```
 [root@station74 filebeat-6.7.1-linux-x86_64]# ./filebeat -e -c filebeat.yml
@@ -104,10 +104,15 @@ Loaded dashboards
           var.paths: ["/var/log/nginx/access.log*"]
     ```
 
+## 关于自定义 filebeat output index 文件名
+
+[https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html](https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html)
+[https://www.elastic.co/guide/en/beats/filebeat/current/configuration-template.html](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-template.html)
+
 ## 其他设置
 
 [安全验证](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-configuration.html)
-2019-04-17T17:45:54.428+0800	ERROR	instance/beat.go:802	Exiting: Error importing Kibana dashboards: fail to import the dashboards in Kibana: Error importing directory /mydata/filebeat-7.0.0-linux-x86_64/kibana: Failed to import dashboard: Failed to load directory /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard:
-  error loading /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard/Filebeat-Zeek-Overview.json: returned 400 to import file: <nil>. Response: {"statusCode":400,"error":"Bad Request","message":"Document \"7cbb5410-3700-11e9-aa6d-ff445a78330c\" has property \"dashboard\" which belongs to a more recent version of Kibana (7.0.0)."}
+2019-04-17T17:45:54.428+0800 ERROR instance/beat.go:802 Exiting: Error importing Kibana dashboards: fail to import the dashboards in Kibana: Error importing directory /mydata/filebeat-7.0.0-linux-x86_64/kibana: Failed to import dashboard: Failed to load directory /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard:
+error loading /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard/Filebeat-Zeek-Overview.json: returned 400 to import file: <nil>. Response: {"statusCode":400,"error":"Bad Request","message":"Document \"7cbb5410-3700-11e9-aa6d-ff445a78330c\" has property \"dashboard\" which belongs to a more recent version of Kibana (7.0.0)."}
 Exiting: Error importing Kibana dashboards: fail to import the dashboards in Kibana: Error importing directory /mydata/filebeat-7.0.0-linux-x86_64/kibana: Failed to import dashboard: Failed to load directory /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard:
-  error loading /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard/Filebeat-Zeek-Overview.json: returned 400 to import file: <nil>. Response: {"statusCode":400,"error":"Bad Request","message":"Document \"7cbb5410-3700-11e9-aa6d-ff445a78330c\" has property \"dashboard\" which belongs to a more recent version of Kibana (7.0.0)."}
+error loading /mydata/filebeat-7.0.0-linux-x86_64/kibana/7/dashboard/Filebeat-Zeek-Overview.json: returned 400 to import file: <nil>. Response: {"statusCode":400,"error":"Bad Request","message":"Document \"7cbb5410-3700-11e9-aa6d-ff445a78330c\" has property \"dashboard\" which belongs to a more recent version of Kibana (7.0.0)."}

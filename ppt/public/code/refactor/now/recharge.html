@@ -1,0 +1,21 @@
+<li class="clearfix">
+	<span class="r-list-left">支付方式</span>
+	<div class="r-list-right">
+		<div class="clearfix">
+			<label ng-class="{'selected':payType==1}"><input type="radio" ng-click="choosePayWay(1)" name="flag" />网上银行（推荐）</label>
+			<label ng-class="{'selected':payType==2}"><input type="radio" ng-click="choosePayWay(2)" name="flag" />快捷支付（推荐）</label>
+			<label><input type="radio" ng-click="choosePayWay(3)" name="flag" />微信（转账）</label>
+		</div>
+		<div class="bank-list" ng-if="payType==1||payType==2">
+			<div class="bank-img clearfix" ng-model="bank.code">
+				<div>确保已经在银行柜台开通了网上支付功能，为了方便您支付，Windows用户建议使用IE浏览器</div>
+				<div class="pay-channel-list">
+					<img src="{{ '/resources/images/pay/' + item.imageName }}" alt="{{ item.name }}" ng-class="{'selected':item.payChannelId==chooseId}" ng-repeat="item in payList" ng-click="choosePayChannel(item.payChannelId)" />
+				</div>
+			</div>
+		</div>
+	</div>
+</li>
+<li class="recharge-btn">
+	<a class="btn-detail btn-orange" ng-click="toPay(bank)">{{ payType == 2 ? '快捷充值' : '立即充值' }}</a>
+</li>

@@ -1,11 +1,13 @@
 ---
-title: Elasticsearch 细节详解
+title: Elasticsearch —— 初识大概
 tags: elk
 categories:
   - 开发
   - elk
 thumb_img: elastic.png
+date: 2019-05-21 22:59:06
 ---
+
 
 # Elasticsearch
 
@@ -451,7 +453,7 @@ GET /eminoda/_search
 }
 ````
 
-### [filter 查询](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-filters.html)
+### [filter 过滤查询](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-filters.html)
 
 filter 从属于 bool 属性，和 must 并列
 
@@ -473,4 +475,140 @@ GET /eminoda/_search
     }
   }
 }
+````
+
+### [aggregation 聚合查询](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-aggregations.html)
+
+类似 sql 的 group by 操作，分组后按照分组数据进行倒叙输出
+
+````
+SELECT state, COUNT(*) FROM bank GROUP BY state ORDER BY COUNT(*) DESC LIMIT 10;
+````
+
+按照 nickname 字段分组，至多显示 10 组
+````
+GET /eminoda/_search
+{
+  "aggs":{
+    "group_by_state":{
+      "terms": {
+        "field": "nickname.keyword",
+        "size": 10
+      }
+    }
+  }
+}
+````
+````
+{
+  "took" : 0,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 3,
+    "max_score" : 1.0,
+    "hits" : [
+      {
+        "_index" : "eminoda",
+        "_type" : "_doc",
+        "_id" : "2",
+        "_score" : 1.0,
+        "_source" : {
+          "nickname" : "second Mike",
+          "age" : 22
+        }
+      },
+      {
+        "_index" : "eminoda",
+        "_type" : "_doc",
+        "_id" : "1",
+        "_score" : 1.0,
+        "_source" : {
+          "nickname" : "first Juck",
+          "age" : 11
+        }
+      },
+      {
+        "_index" : "eminoda",
+        "_type" : "_doc",
+        "_id" : "3",
+        "_score" : 1.0,
+        "_source" : {
+          "nickname" : "second Mike",
+          "age" : 33
+        }
+      }
+    ]
+  },
+  "aggregations" : {
+    "group_by_state" : {
+      "doc_count_error_upper_bound" : 0,
+      "sum_other_doc_count" : 0,
+      "buckets" : [
+        {
+          "key" : "second Mike",
+          "doc_count" : 2
+        },
+        {
+          "key" : "first Juck",
+          "doc_count" : 1
+        }
+      ]
+    }
+  }
+}
+````
+
+分组后，再按照 age 计算平均年龄，放入新字段 average_age，并且 nickname 分组的数据按照 average_age 升序
+````
+GET /eminoda/_search
+{
+  "aggs":{
+    "group_by_state":{
+      "terms": {
+        "field": "nickname.keyword",
+        "size": 10,
+        "order": {
+          "_term": "asc"
+        }
+      },
+      "aggs": {
+        "average_age": {
+          "avg": {
+            "field": "age"
+          }
+        }
+      }
+    }
+  }
+}
+````
+````
+  "aggregations" : {
+    "group_by_state" : {
+      "doc_count_error_upper_bound" : 0,
+      "sum_other_doc_count" : 0,
+      "buckets" : [
+        {
+          "key" : "second Mike",
+          "doc_count" : 2,
+          "average_age" : {
+            "value" : 27.5
+          }
+        },
+        {
+          "key" : "first Juck",
+          "doc_count" : 1,
+          "average_age" : {
+            "value" : 11.0
+          }
+        }
+      ]
+    }
+  }
 ````

@@ -2,37 +2,39 @@
 title: Elasticsearch —— 初识大概
 tags: elk
 categories:
-  - 开发
-  - elk
+    - 开发
+    - elk
 thumb_img: elastic.png
 date: 2019-05-21 22:59:06
 ---
-
 
 # Elasticsearch
 
 Elasticsearch 是高度可伸缩的开源全文搜索和分析引擎。 你可以即时存储、搜索并分析大容量数据。可靠的底层引擎和技术通常应对复杂的搜索场景和需求。
 
+参考官方文档，初识 Elasticsearch 主要的 api 使用。
+
 ## [核心理念 Basic Concepts](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-concepts.html)
 
-- Near Realtime(NRT) 接近实时的搜索能力
-- Cluster & Node （集群和节点） 
+-   Near Realtime(NRT) 接近实时的搜索能力
+-   Cluster & Node （集群和节点）
 
-  集群由多个节点组成，每个节点参与集群的索引和搜索操作，每个节点独一无二，并都指向同一个集群。
+    集群由多个节点组成，每个节点参与集群的索引和搜索操作，每个节点独一无二，并都指向同一个集群。
 
-- Index & Document （索引和文档）
+-   Index & Document （索引和文档）
 
-  Document 是被索引前的基础数据单位，一个 Index 索引将收集相同特征的文档集合，从而执行索引，搜索，更新等操作。
+    Document 是被索引前的基础数据单位，一个 Index 索引将收集相同特征的文档集合，从而执行索引，搜索，更新等操作。
 
 等相关操作
 
-- Shards & Replicas 切片和备份
+-   Shards & Replicas 切片和备份
 
 ## 集群相关操作
 
 > 以下操作均通过 Kibana > Dev Tools > Console 实践，当然也可以通过 Postman 等工具
 
 ### 健康检查
+
 ```
 GET /_cat/health?v
 
@@ -43,15 +45,16 @@ epoch      timestamp cluster       status node.total node.data shards pri relo i
 status 标识集群的“健康”指标，通常 Green、Yellow、Red 分类。Yellow 是指数据可用但没有做备份等处理
 
 > Once that replica gets allocated onto a second node, the health status for this index will turn to green.
+
 ### 查询子节点信息
 
-````
+```
 GET /_cat/nodes?v
 
 ip             heap.percent ram.percent cpu load_1m load_5m load_15m node.role master name
 192.1.2.3           46          51   0    0.00    0.01     0.05 mdi       *      2EI_4xO
 
-````
+```
 
 ### 查询索引列表
 
@@ -90,7 +93,7 @@ yellow open   eminoda                      63rQmVM4SX6dk4HCxSSzqQ   5   1       
 
 ### add 添加数据
 
-````
+```
 # /节点名称/文档标识/Id
 # <HTTP Verb> /<Index>/<Endpoint>/<ID>
 PUT /eminoda/_doc/1
@@ -98,8 +101,9 @@ PUT /eminoda/_doc/1
   "name":"eminoda",
   "age":28
 }
-````
-````
+```
+
+```
 {
   "_index" : "eminoda",
   "_type" : "_doc",
@@ -114,11 +118,11 @@ PUT /eminoda/_doc/1
   "_seq_no" : 0,
   "_primary_term" : 1
 }
-````
+```
 
 ### query 查询数据
 
-````
+```
 GET /eminoda/_doc/1
 
 {
@@ -134,11 +138,11 @@ GET /eminoda/_doc/1
     "age" : 28
   }
 }
-````
+```
 
 ### [delete 删除索引、数据](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-delete-index.html)
 
-````
+```
 DELETE /eminoda/_doc/1
 
 {
@@ -164,26 +168,29 @@ GET /eminoda/_doc/1
   "_id" : "1",
   "found" : false
 }
-````
-````
+```
+
+```
 DELETE /eminoda
 
 {
   "acknowledged" : true
 }
-````
+```
 
 ### update 修改数据
 
 id 不变，只改变 body 数据，就是更新数据
-````
+
+```
 PUT /eminoda/_doc/1
 {
   "name":"eminoda2",
   "age":28
 }
-````
-````
+```
+
+```
 # 注意是 update 状态
 {
   "_index" : "eminoda",
@@ -199,18 +206,19 @@ PUT /eminoda/_doc/1
   "_seq_no" : 1,
   "_primary_term" : 1
 }
-````
+```
 
 如果更改 id ，就相当于新添加数据；也可以交给 elasticsearch 自己生成 id（随机编码），改用 POST 方法，同时不指定 id
 
-````
+```
 POST /eminoda/_doc
 {
   "name":"mike",
   "age":48
 }
-````
-````
+```
+
+```
 {
   "_index" : "eminoda",
   "_type" : "_doc",
@@ -225,51 +233,52 @@ POST /eminoda/_doc
   "_seq_no" : 0,
   "_primary_term" : 1
 }
-````
+```
 
 如果要查询上述数据，就要拿指定的 id
-````
+
+```
 GET /eminoda/_doc/BE2uy2oB3Cyw7jMvGdJt
-````
+```
 
 ### [batch 多数据操作](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-batch-processing.html)
 
-
 批量添加数据
 
-````
+```
 # /节点名称/_bulk
 POST /eminoda/_bulk
 {"index":{"_id":"1", "_type":"_doc"}}
 {"name": "Eminoda" }
 {"index":{"_id":"2", "_type":"_doc"}}
 {"name": "Shinoda" }
-````
-注意：不能漏掉 _type，不然会报如下错误
+```
 
-````
+注意：不能漏掉 \_type，不然会报如下错误
+
+```
 "Validation Failed: 1: type is missing;2: type is missing;"
-````
+```
 
 批量复杂操作
 
-````
+```
 POST /eminoda/_bulk
 {"update":{"_id":"1","_type":"_doc"}}
 {"doc":{"name":"Lady GAGA"}}
 {"delete":{"_id":"2","_type":"_doc"}}
-````
+```
 
 ## [查询 Search](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-search-API.html)
 
 ### 简单查询
 
-````
+```
 # /:index/_search
 GET /eminoda/_search
-````
+```
 
-````
+```
 {
   "took" : 0,
   "timed_out" : false,
@@ -305,19 +314,21 @@ GET /eminoda/_search
   }
 }
 
-````
+```
 
 ### 条件查询
 
-查询 index 中匹配所有的 document，并按照 _id 倒序
+查询 index 中匹配所有的 document，并按照 \_id 倒序
 
 参数式：
-````
+
+```
 GET /eminoda/_search?q=*sort=_id:desc
-````
+```
 
 命令式（Query DSL）：
-````
+
+```
 GET /eminoda/_search
 {
   "query": {
@@ -329,11 +340,11 @@ GET /eminoda/_search
     }
   ]
 }
-````
+```
 
 类似 sql，你也可以添加 类似 **“分页”** 的条件
 
-````
+```
 # 从第一条开始，查询两条数据
 GET /eminoda/_search
 {
@@ -343,10 +354,11 @@ GET /eminoda/_search
   "size":2,
   "from": 0
 }
-````
+```
 
-自定义数据 **_source** 显示特定字段（Field）
-````
+自定义数据 **\_source** 显示特定字段（Field）
+
+```
 GET /eminoda/_search
 {
   "query": {
@@ -354,10 +366,11 @@ GET /eminoda/_search
   },
   "_source": ["name","age"]
 }
-````
+```
 
 只限制 age=11 的数据
-````
+
+```
 GET /eminoda/_search
 {
   "query": {
@@ -366,21 +379,23 @@ GET /eminoda/_search
     }
   }
 }
-````
+```
 
 ### **部分匹配** 和 **全文匹配**
 
-_source 如下：
-````
+\_source 如下：
+
+```
 POST /eminoda/_bulk?pretty
 {"index":{"_id":"1", "_type":"_doc"}}
 {"name": "first Juck", "age":11 }
 {"index":{"_id":"2", "_type":"_doc"}}
 {"name": "second Mike", "age":22 }
-````
+```
 
 **match** 将搜索含有 first or Mike 的数据
-````
+
+```
 GET /eminoda/_search
 {
   "query": {
@@ -389,9 +404,9 @@ GET /eminoda/_search
     }
   }
 }
-````
+```
 
-````
+```
 "hits" : [
   {
     "_index" : "eminoda",
@@ -414,10 +429,11 @@ GET /eminoda/_search
     }
   }
 ]
-````
+```
 
-**match_phrase** 将一条都匹配不到，除非把 _id=1 的数据改为 first Mike
-````
+**match_phrase** 将一条都匹配不到，除非把 \_id=1 的数据改为 first Mike
+
+```
 GET /eminoda/_search
 {
   "query": {
@@ -426,17 +442,17 @@ GET /eminoda/_search
     }
   }
 }
-````
+```
 
 ### bool 查询
 
-- **should** or
-- **must** and
-- **must_not** all not
+-   **should** or
+-   **must** and
+-   **must_not** all not
 
 上述三个条件可以混用，match 规则也可多条
 
-````
+```
 GET /eminoda/_search
 {
   "query": {
@@ -451,18 +467,18 @@ GET /eminoda/_search
     }
   }
 }
-````
+```
 
 ### [filter 过滤查询](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-filters.html)
 
 filter 从属于 bool 属性，和 must 并列
 
-````
+```
 GET /eminoda/_search
 {
   "query": {
     "bool": {
-      "should": { 
+      "should": {
         "match": {"name":"second Mike"} },
       "filter": {
         "range": {
@@ -475,18 +491,19 @@ GET /eminoda/_search
     }
   }
 }
-````
+```
 
 ### [aggregation 聚合查询](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-aggregations.html)
 
 类似 sql 的 group by 操作，分组后按照分组数据进行倒叙输出
 
-````
+```
 SELECT state, COUNT(*) FROM bank GROUP BY state ORDER BY COUNT(*) DESC LIMIT 10;
-````
+```
 
 按照 nickname 字段分组，至多显示 10 组
-````
+
+```
 GET /eminoda/_search
 {
   "aggs":{
@@ -498,8 +515,9 @@ GET /eminoda/_search
     }
   }
 }
-````
-````
+```
+
+```
 {
   "took" : 0,
   "timed_out" : false,
@@ -562,10 +580,11 @@ GET /eminoda/_search
     }
   }
 }
-````
+```
 
 分组后，再按照 age 计算平均年龄，放入新字段 average_age，并且 nickname 分组的数据按照 average_age 升序
-````
+
+```
 GET /eminoda/_search
 {
   "aggs":{
@@ -587,8 +606,9 @@ GET /eminoda/_search
     }
   }
 }
-````
-````
+```
+
+```
   "aggregations" : {
     "group_by_state" : {
       "doc_count_error_upper_bound" : 0,
@@ -611,4 +631,4 @@ GET /eminoda/_search
       ]
     }
   }
-````
+```

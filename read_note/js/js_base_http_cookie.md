@@ -6,11 +6,10 @@ js 基础 -- cookie
 
 处理业务需求遇到过如下几个问题，有必要复盘对 cookie 做个汇总：
 
--   cookie 的存储受 domain 和 path 影响，那 port 端口是会影响？
--   js 如何获取浏览器 cookie？
--   服务端如何重写 cookie 到客户端？
--   cookie 的失效时间，以及 maxAge 和 Expires 的区别？
--   ...
+- cookie 的存储受 domain 和 path 影响，那 port 端口是会影响？
+- js 如何获取浏览器 cookie？
+- cookie 的失效时间，以及 maxAge 和 Expires 的区别？
+- ...
 
 先介绍下 cookie
 
@@ -23,7 +22,7 @@ HTTP cookie 是当用户访问网页时，由服务端给客户端发送并存�
 
 ### Domain 和 Path
 
-这两个属性都关系到存储 cookie 的作用域。
+这两个属性都关系到存储 cookie 的存储域。
 
 基于 cookie 的域名安全机制 **同源策略**，www.a.com 域下是不能够访问 www.b.com 下的 cookie 信息的。
 
@@ -39,7 +38,7 @@ HTTP cookie 是当用户访问网页时，由服务端给客户端发送并存�
 
 Expires 和 Max-Age 的设置都可以使 cookie 失效过期，只是前者是一个 Date 的日期；后者为过期的秒数，低版本 IE （6，7，8）不支持此属性，绝大多数浏览器都支持此两者属性，并优先支持 Max-Age。
 
-值得注意的，时区 TimeZone 的上不同，GMT（格林尼治平时），UTC（协调世界时）
+值得注意的，不同的时区 TimeZone，会导致记录到浏览器的过期时间不同，比如：GMT（格林尼治平时），UTC（协调世界时）
 
 ````js
 new Date(); // Sun Jun 02 2019 23:23:50 GMT+0800 (中国标准时间)
@@ -50,7 +49,7 @@ new Date().toGMTString(); // Sun, 02 Jun 2019 15:33:46 GMT
 new Date().toISOString(); // 2019-06-02T15:37:54.607Z
 ````
 
-另外，前两天遇到 Node 端重写 cookie，由于 java Expires 过期时间的输出“不正确”，导致解析时间失败，临时做了如下调整：
+另外，前两天遇到 Node 端重写 cookie，由于 java Expires 过期时间的输出“不正确”，导致 koa 的 cookie 解析时间失败，临时做了如下调整：
 
 ````js
 ctx.cookies.set('name', 'tobi', {
@@ -66,17 +65,44 @@ ctx.cookies.set('name', 'tobi', {
 
 ## session
 
-与 cookie 不同，前者存放在客户端，而 session 是和服务端一同“配合”让数据持久化的技术方案，都是解决 http 无状态这类问题。
+与 cookie 不同，前者存放在客户端，后者是记录于浏览器内存中的。 session 是和服务端一同“配合”让数据持久化的技术方案，都是解决 http 无状态这类问题。
 
-服务端向客户端浏览器丢个 sessionId （比如，Tomcat 里的 JESSIONID），每次 http 会话时都会把这个 id 传给服务端，从而在两者间处理业务问题。
+服务端向客户端浏览器丢个 sessionId （比如，Tomcat 里的 JESSIONID），每次 http 请求，都会把当前会话的 sessionId 传给服务端，从而处理实际的业务问题。
 
 当然浏览器关闭后，session 域保存的东西就没有了。
 
 ## 怎么通过 js 获取 cookie
 
-## 服务端重写 cookie
+````js
+document.cookie // 即可输出所有 cookie
+````
+
+利用正则遍历出所有 cookie
+
+````js
+let cookies = document.cookie;
+let cRE = /(\w+)=(\w+);/g; // 参考
+let result = cRE.exec(cookies);
+while(result){
+    console.log(`key:${result[1]},value:${result[2]}`);
+    result = cRE.exec(cookies);;
+}
+````
+
+也可以通过 document.cookie.split('; '); 这种简单的方法进行切割分组（npm cookie 就是这样做的）
 
 ## cookie 的保护
+
+### 属性入手
+对于设置 cookie 几个属性，当然不要忽略 Secure and HttpOnly 这两个属性
+
+### 不要永久缓存
+对每个 cookie 设置符合业务需求的过期时间
+
+### 加密
+通常我们不会对 cookie 信息进行加密，但既然是本地数据就很容易被人模拟。
+
+为了增加网站安全，可以的话做点 Token 机制的安全手段
 
 ## 怎么查看 Chrome 的 Cookie？
 

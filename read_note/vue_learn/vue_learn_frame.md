@@ -1,23 +1,24 @@
 <!-- vue_learn--框架结构一览 -->
 
 ## 框架结构
-列出主要目录，标注和源码相关用途（其他忽略）
 
-````
-├─.github
+列出 vue 项目主要目录，标注和源码相关用途（其他忽略），这样在后续的阅读中知道是哪一块内容了。
+
+```
+├─.github                       # 工程化配置文件 start
 ├─.circleci
 ├─.gitignore
 ├─.eslintignore
-├─.flowconfig                   # flow 配置文件
+├─.flowconfig
 ├─.babelrc.js
 ├─.eslintrc.js
-├─.editorconfig
-├─package.json                  # package，着重script
+├─.editorconfig                 # 工程化配置文件 end
+├─package.json                  # package，着重 script
 ├─node_modules
-├─test
+├─test                          # 测试，如果你的项目需要 vue 的测试可以参考
 ├─types
 ├─examples
-├─benchmarks
+├─benchmarks                    # 性能实验对比
 ├─scripts
 |    ├─config.js                # rollup 相关构建脚本
 |    ├─...
@@ -28,7 +29,7 @@
 |    ├─vue-server-renderer
 ├─flow                          # flow 相关构建脚本
 |  ├─...
-├─dist                          # 不同环境输出的vue文件
+├─dist                          # 不同环境输出的 vue 文件
 |  ├─vue.common.dev.js
 |  ├─vue.common.js
 |  ├─vue.common.prod.js
@@ -74,28 +75,56 @@
 |  |  ├─global-api
 |  |  ├─components
 |  ├─compiler
-````
+```
+
 ## 简易流程
-描述Vue是如何工作，不会详细到具体，笼统的讲下流程。也是后续看源码的一个思路指引。
+
+描述 Vue 是如何工作，不会详细到具体，笼统的讲下流程。也是后续看源码的一个思路指引。
 
 1. 从 package.json 入手
 
-    **vue版本2.5.20**，特此说明
+    选择版本：**vue 版本 ~~2.5.20~~ 2.6.10**（2019 年，尤大说要升级 3.0，不过感觉 delay 的风险很大）
 
     只针对 **npm run dev** 这么一个脚本说明。其他环境有兴趣的同学可以尝试，学习。
-    启动目前只遇到这问题：[vue编译 Error: Could not load /src/core/config](https://segmentfault.com/a/1190000017335977)，其他问题的话欢迎 issue
-    ````
+
+    ```js
     "scripts": {
         "dev": "rollup -w -c scripts/config.js --environment TARGET:web-full-dev"
         ...
     }
-    ````
+    ```
+
+    启动目前只遇到这问题：[vue 编译 Error: Could not load /src/core/config](https://segmentfault.com/a/1190000017335977)
+
+    需要修改 node_modules/rollup-plugin-alias/dist/rollup-plugin-alias.js
+
+    ```js
+    let updatedId = normalizeId(importeeId.replace(toReplace, entry));
+    // 追加后缀
+    if (!/js$/.test(updatedId)) {
+    	// console.log(updatedId + '  ---->  ' + updatedId + '.js');
+    	updatedId += '.js';
+    }
+    if (isFilePath(updatedId)) {
+    	const directory = path.posix.dirname(importerId);
+
+    	// Resolve file names
+    	// const filePath = path.posix.resolve(directory, updatedId);
+    	// 更改解析方式
+    	const filePath = path.resolve(directory, updatedId);
+    	// console.log(filePath);
+    	const match = resolve.map(ext => (endsWith(ext, filePath) ? filePath : `${filePath}${ext}`)).find(exists);
+
+    	if (match) {
+    	}
+    }
+    ```
 
 2. 分析 rollup.config
 
     scripts\config.js
 
-    ````js
+    ```js
     if (process.env.TARGET) {
         module.exports = genConfig(process.env.TARGET)
     }
@@ -132,13 +161,15 @@
             }
         }
         return config
-    ````
+    ```
+
 3. 从入口文件开始，一路走到黑
 
     以下内容按照 **注释的编号顺序** 查看
-    
+
     src\platforms\web\entry-runtime-with-compiler.js
-    ````js
+
+    ```js
     // 1. 引入运行后Vue对象
     import Vue from './runtime/index'
     const mount = Vue.prototype.$mount
@@ -148,23 +179,25 @@
         return mount.call(this, el, hydrating)
     }
     Vue.compile = compileToFunctions
-    ````
+    ```
 
     src\platforms\web\runtime\index.js
-    ````js
+
+    ```js
     // 2. 引入核心Vue对象
-    import Vue from 'core/index'
+    import Vue from 'core/index';
     // 12. 定义 Vue.prototype.__patch__
-    Vue.prototype.__patch__ = inBrowser ? patch : noop
+    Vue.prototype.__patch__ = inBrowser ? patch : noop;
     // 13. 定义 全局
-    Vue.prototype.$mount = function(el,hydrating){
-        return mountComponent(this, el, hydrating)
-    }
+    Vue.prototype.$mount = function(el, hydrating) {
+    	return mountComponent(this, el, hydrating);
+    };
     // 结束
-    ````
+    ```
 
     src\core\index.js
-    ````js
+
+    ```js
     // 3. 引入Vue实例，这是整个Vue的起点，也就是Vue构造函数
     import Vue from './instance/index'
     // 9. 初始化全局方法
@@ -181,10 +214,11 @@
         }
     })
     ...
-    ````
+    ```
 
     src\core\instance\index.js
-    ````js
+
+    ```js
     // 4. Vue构造函数
     function Vue (options) {
         ...
@@ -201,10 +235,11 @@
     lifecycleMixin(Vue)
     // 定义 渲染方法 Vue.prototype.$nextTick，_render
     renderMixin(Vue)
-    ````
+    ```
 
     src\core\instance\init.js
-    ````js
+
+    ```js
     // 6. 初始化
     Vue.prototype._init = function (options?: Object) {
         ...
@@ -223,9 +258,11 @@
             vm.$mount(vm.$options.el)
         }
     }
-    ````
+    ```
+
     src\core\global-api\index.js
-    ````js
+
+    ```js
     // 10. 定于全局方法
     export function initGlobalAPI (Vue: GlobalAPI) {
         ...
@@ -251,4 +288,4 @@
         initExtend(Vue) // 定义 Vue.extend
         initAssetRegisters(Vue) // Vue[type](component,directive,filter)
     }
-    ````
+    ```

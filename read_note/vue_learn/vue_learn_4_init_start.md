@@ -11,10 +11,10 @@ function Vue(options) {
 }
 ```
 
-\_init 方法是 initMixin 中定义的原型方法。
+能看到 Vue 构造函数里只有 \_init 一个方法，其是 initMixin 中定义的原型方法，所有的准备工作都在在此初始化的。
 
 ```js
-// E:\github\vue\src\core\instance\init.js
+// vue/src/core/instance\init.js
 
 export function initMixin(Vue: Class<Component>) {
 	Vue.prototype._init = function(options?: Object) {
@@ -25,7 +25,7 @@ export function initMixin(Vue: Class<Component>) {
 
 ## vm
 
-Vue 的实例化后的对象（this），很多参数都挂在这个 vm 上。
+Vue 的实例化后的对象（this），很多 **参数** 和 **方法** 都挂在这个 vm 上。
 
 ```js
 Vue.prototype._init = function(options?: Object) {
@@ -39,13 +39,49 @@ Vue.prototype._init = function(options?: Object) {
 参照官方文档的 [实例属性](https://cn.vuejs.org/v2/api/#%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7) 就能知道哪些属性是挂在在 vm 上的（包括原型，本身 prototype 就是挂在 Vue 构造函数上的）。
 
 ```js
-// E:\github\vue\src\core\instance\state.js
+// vue/src/core/instance\state.js
 
 Object.defineProperty(Vue.prototype, '$data', dataDef);
 Object.defineProperty(Vue.prototype, '$props', propsDef);
 ```
 
-能看到 \_init 方法中还有其他方法定义
+## 性能检测
+
+注意到 _init 方法中还有有关 **性能检测** 的代码，如下：
+
+```js
+let startTag, endTag;
+if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+	startTag = `vue-perf-start:${vm._uid}`;
+	endTag = `vue-perf-end:${vm._uid}`;
+	mark(startTag);
+}
+//...中间执行代码
+if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+	vm._name = formatComponentName(vm, false);
+	mark(endTag);
+	measure(`vue ${vm._name} init`, startTag, endTag);
+}
+```
+
+我们可以在开发环境中，设置 config.performance ，并在控制台看到在不同阶段性能的消耗。
+
+```js
+Vue.config.performance = true;
+var app = new Vue({
+	el: '#app',
+	data: {
+		message: '页面加载于 ' + new Date().toLocaleString()
+	}
+});
+```
+
+那 performance 具体怎么玩，这里准备了一篇文章 [前端性能检查 performance](https://eminoda.github.io/2019/06/08/window-performance/)
+
+
+## 其他
+
+能看到 \_init 方法中还有其他方法定义，mergeOptions 属性合并和一堆 init 子方法：
 
 ```js
 vm.$options = mergeOptions(resolveConstructorOptions(vm.constructor), options || {}, vm);
@@ -64,39 +100,6 @@ callHook(vm, 'created');
 ```
 
 他们到底做了什么，请看后续章节
-
-## 性能检测
-
-// TODO Chrome 性能检测，及其 API 调查
-
-符合如下条件，就会在程序首位处执行检测注入的代码。打开 Chrome 开发者工具，在 performance 中就能看到程序在不同阶段的消耗。
-
-```js
-let startTag, endTag;
-if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-	startTag = `vue-perf-start:${vm._uid}`;
-	endTag = `vue-perf-end:${vm._uid}`;
-	mark(startTag);
-}
-//...中间执行代码
-if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-	vm._name = formatComponentName(vm, false);
-	mark(endTag);
-	measure(`vue ${vm._name} init`, startTag, endTag);
-}
-```
-
-我们可以在开发环境中，打开 config.performance
-
-```js
-Vue.config.performance = true;
-var app = new Vue({
-	el: '#app',
-	data: {
-		message: '页面加载于 ' + new Date().toLocaleString()
-	}
-});
-```
 
 上一篇：[框架结构](./vue_learn_basejs.md)
 

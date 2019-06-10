@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>nth-of-type</title>
+    <style>
+        h3 code {
+            background: #f2f2f2;
+            color: #333;
+            padding: 10px 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <h3><code>p:nth-of-type(2n+1)</code></h3>
+    <style>
+        .wrap p:nth-of-type(2n+1) {
+            font-size: 16px;
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+    <div class="wrap">
+        <p class="line">id:1---p1</p>
+        <div class="line">id:2---div1</div>
+        <p class="line">id:3---p2</p>
+        <div class="line">id:4---div2</div>
+        <p class="line">id:5---p3</p>
+        <div class="line">id:6---div3</div>
+        <p class="line">id:7---p4</p>
+        <div class="line">id:8---div4</div>
+        <p class="line">id:9---p5</p>
+        <div class="line">id:10---div5</div>
+    </div>
+    <h3><code>.line:nth-of-type(2n+1)</code></h3>
+    <style>
+        .wrap-a .line:nth-of-type(2n+1) {
+            font-size: 16px;
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+    <div class="wrap-a">
+        <p class="line">id:1---p1</p>
+        <div class="line">id:2---div1</div>
+        <p class="line">id:3---p2</p>
+        <div class="line">id:4---div2</div>
+        <p class="line">id:5---p3</p>
+        <div class="line">id:6---div3</div>
+        <p class="line">id:7---p4</p>
+        <div class="line">id:8---div4</div>
+        <p class="line">id:9---p5</p>
+        <div class="line">id:10---div5</div>
+    </div>
+    <h3><code>.hello:nth-of-type(2n+1)</code></h3>
+    <style>
+        .wrap-b .hello:nth-of-type(2n+1) {
+            font-size: 16px;
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+    <div class="wrap-b">
+        <p class="hello">id:1---p1</p>
+        <div class="hello">id:2---div1</div>
+        <p class="hello">id:3---p2</p> <!-- 虽 .hello 奇数，但 p 标签偶数。不输出 -->
+        <div class="">id:4---div2</div>
+        <p class="hello">id:5---p3</p>
+        <div class="hello">id:6---div3</div>
+        <p class="">id:7---p4</p>
+        <div class="hello">id:8---div4</div>
+        <div class="hello">id:9---div5</div>
+    </div>
+    <h3><code>.line:nth-of-type(2)</code></h3>
+    <style>
+        .wrap-c .line:nth-of-type(2) {
+            font-size: 16px;
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+    <div class="wrap-c">
+        <p class="line">id:1---p1</p>
+        <div class="line">id:2---div1</div>
+        <p class="line">id:3---p2</p>
+        <div class="line">id:4---div2</div>
+        <p class="line">id:5---p3</p>
+        <div class="line">id:6---div3</div>
+        <p class="line">id:7---p4</p>
+        <div class="line">id:8---div4</div>
+        <p class="line">id:9---p5</p>
+        <div class="line">id:10---div5</div>
+    </div>
+</body>
+
+</html>

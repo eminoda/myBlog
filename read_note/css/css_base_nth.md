@@ -166,7 +166,7 @@ tips: 注意 nth-of-type 的描述， **相同兄弟节点的元素**
 </div>
 ```
 
-![.hello:nth-of-type(2n+1)](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/css/imgs/nthOfType3.png)
+![.line:nth-of-type(2)](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/css/imgs/nthOfType3.png)
 
 结合之前例子， 就能知道为何这两行显示。 
 
@@ -190,19 +190,19 @@ tips: 注意 nth-of-type 的描述， **相同兄弟节点的元素**
 </div>
 ```
 
-![.line:nth-of-type(2)](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/css/imgs/nthOfType4.png)
+![.line:nth-child(2)](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/css/imgs/nthOfType4.png)
 
 和 nth-of-type 不同， child 是根据父节点下， 和伪元素匹配的元素， **且不会按照相同元素** 做区分。 
 
 ## 最佳实践
 
-在使用上， 无论 **:nth-of-type** 还是 **:nth-child** 最好都在前面加个父类的选择器
+在使用上， 无论 **:nth-of-type** 还是 **:nth-child** 最好都在前面加个父类的选择器： 
 
-例如： selector :nth-of-type
+selector :nth-of-type
 
 这样有个好处， 不至于由于没控制好“分寸”导致样式影响到其他地方。 
 
-.wrap-test 只是因为区分其他 demo。 比如开发者本地想实现父标签 .test-parent1 下第三个 p 标签显示粉色（.wrap-test .test-parent1 :nth-child(3)）， 结果遗漏了父标签， 导致 .test-parent1 和 .test-parent2 都做了显示。 
+如下： （.wrap-test 只是因为区分其他 demo） 比如开发者本地想实现父标签 .test-parent1 下第三个 p 标签显示粉色（.wrap-test .test-parent1 :nth-child(3)）， 结果遗漏了父标签， 导致 .test-parent1 和 .test-parent2 都做了显示。 
 
 ```html
 <h3><code>无父类修饰</code></h3>
@@ -245,8 +245,8 @@ tips: 注意 nth-of-type 的描述， **相同兄弟节点的元素**
 
 如果你觉得这篇文章对你有帮助， 请点个赞或者分享给更多的道友。 
 
-也可以扫码关注我的 **微信订阅号 - [ 前端雨爸 ]**， 第一时间收到技术文章 :rocket:
+也可以扫码关注我的 **微信订阅号 - [ 前端雨爸 ]**， 第一时间收到技术文章 :rocket:， 工作之余我会持续输出 :fire:
 
 ![微信订阅号-前端雨爸](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/webcat-qrcode.jpg)
 
-我会把学习和工作心得持续输出 :fire: ， 你们的支持是我写作的最大动力 :tada:
+最后感谢阅读， 你们的支持是我写作的最大动力 :tada:

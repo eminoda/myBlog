@@ -29,7 +29,7 @@ css 基础 -- nth-of-type
 
 结果如下， 不知你是否正确？ 这篇的目的就是搞懂这些小知识点， 不然对不起几年搬砖留下的腰肌劳损。
 
-![nth-of-type(2n+1)](./imgs/nthOfType1.png)
+![nth-of-type(2n+1)](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/css/imgs/nthOfType1.png)
 
 ## nth-of-type
 
@@ -62,7 +62,7 @@ css 基础 -- nth-of-type
 </div>
 ```
 
-![p:nth-of-type(2n+1)](./imgs/nthOfType.png)
+![p:nth-of-type(2n+1)](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/css/imgs/nthOfType.png)
 
 这个 demo 可能发现不出自己的问题， 毕竟符合预期显示了符合 **奇数规则的 p 标签**。
 
@@ -95,7 +95,7 @@ css 基础 -- nth-of-type
 
 和上面不同， 标签 p 换成了 **样式选择器** .line ， 那哪些符合条件？
 
-![.line:nth-of-type(2n+1)](./imgs/nthOfType1.png)
+![.line:nth-of-type(2n+1)](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/css/imgs/nthOfType1.png)
 
 原以为和上例一样， 会类似按照 .line 取奇数行做显示， 结果却不是。
 
@@ -129,7 +129,7 @@ css 基础 -- nth-of-type
 </div>
 ```
 
-![.hello:nth-of-type(2n+1)](./imgs/nthOfType2.png)
+![.hello:nth-of-type(2n+1)](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/css/imgs/nthOfType2.png)
 
 注意： id:3---p2 内容没有显示。
 
@@ -162,7 +162,7 @@ css 基础 -- nth-of-type
 </div>
 ```
 
-![.line:nth-of-type(2)](./imgs/nthOfType3.png)
+![.line:nth-of-type(2)](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/css/imgs/nthOfType3.png)
 
 结合之前例子，就能知道为何这两行显示。
 

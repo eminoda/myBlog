@@ -224,6 +224,6 @@
 
 到此 Vue 主要流程结束，后续开始解读其中细节，从 Vue 构造函数的 \_init 开始看。
 
-上一篇：[框架结构一览](./vue_learn_basejs.md)
+上一篇：[准备工作](./vue_learn_2_prepare.md)
 
-下一篇：[初始化-开始](./vue_learn_init_start.md)
+下一篇：[Vue 初始化 - 初始化开始](./vue_learn_4_init_start.md)

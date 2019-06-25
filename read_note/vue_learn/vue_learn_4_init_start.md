@@ -25,7 +25,7 @@ export function initMixin(Vue: Class<Component>) {
 
 ## vm
 
-Vue 的实例化后的对象（this），很多 **参数** 和 **方法** 都挂在这个 vm 上。
+vm 是 Vue 的 this 引用，很多 **参数** 和 **方法** 都挂在这个 vm 上。
 
 ```js
 Vue.prototype._init = function(options?: Object) {
@@ -36,7 +36,7 @@ Vue.prototype._init = function(options?: Object) {
 };
 ```
 
-参照官方文档的 [实例属性](https://cn.vuejs.org/v2/api/#%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7) 就能知道哪些属性是挂在在 vm 上的（包括原型，本身 prototype 就是挂在 Vue 构造函数上的）。
+参照官方文档的 [实例属性](https://cn.vuejs.org/v2/api/#%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7) 就能知道哪些属性是 **实例化后** 挂在在 vm 上的（包括原型，本身 prototype 就是挂在 Vue 构造函数上的）。
 
 ```js
 // vue/src/core/instance\state.js
@@ -47,7 +47,7 @@ Object.defineProperty(Vue.prototype, '$props', propsDef);
 
 ## 性能检测
 
-注意到 _init 方法中还有有关 **性能检测** 的代码，如下：
+注意到 \_init 方法中还有有关 **性能检测** 的代码，如下：
 
 ```js
 let startTag, endTag;
@@ -78,7 +78,6 @@ var app = new Vue({
 
 那 performance 具体怎么玩，这里准备了一篇文章 [前端性能检查 performance](https://eminoda.github.io/2019/06/08/window-performance/)
 
-
 ## 其他
 
 能看到 \_init 方法中还有其他方法定义，mergeOptions 属性合并和一堆 init 子方法：
@@ -101,6 +100,6 @@ callHook(vm, 'created');
 
 他们到底做了什么，请看后续章节
 
-上一篇：[框架结构](./vue_learn_basejs.md)
+上一篇：[框架结构](./vue_learn_3_frame.md)
 
-下一篇：[Vue 初始化-选项](./vue_learn_init_start.md)
+下一篇：[Vue 初始化 - 选项合并](./vue_learn_5_init_options.md)

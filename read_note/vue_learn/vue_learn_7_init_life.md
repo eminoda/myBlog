@@ -1,6 +1,4 @@
-<!-- vue_learn--初始化-生命周期 -->
-
-# Vue 初始化 - 生命周期
+# Vue 初始化-生命周期
 
 紧接着看到如下代码：
 
@@ -40,6 +38,6 @@ export function initLifecycle(vm: Component) {
 }
 ```
 
-上一篇： [Vue 初始化 - 渲染代理](./vue_learn_6_init_renderProxy.md)
+上一篇： [Vue 初始化-渲染代理](./vue_learn_6_init_renderProxy.md)
 
-下一篇： [Vue 初始化 - 事件](./vue_learn_8_init_events.md)
+下一篇： [Vue 初始化-事件](./vue_learn_8_init_events.md)

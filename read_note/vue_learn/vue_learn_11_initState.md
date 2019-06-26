@@ -1,10 +1,12 @@
 <!-- vue_learn--initState -->
 
-# Vue 初始化 - initState
+# Vue 初始化-initState
 
 ```js
 initState(vm);
 ```
+
+实现如下：
 
 ```js
 export function initState(vm: Component) {
@@ -73,10 +75,60 @@ function initProps(vm: Component, propsOptions: Object) {
 }
 ```
 
-先对 props 上的属性进行校验初始化，如果设置了 default 且为 function，则会执行
+先通过 **validateProp** 对 props 上的属性进行校验初始化，并会结合 [propsData](https://cn.vuejs.org/v2/api/#propsData) 判断 Boolean 类型，且未设置 default 的初始化值。
 
 ```js
 const value = validateProp(key, propsOptions, propsData, vm);
+```
+
+```js
+function validateProp(key: string, propOptions: Object, propsData: Object, vm?: Component): any {
+	const prop = propOptions[key];
+	const absent = !hasOwn(propsData, key);
+	let value = propsData[key];
+	// boolean casting
+	const booleanIndex = getTypeIndex(Boolean, prop.type);
+	if (booleanIndex > -1) {
+		if (absent && !hasOwn(prop, 'default')) {
+			value = false;
+		} else if (value === '' || value === hyphenate(key)) {
+			// only cast empty string / same name to boolean if
+			// boolean has higher priority
+			const stringIndex = getTypeIndex(String, prop.type);
+			if (stringIndex < 0 || booleanIndex < stringIndex) {
+				value = true;
+			}
+		}
+	}
+	// check default value
+	if (value === undefined) {
+		value = getPropDefaultValue(vm, prop, key);
+		// since the default value is a fresh copy,
+		// make sure to observe it.
+		const prevShouldObserve = shouldObserve;
+		toggleObserving(true);
+		observe(value);
+		toggleObserving(prevShouldObserve);
+	}
+	if (
+		process.env.NODE_ENV !== 'production' &&
+		// skip validation for weex recycle-list child component props
+		!(__WEEX__ && isObject(value) && '@binding' in value)
+	) {
+		assertProp(prop, key, value, vm, absent);
+	}
+	return value;
+}
+```
+
+如果设置了 default 且为 function，则会执行。
+
+```js
+function getPropDefaultValue(vm: ?Component, prop: PropOptions, key: string) {
+	const def = prop.default;
+	//...
+	return typeof def === 'function' && getType(prop.type) !== 'Function' ? def.call(vm) : def;
+}
 ```
 
 遍历 props 所有属性，并定义动态绑定
@@ -89,45 +141,72 @@ for (const key in propsOptions) {
 
 ## initMethods
 
-相对简单，直接遍历 methods 上的属性。
+相对简单，直接遍历 methods 上的属性，最后将这些属性 bind 到 vm 上。
 
+根据如下代码的 warn，知道 methods 属性最好别和 props，vm 上的属性重名。
 ```js
-const props = vm.$options.props
-  for (const key in methods) {
-    if (process.env.NODE_ENV !== 'production') {
-      warn(...);
-    }
-    vm[key] = typeof methods[key] !== 'function' ? noop : bind(methods[key], vm)
-  }
+function initMethods(vm: Component, methods: Object) {
+	const props = vm.$options.props;
+	for (const key in methods) {
+		if (process.env.NODE_ENV !== 'production') {
+			if (typeof methods[key] !== 'function') {
+				warn(`Method "${key}" has type "${typeof methods[key]}" in the component definition. ` + `Did you reference the function correctly?`, vm);
+			}
+			if (props && hasOwn(props, key)) {
+				warn(`Method "${key}" has already been defined as a prop.`, vm);
+			}
+			if (key in vm && isReserved(key)) {
+				warn(`Method "${key}" conflicts with an existing Vue instance method. ` + `Avoid defining component methods that start with _ or $.`);
+			}
+		}
+		vm[key] = typeof methods[key] !== 'function' ? noop : bind(methods[key], vm);
+	}
+}
 ```
 
 **bind(methods[key], vm)** 封装一个绑定 vm 作用域的函数，如果有 [bind 定义中的疑问，请访问看下](https://github.com/eminoda/myBlog/issues/14)
 
 ## initData
 
-// TODO isReserved 为何要判断 \$ \_
+获取 options.data ，将 data 上的属性做个校验，如果和 methods、props 属性相同给予警告，最后交给 observe 观察。
 
 ```js
-function initData (vm: Component) {
-  let data = vm.$options.data
-  ...
-  const keys = Object.keys(data)
-  const props = vm.$options.props
-  const methods = vm.$options.methods
-  let i = keys.length
-  while (i--) {
-    const key = keys[i]
-    // 检验合法
-    ...
-  }
-  // observe data
-  // 观察 data
-  observe(data, true /* asRootData */)
+function initData(vm: Component) {
+	let data = vm.$options.data;
+	data = vm._data = typeof data === 'function' ? getData(data, vm) : data || {};
+	if (!isPlainObject(data)) {
+		data = {};
+		process.env.NODE_ENV !== 'production' && warn('data functions should return an object:\n' + 'https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function', vm);
+	}
+	// proxy data on instance
+	const keys = Object.keys(data);
+	const props = vm.$options.props;
+	const methods = vm.$options.methods;
+	let i = keys.length;
+	while (i--) {
+		const key = keys[i];
+		if (process.env.NODE_ENV !== 'production') {
+			if (methods && hasOwn(methods, key)) {
+				warn(`Method "${key}" has already been defined as a data property.`, vm);
+			}
+		}
+		if (props && hasOwn(props, key)) {
+			process.env.NODE_ENV !== 'production' && warn(`The data property "${key}" is already declared as a prop. ` + `Use prop default value instead.`, vm);
+		} else if (!isReserved(key)) {
+			// TODO isReserved 为何要判断 \$ \_
+			proxy(vm, `_data`, key);
+		}
+	}
+	// observe data
+	observe(data, true /* asRootData */);
 }
-
 ```
 
 ## initComputed
+
+[如同 computed 的描述](https://cn.vuejs.org/v2/api/#computed)：计算属性将被混入到 Vue 实例中。所有 getter 和 setter 的 this 上下文自动地绑定为 Vue 实例。
+
+遍历所有 computed 属性，获取内部的 getter 方法，交给 watch 监控。
 
 ```js
 function initComputed (vm: Component, computed: Object) {
@@ -190,6 +269,6 @@ function createWatcher (
 }
 ```
 
-上一篇： [Vue 初始化 - Injections](./vue_learn_10_initInjections.md)
+上一篇： [Vue 初始化-Injections](./vue_learn_10_initInjections.md)
 
-下一篇： [Vue 初始化 - provide](./vue_learn_12_initProvide.md)
+下一篇： [Vue 初始化-provide](./vue_learn_12_initProvide.md)

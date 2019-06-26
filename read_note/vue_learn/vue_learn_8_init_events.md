@@ -1,12 +1,10 @@
-<!-- vue_learn--初始化-事件 -->
-
-# Vue 初始化 - 事件
+# Vue 初始化-事件
 
 ```js
 initEvents(vm);
 ```
 
-看下方法定义
+看下方法定义：
 
 ```js
 export function initEvents(vm: Component) {
@@ -31,7 +29,7 @@ function initInternalComponent (vm, options) {
 }
 ```
 
-而 initInternalComponent 在 vue 最开始的 initMixin 方法中被调用。由于这个 if 目前不会进入，所以暂时跳过
+而 initInternalComponent 在 vue 最开始的 initMixin 方法中被调用。由于这个 if 目前不会进入，所以暂时跳过。
 
 ```js
 if (options && options._isComponent) {
@@ -44,6 +42,6 @@ if (options && options._isComponent) {
 }
 ```
 
-上一篇： [Vue 初始化 - 生命周期](./vue_learn_7_init_life.md)
+上一篇： [Vue 初始化-生命周期](./vue_learn_7_init_life.md)
 
-下一篇：[Vue 初始化 - 生命周期钩子](./vue_learn_9_lifeHook.md)
+下一篇：[Vue 初始化-生命周期钩子](./vue_learn_9_lifeHook.md)

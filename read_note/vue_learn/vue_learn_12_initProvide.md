@@ -1,8 +1,8 @@
 <!-- vue_learn--initProvide -->
 
-# Vue 初始化 - provide
+# Vue 初始化-provide
 
-方法定义，和 initInjections 呼应
+方法定义和 initInjections 呼应
 
 ```js
 export function initProvide(vm: Component) {
@@ -14,5 +14,6 @@ export function initProvide(vm: Component) {
 }
 ```
 
-上一篇： [Vue 初始化 - initState](./vue_learn_11_initState.md)
-下一篇： [初始化-总结](./vue_learn_init_end.md)
+上一篇： [Vue 初始化-initState](./vue_learn_11_initState.md)
+
+下一篇： [Vue 初始化-总结](./vue_learn_13_init_end.md)

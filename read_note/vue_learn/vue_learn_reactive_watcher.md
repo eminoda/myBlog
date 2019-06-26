@@ -179,7 +179,7 @@ export function pushTarget (target: ?Watcher) {
 // 移除最新一个watch对象，最新target为队列最后个
 export function popTarget () {
   targetStack.pop()
-  Dep.target = targetStack[targetStack.length - 1]
+  Dep.target = targetStack[targetStack.length-1]
 }
 ````
 

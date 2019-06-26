@@ -1,6 +1,42 @@
-# Vue 初始化 - 初始化开始
+# Vue 初始化-初始化开始
 
-## 从构造函数开始
+先看下 Vue 构造函数下面的方法
+
+```js
+initMixin(Vue);
+stateMixin(Vue);
+eventsMixin(Vue);
+lifecycleMixin(Vue);
+renderMixin(Vue);
+```
+
+定义一系列 prototype 方法，参照官方文档的 [实例方法 / 数据](https://cn.vuejs.org/v2/api/#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95-%E6%95%B0%E6%8D%AE)、[实例方法 / 生命周期](https://cn.vuejs.org/v2/api/#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F) 等章节能知道这些方法使用上有什么用。
+
+后续看到具体调用代码时在详细跟进。
+
+```js
+// initMixin
+Vue.prototype._init = function() {};
+// stateMixin
+Vue.prototype.$set = set;
+Vue.prototype.$delete = del;
+Object.defineProperty(Vue.prototype, '$data', dataDef);
+Object.defineProperty(Vue.prototype, '$props', propsDef);
+// eventsMixin
+Vue.prototype.$on = function() {};
+Vue.prototype.$once = function() {};
+Vue.prototype.$off = function() {};
+Vue.prototype.$emit = function() {};
+// lifecycleMixin
+Vue.prototype._update = function() {};
+Vue.prototype.$forceUpdate = function() {};
+Vue.prototype.$destroy = function() {};
+// renderMixin
+Vue.prototype.$nextTick = function() {};
+Vue.prototype._render = function() {};
+```
+
+然后在把注意力放在 Vue 构造函数中：
 
 ```js
 import { initMixin } from './init';
@@ -11,7 +47,7 @@ function Vue(options) {
 }
 ```
 
-能看到 Vue 构造函数里只有 \_init 一个方法，其是 initMixin 中定义的原型方法，所有的准备工作都在在此初始化的。
+能看到 Vue 构造函数里只有 \_init 一个方法，其实就是引用 initMixin 中定义的原型方法，所有的准备工作都在在此初始化的。
 
 ```js
 // vue/src/core/instance\init.js
@@ -22,6 +58,8 @@ export function initMixin(Vue: Class<Component>) {
 	};
 }
 ```
+
+就这里开始，逐步阅读 initMixin 中的变量 or 方法：
 
 ## vm
 
@@ -34,15 +72,6 @@ Vue.prototype._init = function(options?: Object) {
 	vm._isVue = true;
 	// ...
 };
-```
-
-参照官方文档的 [实例属性](https://cn.vuejs.org/v2/api/#%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7) 就能知道哪些属性是 **实例化后** 挂在在 vm 上的（包括原型，本身 prototype 就是挂在 Vue 构造函数上的）。
-
-```js
-// vue/src/core/instance\state.js
-
-Object.defineProperty(Vue.prototype, '$data', dataDef);
-Object.defineProperty(Vue.prototype, '$props', propsDef);
 ```
 
 ## 性能检测
@@ -76,15 +105,17 @@ var app = new Vue({
 });
 ```
 
-那 performance 具体怎么玩，这里准备了一篇文章 [前端性能检查 performance](https://eminoda.github.io/2019/06/08/window-performance/)
+那 performance 具体怎么玩，这里准备了一篇文章可以了解下： [前端性能检查 performance](https://eminoda.github.io/2019/06/08/window-performance/)
 
 ## 其他
 
-能看到 \_init 方法中还有其他方法定义，mergeOptions 属性合并和一堆 init 子方法：
+能看到 \_init 方法中还有其他方法定义，mergeOptions 属性合并：
 
 ```js
 vm.$options = mergeOptions(resolveConstructorOptions(vm.constructor), options || {}, vm);
 ```
+
+和一堆 init 子方法：
 
 ```js
 vm._self = vm;
@@ -102,4 +133,4 @@ callHook(vm, 'created');
 
 上一篇：[框架结构](./vue_learn_3_frame.md)
 
-下一篇：[Vue 初始化 - 选项合并](./vue_learn_5_init_options.md)
+下一篇：[Vue 初始化-选项合并](./vue_learn_5_init_options.md)

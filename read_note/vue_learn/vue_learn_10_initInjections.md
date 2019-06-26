@@ -1,12 +1,12 @@
 <!-- vue_learn--initInjections -->
 
-# Vue 初始化 - Injections
+# Vue 初始化-Injections
 
 ```js
 initInjections(vm); // resolve injections before data/props
 ```
 
-方法定义：
+这里开始会有相关绑定的方法出现（observe、reactive、watch），我们先一律跳过。方法定义如下：
 
 ```js
 export function initInjections(vm: Component) {
@@ -82,6 +82,6 @@ export function resolveInject(inject: any, vm: Component): ?Object {
 defineReactive(vm, key, result[key]);
 ```
 
-上一篇： [Vue 初始化 - 生命周期钩子](./vue_learn_9_lifeHook.md)
+上一篇： [Vue 初始化-生命周期钩子](./vue_learn_9_lifeHook.md)
 
-下一篇： [Vue 初始化 - initState](./vue_learn_11_initState.md)
+下一篇： [Vue 初始化-initState](./vue_learn_11_initState.md)

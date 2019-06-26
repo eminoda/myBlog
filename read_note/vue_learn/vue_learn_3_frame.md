@@ -226,4 +226,4 @@
 
 上一篇：[准备工作](./vue_learn_2_prepare.md)
 
-下一篇：[Vue 初始化 - 初始化开始](./vue_learn_4_init_start.md)
+下一篇：[Vue 初始化-初始化开始](./vue_learn_4_init_start.md)

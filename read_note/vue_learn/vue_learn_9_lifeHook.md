@@ -1,6 +1,4 @@
-<!-- vue_learn--初始化-生命周期 钩子 -->
-
-# Vue 初始化 - 生命周期钩子
+# Vue 初始化-生命周期钩子
 
 在初始化 init 的时候，一共调用 2 个钩子 beforeCreate & created
 
@@ -70,6 +68,6 @@ if (vm.$options.el) {
 }
 ```
 
-上一篇： [Vue 初始化 - 事件](./vue_learn_8_init_events.md)
+上一篇： [Vue 初始化-事件](./vue_learn_8_init_events.md)
 
-下一篇： [Vue 初始化 - Injections](./vue_learn_10_initInjections.md)
+下一篇： [Vue 初始化-Injections](./vue_learn_10_initInjections.md)

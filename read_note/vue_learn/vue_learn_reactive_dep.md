@@ -50,7 +50,7 @@ notify () {
     const subs = this.subs.slice() // 浅拷贝
     if (process.env.NODE_ENV !== 'production' && !config.async) {
         // 非异步按照 id 进行排序
-        subs.sort((a, b) => a.id - b.id)
+        subs.sort((a, b) => a.id-b.id)
     }
     for (let i = 0, l = subs.length; i < l; i++) {
         // 调用 watcher.update 进行监控

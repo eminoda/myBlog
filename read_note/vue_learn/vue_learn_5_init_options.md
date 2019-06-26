@@ -1,32 +1,34 @@
 # Vue 初始化-选项合并
 
-选项 options 合并的代码如下：
-
 ```js
 // merge options
 if (options && options._isComponent) {
-	// TODO initInternalComponent
-
-	// optimize internal component instantiation
-	// since dynamic options merging is pretty slow, and none of the
-	// internal component options needs special treatment.
+	// TODO options._isComponent 何时定义，initInternalComponent 有什么用
 	initInternalComponent(vm, options);
 } else {
 	vm.$options = mergeOptions(resolveConstructorOptions(vm.constructor), options || {}, vm);
 }
 ```
 
-目前我们没有主动设置过 \_isComponent， 暂时只看 else 中的逻辑。
+目前我们没有主动设置过 \_isComponent， 暂时只看 else 中的逻辑。看下选项合并后将什么结果交给 **vm.\$options**
 
 首先注意到 **mergeOptions** 中需要三个参数：
 
--   parent -- resolveConstructorOptions(vm.constructor)
--   child -- new Vue({...}) 的 options
--   vm -- this
+```js
+mergeOptions(resolveConstructorOptions(vm.constructor), options || {}, vm);
+```
 
-我们先来看下 **resolveConstructorOptions** ， 用来解析构造函数的 options 属性（如果你对 constructor 很陌生， 可以参考 [js 基础 -- 面向对象 3. 原型那些事](https://github.com/eminoda/myBlog/issues/4) ）：
+在方法实现的参数列表如下：
 
-内部通过 **递归 resolveConstructorOptions** 将对象父子的属性做继承覆盖
+```js
+function mergeOptions (parent: Object,child: Object,vm?: Component)
+```
+
+语义化为：parent、child、vm ，基本能猜到会根据继承关系将其中的属性参数交给 vm。
+
+## resolveConstructorOptions
+
+先来看下通过 **resolveConstructorOptions** 对 vm.constructor 参数的处理：
 
 ```js
 export function resolveConstructorOptions(Ctor: Class<Component>) {
@@ -55,11 +57,14 @@ export function resolveConstructorOptions(Ctor: Class<Component>) {
 }
 ```
 
-**resolveModifiedOptions** : 遍历 Ctor 中的所有 options 属性， 和 Ctor.sealedOptions 做对比， return 有差异的结果
+如果你对 constructor 很陌生， 可以参考 [js 基础 -- 面向对象 3. 原型那些事](https://github.com/eminoda/myBlog/issues/4)
+
+**resolveConstructorOptions** 方法内部会判断是否有“父类”指向，并会通过 **递归** 获得上级 super.options ，并与当前“类”的 superOptions 做对比，并初始化当前“类”的 **superOptions**
+
+同时还会调用 **resolveModifiedOptions** ，遍历 Ctor 中的所有 options 属性，并将通过 Vue.extend 扩展的“之类”上的属性 sealedOptions 和当前 Ctro 的 options 作比对，得出最后的 **modifiedOptions**
 
 ```js
 function resolveModifiedOptions(Ctor: Class<Component>): ?Object {
-	// TODO resolveModifiedOptions sealedOptions 哪里设置？
 	let modified;
 	const latest = Ctor.options;
 	const sealed = Ctor.sealedOptions;
@@ -75,7 +80,7 @@ function resolveModifiedOptions(Ctor: Class<Component>): ?Object {
 
 ## mergeOptions
 
-处理完 constructor 上那些参数后， 进入 mergeOptions 中看下具体逻辑：
+处理完 constructor 上那些 options 参数后， 进入 mergeOptions 中看下具体逻辑：
 
 ```js
 export function mergeOptions(parent: Object, child: Object, vm?: Component): Object {
@@ -231,7 +236,7 @@ function mergeField(key) {
 
 具体 mergeField 的 strats 策略模式有哪些， 下面详细了解下。
 
-## 合并（key）策略 strats
+vue 对每个 options 属性提供了合并策略 strats
 
 ### 默认策略
 
@@ -327,6 +332,6 @@ vm.$options = mergeOptions(resolveConstructorOptions(vm.constructor), options ||
 
 因为 vm 是指向 this 的， 所以你可以在 console 中， 输出 **vueInstance.\$options** 来看 merge 后的参数。
 
-上一篇： [Vue 初始化 - 初始化开始](./vue_learn_4_init_start.md)
+上一篇： [Vue 初始化-初始化开始](./vue_learn_4_init_start.md)
 
-下一篇： [Vue 初始化 - 渲染代理](./vue_learn_6_init_renderProxy.md)
+下一篇： [Vue 初始化-渲染代理](./vue_learn_6_init_renderProxy.md)

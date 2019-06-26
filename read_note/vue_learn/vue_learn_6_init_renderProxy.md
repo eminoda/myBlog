@@ -1,8 +1,6 @@
-# Vue 初始化 - 渲染代理
+# Vue 初始化-渲染代理
 
-## initProxy
-
-接着 mergeOptions 后赋值给 vm.\$options ， 将看到如下代码：
+接着 mergeOptions 后赋值给 vm.\$options 后， 将看到如下代码：
 
 ```js
 if (process.env.NODE_ENV !== 'production') {
@@ -97,7 +95,27 @@ function initRender(vm: Component) {
 }
 ```
 
-可能你也会有和我一样的疑问： \_render 哪里冒出来的， 执行顺序不对啊？ 其实看下 vue instance/index.js
+\_renderProxy 在 \_render 中调用，并且 target 是 vm.\$createElement 。
+
+\_render 在 \$mount 中被使用：
+
+```js
+Vue.prototype.$mount = function(el?: string | Element, hydrating?: boolean): Component {
+	el = el && inBrowser ? query(el) : undefined;
+	return mountComponent(this, el, hydrating);
+};
+```
+
+```js
+// E:\github\vue\src\core\instance\lifecycle.js
+export function mountComponent() {
+	updateComponent = () => {
+		vm._update(vm._render(), hydrating);
+	};
+}
+```
+
+可能你也会有和我一样的疑问： \_render 哪里冒出来的， 执行顺序不对啊？回头注意下 Vue 构造函数，底下有声明定义。
 
 ```js
 // E:\github\vue\src\core\instance\index.js
@@ -110,8 +128,6 @@ function Vue(options) {
 renderMixin(Vue)
 ```
 
-一开始在 **函数声明** 的时候就初始化了这些方法， 只不过我这边阅读代码的顺序不可能那么跳跃， 这里做个备注。
+上一篇： [Vue 初始化-选项合并](./vue_learn_5_init_options.md)
 
-上一篇： [Vue 初始化 - 选项合并](./vue_learn_5_init_options.md)
-
-下一篇： [Vue 初始化 - 生命周期](./vue_learn_7_init_life.md)
+下一篇： [Vue 初始化-生命周期](./vue_learn_7_init_life.md)

@@ -39,12 +39,12 @@ Vue.prototype._init = function (options?: Object) {
 }
 ```
 
--   作为 Vue 构造函数的入口方法，定义了许多初始化功能
--   通过 mergeOptions 合并“其他” Vue 和 Vue 示例的 options
--   合并过程中 **规范化** ，**定制不同的策略** 初始化不同的属性选项
--   初始化 **组件** 等场景指定的 inject provide
--   特定在 prop，data，watch 初始化了 **动态响应**
--   穿插在上面几个步骤，定义了 beforeCreate，created 两个生命周期
+- 作为 Vue 构造函数的入口方法，定义了许多初始化功能
+- 通过 mergeOptions 合并“其他” Vue 和 Vue 示例的 options
+- 合并过程中 **规范化** ，**定制不同的策略** 初始化不同的属性选项
+- 初始化 **组件** 等场景指定的 inject provide
+- 特定在 prop，data，watch 初始化了 **动态响应**
+- 穿插在上面几个步骤，定义了 beforeCreate，created 两个生命周期
 
 初始化就算这样告一段落，要知道 init 过程中，没有对 defineReactive、observe ... 做过解释，后续开始 **动态响应** 这块的内容。
 

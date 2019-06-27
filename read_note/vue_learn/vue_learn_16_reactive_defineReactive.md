@@ -1,21 +1,18 @@
-<!-- vue_learn--响应式-定义动态响应方法 defineReactive -->
-
 # Vue 数据响应-动态响应 defineReactive
 
 ```js
-export function defineReactive (
-  obj: Object,
-  key: string,
-  val: any,
-  customSetter?: ?Function,
-  shallow?: boolean
-) {
-    const dep = new Dep()
-    ...
+export function defineReactive(obj: Object, key: string, val: any, customSetter?: ?Function, shallow?: boolean) {
+  //...
 }
 ```
 
-判断是否有属性定义，这是基础
+首先会创建 Dep 可观察的对象：
+
+```js
+const dep = new Dep();
+```
+
+之后，判断是否可以对属性进行“修改”：
 
 ```js
 const property = Object.getOwnPropertyDescriptor(obj, key);
@@ -24,22 +21,23 @@ if (property && property.configurable === false) {
 }
 ```
 
-对 val 做初始化赋值，如果 参数列表有 obj，key，并且访问属性有 setter 无 getter
-// TODO 这里对于参数的问题，看下 issue
+获取 **obj** 上对应 key 的访问器属性 **setter/getter**
 
 ```js
+const getter = property && property.get;
+const setter = property && property.set;
 if ((!getter || setter) && arguments.length === 2) {
   val = obj[key];
 }
 ```
 
-判断 val 是否已经是 **“深度”观察对象**（shallow：浅）
+判断 val 是否已经是 **“深度”观察对象**（shallow：浅），在 initDate 没有涉及 val 值，暂时跳过
 
 ```js
 let childOb = !shallow && observe(val);
 ```
 
-回到主函数 defineReactive ，重新定义 obj 中每个属性 key 的对象属性。
+之后对 obj 上每个属性设置访问器属性 **setter/getter**
 
 ```js
 Object.defineProperty(obj, key, {
@@ -54,31 +52,38 @@ Object.defineProperty(obj, key, {
 }
 ```
 
-**set**
+看下 setter/getter 的具体做了什么：
+
+**setter**
 
 ```js
-// 1. 如果有原 getter 函数的话，就调用并算出 (old)value
-const value = getter ? getter.call(obj) : val
-// 2. 判断 oldvalue 和 newvalue 值是否有变化
-if (newVal === value || (newVal !== newVal && value !== value)) {
-    return
+function reactiveSetter (newVal) {
+  // 1. 如果有原 getter 函数的话，就调用并算出 value(old)
+  const value = getter ? getter.call(obj) : val
+  // 2. 判断 oldvalue 和 newvalue 值是否有变化
+  if (newVal === value || (newVal !== newVal && value !== value)) {
+      return
+  }
+  ...
+  // #7981: for accessor properties without setter
+  if (getter && !setter) return
+  // 3. 如果有原 setter ，则调用
+  if (setter) {
+      setter.call(obj, newVal)
+  } else {
+      // 3. newVal 替换旧值
+      val = newVal
+  }
+  childOb = !shallow && observe(newVal)
+  // 4. 通知 watch 更新，暂时先跳过
+  dep.notify()
 }
-...
-// #7981: for accessor properties without setter
-if (getter && !setter) return
-// 3. 如果有原 setter ，则调用
-if (setter) {
-    setter.call(obj, newVal)
-} else {
-    // 3. newVal 替换旧值
-    val = newVal
-}
-childOb = !shallow && observe(newVal)
-// 通知 watch 更新，暂时先跳过
-dep.notify()
+
 ```
 
-**get**
+每次通过 setter 设置值时，会判断新老值是否有变化，对于新设置的 newVal ，如果有嵌套对象，会继续封装 observe 将其赋予可观察能力。
+
+**getter**
 
 ```js
 // 如果有原 getter ，则调用

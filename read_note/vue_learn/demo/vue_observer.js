@@ -15,3 +15,7 @@ Object.defineProperty(data, '__ob__', {
 });
 
 data['__ob__'].say();
+
+
+
+const test = 'abc',

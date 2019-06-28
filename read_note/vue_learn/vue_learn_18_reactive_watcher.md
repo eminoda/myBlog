@@ -207,3 +207,5 @@ function stateMixin() {
   };
 }
 ```
+
+后面根据这三种创建 Watcher 对象的时间点来深入了解下动态响应机制。

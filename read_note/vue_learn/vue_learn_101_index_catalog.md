@@ -1,0 +1,56 @@
+# vue 源码学习
+
+## 初衷:heart:
+
+作为一个 Vue 的重度使用者，一直“无脑”用着官方提供的 API，完成既定需求。表面看似熟悉这门技术框架，但根本不了解其内部机制，就和几根稻草顶着一块砖头一样 **软弱不堪**。
+
+面对有时摸不着原因的 bug，或者控制台的 error 警告，是时候好好“修建”那薄弱的根基。翻看源码不仅仅是为了学习内部原理，更多是跟随专业作者（们）的开发设计思想，开阔自己那 **狭小** 的眼界。
+
+可能会花大量的时间，可能一周、一月、断断续续，总之最终希望 **劳有所获**。事实证明，我已经断断续续花了近半年了 :disappointed_relieved:。
+
+几个小目标 :triangular_flag_on_post:：
+
+- 翻看完 vue code，知晓其中核心原理
+- 提升解决 vue 技术问题能力
+- 结合自身所欠缺的，学习 **最佳实践**（工具方法、设计模式...）
+
+## 目录介绍 :bookmark_tabs:
+
+- [准备工作](./vue_learn_prepare.md)
+- [框架结构一览](./vue_learn_frame.md)
+
+- [初始化-开始](./vue_learn_init_start.md)
+- [初始化-选项合并](./vue_learn_init_options.md)
+- [初始化-渲染代理](./vue_learn_init_renderProxy.md)
+- [初始化-生命周期](./vue_learn_init_life.md)
+- [初始化-事件](./vue_learn_init_events.md)
+- [初始化-生命周期 钩子](./vue_learn_init_lifeHook.md)
+- [初始化-initInjections](./vue_learn_init_initInjections.md)
+- [初始化-initState](./vue_learn_init_initState.md)
+- [初始化-initProvide](./vue_learn_init_initProvide.md)
+- [初始化-总结](./vue_learn_init_end.md)
+
+- [响应式-创建观察者对象](./vue_learn_reactive_observe.md)
+- [响应式-观察者对象](./vue_learn_reactive_Observer.md)
+- [响应式-定义响应方法](./vue_learn_reactive_defineReactive.md)
+- [响应式-观察订阅 dep](./vue_learn_reactive_dep.md)
+- [响应式-监听 watcher](./vue_learn_reactive_watcher.md)
+
+- [渲染-render](./vue_learn_render_parser.md)
+- [渲染-模板编译器 createCompiler](./vue_learn_render_parser.md)
+
+- [-](-)
+- [附录 生命周期图示](./vue_learn_appendix_life.md)
+- demo
+
+- **base\_** 基础工具方法。
+
+## 感谢和参考 :sunny:
+
+由于一直在**搬砖**，让自己在技术面前依旧是**新人**，因为我从未深度了解**它们**。所以开始这段旅程前，需要很多人的指点和引导。再次感谢社区那些无私奉献的大佬们。
+
+如果觉得需要更多的参考，可以看下以下链接：
+
+- [Vue 技术内幕--hcysun](http://hcysun.me/vue-design/) 超详细的解读，还有不错的排版
+- [ECMAScript 6 入门--阮一峰](http://es6.ruanyifeng.com/)
+- [停止学习框架](https://juejin.im/post/5c1a839f518825780008537d)

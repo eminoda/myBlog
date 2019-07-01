@@ -6,7 +6,7 @@
 - Vue.prototype.\$watch
 - Vue.prototype.\$mount mountComponent 渲染组件
 
-这里选一例简单的 initComputed 先来说明
+这里选一例简单的 **initComputed** 先来说明
 
 ## initComputed
 
@@ -45,7 +45,7 @@ function initComputed(vm: Component, computed: Object) {
 }
 ```
 
-遍历 vm.\$options.computed 上的属性，设置每个属性的 getter 方法
+一开始创建一个空的 watchers 对象，遍历 vm.\$options.computed 上的属性，设置每个属性的 getter 方法。
 
 ```js
 const userDef = computed[key];
@@ -60,7 +60,7 @@ const computedWatcherOptions = { lazy: true };
 watchers[key] = new Watcher(vm, getter || noop, noop, computedWatcherOptions);
 ```
 
-在 vm 引用上，对属性 key 进行校验，如果 vm.\$data 也设置过 key 则给出 warn 提示。
+最后在 vm 引用上，对属性 key 进行校验，如果 vm.\$data 也设置过 key 则给出 warn 提示。
 
 ```js
 if (!(key in vm)) {
@@ -112,9 +112,13 @@ class Watcher {
 }
 ```
 
-这里留意下 watcher 上还有 this.getter 属性并且指向 expOrFn，即 computed key 属性上的 getter 方法。
+这里留意下 watcher 上还有 this.getter 属性并且指向 expOrFn，即 computed 每个 key 属性上的 getter 方法。
 
 同时看到构造函数 Watcher 每次初始化时，会向 **vm.\_watchers** 添加 watcher 实例，在如下代码中会被依次执行：
+
+```js
+vm._watchers.push(this);
+```
 
 ```js
 class Watcher {
@@ -195,4 +199,4 @@ get () {
   }
 ```
 
-这里就会用到 this 上的 getter 属性 得到结果 value
+这里就会用到 this 上的 getter 属性 得到结果 value ，从而计算属性 computed 的属性 key 就拿到对应的值。

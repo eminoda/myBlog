@@ -1,28 +1,26 @@
-<!-- vue_learn--渲染 模板编译器 createCompiler -->
-
-# 模板编译器 createCompiler
+# Vue 渲染-词法解析 AST
 
 compileToFunctions 是由 **createCompilerCreator** 编译器工厂方法所创建的属性之一。
 
-该工厂方法依赖一个基础编译方法 **baseCompile** ，其包含 ast 解析和最后在使用的 render 方法。
+该工厂方法依赖一个基础编译方法 **baseCompile** ，其包含 **ast** 解析和最后在使用的 **render** 方法：
 
 ```js
 export const createCompiler = createCompilerCreator(function baseCompile(template: string, options: CompilerOptions): CompiledResult {
-	const ast = parse(template.trim(), options);
-	...
-	const code = generate(ast, options);
-	return {
-		ast,
-		render: code.render,
-		staticRenderFns: code.staticRenderFns
-	};
+  const ast = parse(template.trim(), options);
+  //...
+  const code = generate(ast, options);
+  return {
+    ast,
+    render: code.render,
+    staticRenderFns: code.staticRenderFns
+  };
 });
 ```
 
 ## AST parse
 
 ```js
-//\compiler\index.js
+// E:\github\vue\src\compiler\index.js
 const ast = parse(template.trim(), options);
 ```
 
@@ -30,27 +28,29 @@ const ast = parse(template.trim(), options);
 
 > AST：抽象语法树（abstract syntax tree ）
 
-看下 parse 如何定义
+看下 parse 方法的主体结构：
 
 ```js
-function parse(template,options){
-    ...
-    let root;
-    ...
-    // 交给此方法
-    parseHTML(template,{...})
-    ...
-    return root;
+function parse(template, options) {
+  //...
+  let root;
+  //...
+  // 交给此方法
+  parseHTML(template, {
+    //...
+  });
+  //...
+  return root;
 }
 ```
 
-**parseHTML**
+## parseHTML
 
-进入 while 循环，会有一波波正则匹配，其实就是判断不同种类的 html 标签针对做不同的处理。相关正则可以 [点击这链接](https://github.com/eminoda/myBlog/issues/10) 做个简单的入门。
+进入 while 循环，会有一波波正则匹配，其实就是判断不同种类的 html 标签针对做不同的处理。相关正则可以 [点击这链接，看下正则 Demo](https://github.com/eminoda/myBlog/issues/10) 做个简单的入门。
 
 ```js
 function parseHTML(html, options) {
-    ...
+    //...
     while (html) {
         last = html
         // Make sure we're not in a plaintext content element like script/style
@@ -59,11 +59,11 @@ function parseHTML(html, options) {
             // 注释
             if (comment.test(html)) {
                 // 切割 html
-            advance(...);
+            advance(//...);
             }
             // CDATA
             if(conditionalComment.test(html)){
-            advance(...);
+            advance(//...);
             }
             // doctype
             const doctypeMatch = html.match(doctype)
@@ -72,18 +72,18 @@ function parseHTML(html, options) {
             continue
             }
             if (endTagMatch) {
-                ...
+                //...
             }
             const startTagMatch = parseStartTag();
             if(startTagMatch){
                 handleStartTag(startTagMatch);
-                ...
+                //...
                 continue;
             }
         }
     }
     // 有关 html 一些修正
-    ...
+    //...
 }
 ```
 
@@ -97,13 +97,13 @@ const startTagMatch = parseStartTag();
 
 ```js
 {
-	attrs: [
+    attrs: [
         [" id="app"", "id", "=", "app", undefined, undefined, index: 0, input: "html"]
     ],
-	end: 29,
-	start: 0,
-	tagName: "div",
-	unarySlash: ""
+    end: 29,
+    start: 0,
+    tagName: "div",
+    unarySlash: ""
 }
 ```
 
@@ -111,27 +111,27 @@ const startTagMatch = parseStartTag();
 
 ```js
 function parseStartTag() {
-	const start = html.match(startTagOpen);
-	if (start) {
-		const match = {
-			tagName: start[1], //div
-			attrs: [],
-			start: index // 0
-		};
-		advance(start[0].length); // html 去除开头标签部分 如：<div
-		let end, attr;
-		// 判断起始的标签结尾or含属性（读完开头标签所有内容，break）
-		while (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) {
-			advance(attr[0].length);
-			match.attrs.push(attr);
-		}
-		if (end) {
-			match.unarySlash = end[1]; // 闭合标签相关问题
-			advance(end[0].length);
-			match.end = index;
-			return match;
-		}
-	}
+  const start = html.match(startTagOpen);
+  if (start) {
+    const match = {
+      tagName: start[1], //div
+      attrs: [],
+      start: index // 0
+    };
+    advance(start[0].length); // html 去除开头标签部分 如：<div
+    let end, attr;
+    // 判断起始的标签结尾or含属性（读完开头标签所有内容，break）
+    while (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) {
+      advance(attr[0].length);
+      match.attrs.push(attr);
+    }
+    if (end) {
+      match.unarySlash = end[1]; // 闭合标签相关问题
+      advance(end[0].length);
+      match.end = index;
+      return match;
+    }
+  }
 }
 ```
 
@@ -141,7 +141,7 @@ function parseStartTag() {
 <div id="app">content</div>
 ```
 
-变成
+变成，concent 前的 \<div\> 不是漏写，而是被解析掉了：
 
 ```html
    content
@@ -153,7 +153,7 @@ function parseStartTag() {
 ```js
 if (startTagMatch) {
     handleStartTag(startTagMatch);
-    ...
+    //...
     continue;
 }
 ```
@@ -162,29 +162,29 @@ if (startTagMatch) {
 
 ```js
 function handleStartTag(match) {
-	const tagName = match.tagName;
-	const unarySlash = match.unarySlash;
+  const tagName = match.tagName;
+  const unarySlash = match.unarySlash;
 
-	...
+  //...
 
-	const l = match.attrs.length;
-	const attrs = new Array(l);
-	for (let i = 0; i < l; i++) {
-        const args = match.attrs[i];
-        // [" id="app"", "id", "=", "app", undefined, undefined, index: 0, input: "html"]
-        // 获取当前属性的value
-		const value = args[3] || args[4] || args[5] || "";
-        ...
-        // 将 attrs 从 regex 的结果进行标准化
-        attrs[i] = {
-			name: args[1],
-			value: decodeAttr(value, shouldDecodeNewlines) //这里会对IE特殊 quirks
-		};
-	}
-    ...
-	if (options.start) {
-		options.start(tagName, attrs, unary, match.start, match.end);
-	}
+  const l = match.attrs.length;
+  const attrs = new Array(l);
+  for (let i = 0; i < l; i++) {
+    const args = match.attrs[i];
+    // [" id="app"", "id", "=", "app", undefined, undefined, index: 0, input: "html"]
+    // 获取当前属性的value
+    const value = args[3] || args[4] || args[5] || '';
+    //...
+    // 将 attrs 从 regex 的结果进行标准化
+    attrs[i] = {
+      name: args[1],
+      value: decodeAttr(value, shouldDecodeNewlines) //这里会对IE特殊 quirks
+    };
+  }
+  //...
+  if (options.start) {
+    options.start(tagName, attrs, unary, match.start, match.end);
+  }
 }
 ```
 
@@ -192,17 +192,17 @@ function handleStartTag(match) {
 
 ```js
 start (tag, attrs, unary) {
-    ...
+    //...
     // 定义 AST格式的 element
     let element: ASTElement = createASTElement(tag, attrs, currentParent)
-    ...
+    //...
     // apply pre-transforms
     for (let i = 0; i < preTransforms.length; i++) {
         // class style module 指令的转换
         // 具体看下 options.modules src\platforms\web\compiler\modules\index.js
         element = preTransforms[i](element, options) || element
     }
-    ...
+    //...
     // vue 结构化的指令标签
     if (inVPre) {
         processRawAttrs(element)
@@ -214,7 +214,7 @@ start (tag, attrs, unary) {
         // element-scope stuff
         processElement(element, options)
     }
-    ...
+    //...
     // 经历一系列的处理，得到最新的 element
 }
 ```
@@ -225,15 +225,13 @@ start (tag, attrs, unary) {
 
 ```js
 export function generate(ast: ASTElement | void, options: CompilerOptions): CodegenResult {
-	const state = new CodegenState(options);
-	const code = ast ? genElement(ast, state) : '_c("div")';
-	return {
-		render: `with(this){return ${code}}`,
-		staticRenderFns: state.staticRenderFns
-	};
+  const state = new CodegenState(options);
+  const code = ast ? genElement(ast, state) : '_c("div")';
+  return {
+    render: `with(this){return ${code}}`,
+    staticRenderFns: state.staticRenderFns
+  };
 }
 ```
 
-通过 with ，把 this 对象注入到 code 中使用，作为最后的 render function
-
-// TODO 代码 codegen 相关逻辑需要看下（E:\github\vue\src\compiler\codegen\index.js）
+通过 with ，把 this 对象注入到 code 中使用，作为最后的 render function.

@@ -58,20 +58,20 @@ var createCompileToFunctionFn = function createCompileToFunctionFn(compile) {
 
 ```js
 var app = new Vue({
-    el: "#app",
-    ...
+  el: '#app'
+  //...
 });
 ```
 
 ```js
-export function initMixin (Vue: Class<Component>) {
-    Vue.prototype._init = function (options?: Object) {
-        ...
-        // 会进入该条件
-        if (vm.$options.el) {
-            vm.$mount(vm.$options.el)
-        }
+export function initMixin(Vue: Class<Component>) {
+  Vue.prototype._init = function(options?: Object) {
+    //...
+    // 会进入该条件
+    if (vm.$options.el) {
+      vm.$mount(vm.$options.el);
     }
+  };
 }
 ```
 

@@ -5,7 +5,6 @@ export class Observer {
   value: any;
   dep: Dep;
   vmCount: number; // number of vms that have this object as root $data
-
   //...
 }
 ```
@@ -39,7 +38,7 @@ export function def(obj: Object, key: string, val: any, enumerable?: boolean) {
 
 关于 defineProperty，可以看下：[js 基础 -- 面向对象 1.描述对象属性的属性特征](https://github.com/eminoda/myBlog/issues/2)
 
-会判断 value 是否有指向 Array 类型的原型引用，有则会将 **预设** 好的 arrayMethods 作为替换。
+后面会判断 value 是否有指向 Array 类型的原型引用，有则会将 **预设** 好的 arrayMethods 作为替换。
 
 ```js
 if (Array.isArray(value)) {
@@ -54,7 +53,34 @@ if (Array.isArray(value)) {
 }
 ```
 
-最后经过 observeArray，遍历数组内容，再次调用 observe(items[i]) 对数组内每项元素进行观察
+最后经过 observeArray，遍历数组内容，再次调用 observe(items[i]) 对数组内每项元素进行观察。
+
+需要注意的是，Vue 会遍历原生 Array 类型方法，在调用时会对数组中每项内容赋予观察属性：
+
+```js
+methodsToPatch.forEach(function(method) {
+  // cache original method
+  const original = arrayProto[method];
+  def(arrayMethods, method, function mutator(...args) {
+    const result = original.apply(this, args);
+    const ob = this.__ob__;
+    let inserted;
+    switch (method) {
+      case 'push':
+      case 'unshift':
+        inserted = args;
+        break;
+      case 'splice':
+        inserted = args.slice(2);
+        break;
+    }
+    if (inserted) ob.observeArray(inserted);
+    // notify change
+    ob.dep.notify();
+    return result;
+  });
+});
+```
 
 最终执行 walk(value)
 
@@ -74,4 +100,6 @@ walk (obj: Object) {
 }
 ```
 
-下一篇：[响应式-定义响应方法](./vue_learn_reactive_defineReactive.md)
+上一篇：[Vue 数据响应-赋予观察属性 observe](./vue_learn_301_reactive_observe.md)
+
+下一篇：[Vue 数据响应-动态响应 defineReactive](./vue_learn_303_reactive_defineReactive.md)

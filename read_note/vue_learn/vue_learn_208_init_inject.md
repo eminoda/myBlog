@@ -4,7 +4,7 @@
 initInjections(vm); // resolve injections before data/props
 ```
 
-这里开始会有相关绑定的方法出现（observe、reactive、watch），我们先一律跳过。方法定义如下：
+这里开始会有相关动态响应的方法出现，例如： observe defineReactive 、watch ，我们先一律跳过。
 
 ```js
 export function initInjections(vm: Component) {
@@ -26,11 +26,15 @@ export function initInjections(vm: Component) {
 }
 ```
 
-首先会解析 **inject** 属性，如果没用过 inject，先看下 [provide / inject 用法介绍](https://cn.vuejs.org/v2/api/#provide-inject)
+首先会通过 **resolveInject** 解析 **vm.\$options.inject** 属性：
 
 ```js
 const result = resolveInject(vm.$options.inject, vm);
 ```
+
+可以先看下 [provide / inject 用法介绍](https://cn.vuejs.org/v2/api/#provide-inject)，以熟悉该属性的作用。
+
+> provide 和 inject 主要为高阶插件/组件库提供用例。并不推荐直接用于应用程序代码中。
 
 ```js
 export function resolveInject(inject: any, vm: Component): ?Object {
@@ -72,7 +76,7 @@ export function resolveInject(inject: any, vm: Component): ?Object {
 }
 ```
 
-可能会疑惑 \_provided 在哪里定义，其实和 inject 对应的 initProvide 中处理这段逻辑。不过 inject/provide 是针对父子组件所用。
+可能会疑惑 **\_provided** 在哪里定义，其实和 inject 对应的 initProvide 中处理这段逻辑。不过 inject/provide 是针对父子组件所用。
 
 当成功解析到 inject 的结果后，就执行 defineReactive 定义动态监听对象上的属性。这块内容放到第二个板块再看。
 

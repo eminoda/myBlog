@@ -70,11 +70,13 @@ function initProps(vm: Component, propsOptions: Object) {
 }
 ```
 
-先通过 **validateProp** 对 props 上的属性进行校验初始化，并会结合 [propsData](https://cn.vuejs.org/v2/api/#propsData) 判断 Boolean 类型，且未设置 default 的初始化值。
+先通过 **validateProp** 对 props 上的属性进行校验初始化：
 
 ```js
 const value = validateProp(key, propsOptions, propsData, vm);
 ```
+
+并会结合 [propsData](https://cn.vuejs.org/v2/api/#propsData) 判断 Boolean 类型，且未设置 default 的初始化值。
 
 ```js
 // E:\github\vue\src\core\util\props.js
@@ -118,7 +120,7 @@ function validateProp(key: string, propOptions: Object, propsData: Object, vm?: 
 }
 ```
 
-最后如果 value === undefined ，则会核对 default 默认值。如果设置了 default 且为 function，则会执行获得新的 value，并且推给 observe 动态监听。
+最后如果 **value === undefined**，则会核对 default 默认值。如果存在 default 且为 function，则会执行获得新的 value，并且推给 observe 赋予观察属性。
 
 ```js
 function getPropDefaultValue(vm: ?Component, prop: PropOptions, key: string) {
@@ -133,6 +135,20 @@ function getPropDefaultValue(vm: ?Component, prop: PropOptions, key: string) {
 ```js
 for (const key in propsOptions) {
   defineReactive(props, key, value);
+}
+```
+
+注意中间会给 proxy 做个对象属性代理，初始化 getter/setter
+
+```js
+function proxy(target: Object, sourceKey: string, key: string) {
+  sharedPropertyDefinition.get = function proxyGetter() {
+    return this[sourceKey][key];
+  };
+  sharedPropertyDefinition.set = function proxySetter(val) {
+    this[sourceKey][key] = val;
+  };
+  Object.defineProperty(target, key, sharedPropertyDefinition);
 }
 ```
 
@@ -210,14 +226,14 @@ function initData(vm: Component) {
 function initComputed (vm: Component, computed: Object) {
   // $flow-disable-line
   const watchers = vm._computedWatchers = Object.create(null)
-  ...
+  //...
 
   for (const key in computed) {
     // 获取定义的执行函数，放到getter中
     const userDef = computed[key]
     const getter = typeof userDef === 'function' ? userDef : userDef.get
     if (process.env.NODE_ENV !== 'production' && getter == null) {
-      warn(...)
+      warn(//...)
     }
     // TODO 为何要创建一个 Watcher 对象
     if (!isSSR) {
@@ -233,7 +249,7 @@ function initComputed (vm: Component, computed: Object) {
       // TODO 为何要判断不在 vm 的 key
       defineComputed(vm, key, userDef)
     } else if (process.env.NODE_ENV !== 'production') {
-      warn(...)
+      warn(//...)
     }
   }
 }

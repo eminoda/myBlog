@@ -299,3 +299,7 @@ Vue.prototype.$mount = function() {
 ```
 
 再回到 Watcher ，其实定义的 updateComponent 在其内部执行了 this.get()，即运行了 render() ，从而开始了动态响应渲染。
+
+上一篇：[Vue 数据响应-使用举例](./vue_learn_306_reative_use.md)
+
+下一篇：[Vue 渲染-词法解析 AST](./vue_learn_403_render_parser.md)

@@ -1,12 +1,14 @@
 # Vue 数据响应-动态响应 defineReactive
 
+从 observe(value) 到 new Observer(value) ，最后都调用了 defineReactive
+
 ```js
 export function defineReactive(obj: Object, key: string, val: any, customSetter?: ?Function, shallow?: boolean) {
   //...
 }
 ```
 
-首先会创建 Dep 可观察的对象：
+首先会创建 Dep 可观察依赖的对象：
 
 ```js
 const dep = new Dep();
@@ -54,36 +56,35 @@ Object.defineProperty(obj, key, {
 
 看下 setter/getter 的具体做了什么：
 
-**setter**
+## setter
 
 ```js
-function reactiveSetter (newVal) {
+function reactiveSetter(newVal) {
   // 1. 如果有原 getter 函数的话，就调用并算出 value(old)
-  const value = getter ? getter.call(obj) : val
+  const value = getter ? getter.call(obj) : val;
   // 2. 判断 oldvalue 和 newvalue 值是否有变化
   if (newVal === value || (newVal !== newVal && value !== value)) {
-      return
+    return;
   }
-  ...
+  //...
   // #7981: for accessor properties without setter
-  if (getter && !setter) return
+  if (getter && !setter) return;
   // 3. 如果有原 setter ，则调用
   if (setter) {
-      setter.call(obj, newVal)
+    setter.call(obj, newVal);
   } else {
-      // 3. newVal 替换旧值
-      val = newVal
+    // 3. newVal 替换旧值
+    val = newVal;
   }
-  childOb = !shallow && observe(newVal)
+  childOb = !shallow && observe(newVal);
   // 4. 通知 watch 更新，暂时先跳过
-  dep.notify()
+  dep.notify();
 }
-
 ```
 
 每次通过 setter 设置值时，会判断新老值是否有变化，对于新设置的 newVal ，如果有嵌套对象，会继续封装 observe 将其赋予可观察能力。
 
-**getter**
+## getter
 
 ```js
 // 如果有原 getter ，则调用
@@ -102,6 +103,8 @@ if (Dep.target) {
 return value;
 ```
 
-总结：在对象上每个 key 挂上对象属性，并且对象属性会按条件执行 getter/setter，同时维护 Dep 实例，其中会有相关 watch 功能
+具体 getter/setter 怎么实现数据响应的，就见 Dep 相关定义。
 
-下一篇：
+上一篇：[Vue 数据响应-观察者 Observer](./vue_learn_302_reactive_Observer.md)
+
+下一篇：[Vue 数据响应-观察订阅 dep](./vue_learn_304_reactive_dep.md)

@@ -102,7 +102,7 @@ get () {
     try {
         value = this.getter.call(vm, vm)
     } catch (e) {
-        ...
+        //...
     } finally {
         // "touch" every property so they are all tracked as
         // dependencies for deep watching
@@ -133,7 +133,7 @@ export function popTarget() {
 }
 ```
 
-get() 调用一开始，targetStack 队列为空，调用 pushTarget 后，会在 targetStack 中放入一个 watch 实例对象（this），并且 Dep 订阅对象的 target 指向这个 this 。
+**get()** 调用一开始，**targetStack** 队列为空，调用 pushTarget 后，会在 targetStack 中放入一个 watch 实例对象（this），并且 Dep 订阅对象的 target 指向这个 this 。
 
 之后执行创建 Watcher 时赋值好的 **this.getter** ，即传入的 **expOrFn** ，一个表达式函数。
 
@@ -162,50 +162,8 @@ return value;
 
 那 Watch、Dep、Observer、observe 怎么在整个 Vue 体系中联系起来？
 
-但 Dep 只是用已经实例好的 Watcher 对象，那哪里将 Watcher new 出来的？就要看哪里用到 Watch：
+看下一篇使用举例
 
-mount 挂载组件时：
+上一篇：[Vue 数据响应-观察订阅 dep](./vue_learn_304_reactive_dep.md)
 
-```js
-Vue.prototype.$mount = {
-    return mountComponent(this, el, hydrating)
-}
-function mountComponent() {
-  // ...
-  new Watcher(
-    vm,
-    updateComponent,
-    noop,
-    {
-      before() {
-        if (vm._isMounted && !vm._isDestroyed) {
-          callHook(vm, 'beforeUpdate');
-        }
-      }
-    },
-    true /* isRenderWatcher */
-  );
-}
-```
-
-初始化 data.computed 属性时：
-
-```js
-function initComputed() {
-  // ...
-  watchers[key] = new Watcher(vm, getter || noop, noop, computedWatcherOptions);
-}
-```
-
-初始化 Vue 原型方法时：
-
-```js
-function stateMixin() {
-  // ...
-  Vue.prototype.$watch = function() {
-    const watcher = new Watcher(vm, expOrFn, cb, options);
-  };
-}
-```
-
-后面根据这三种创建 Watcher 对象的时间点来深入了解下动态响应机制。
+下一篇：[Vue 数据响应-使用举例](./vue_learn_306_reative_use.md)

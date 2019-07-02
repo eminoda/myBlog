@@ -1,6 +1,6 @@
-# Vue 数据响应-使用
+# Vue 数据响应-使用举例
 
-回顾上篇结尾提到三处会新建 Watcher 对象:
+回顾上篇结尾，全文搜索 Vue 会发现三处地方新建 Watcher 对象:
 
 - initComputed 初始化 computed 属性
 - Vue.prototype.\$watch
@@ -25,7 +25,7 @@ function initState(vm: Component) {
 }
 ```
 
-怎么和 Watcher 扯上关系？
+怎么和 Watcher 扯上关系？通过 **initComputed**：
 
 ```js
 function initComputed(vm: Component, computed: Object) {
@@ -45,14 +45,14 @@ function initComputed(vm: Component, computed: Object) {
 }
 ```
 
-一开始创建一个空的 watchers 对象，遍历 vm.\$options.computed 上的属性，设置每个属性的 getter 方法。
+一开始创建一个空的 watchers 对象，把它当做一个空的容器，后面填充内容。遍历 vm.\$options.computed 上的属性，设置每个属性的 getter 方法。
 
 ```js
 const userDef = computed[key];
 const getter = typeof userDef === 'function' ? userDef : userDef.get;
 ```
 
-将 getter 当做 expOrFn 参数，交给 Watcher 实例化
+将 getter 当做 expOrFn 参数，交给 Watcher 实例化，这样每个 computed 上每个属性就塞到了 watchers 中。
 
 ```js
 const computedWatcherOptions = { lazy: true };
@@ -70,7 +70,7 @@ if (!(key in vm)) {
 }
 ```
 
-校验通过，则会执行 defineComputed()，此方法会拿出前面预设好的每个属性 key 对应的 watcher 对象
+校验通过，则会执行 defineComputed()，设置对象属性：
 
 ```js
 if (typeof userDef === 'function') {
@@ -114,7 +114,7 @@ class Watcher {
 
 这里留意下 watcher 上还有 this.getter 属性并且指向 expOrFn，即 computed 每个 key 属性上的 getter 方法。
 
-同时看到构造函数 Watcher 每次初始化时，会向 **vm.\_watchers** 添加 watcher 实例，在如下代码中会被依次执行：
+同时看到构造函数 Watcher 每次初始化时，会向 **vm.\_watchers** 添加 watcher 实例，在 watcher 被触发调用时，在如下代码将被执行（当然在 initComputed 中不存在调用）
 
 ```js
 vm._watchers.push(this);
@@ -153,31 +153,33 @@ function flushSchedulerQueue() {
 ```
 
 ```js
-run() {
+class Watcher {
+  run() {
     if (this.active) {
-        const value = this.get();
-        if (
+      const value = this.get();
+      if (
         value !== this.value ||
         // Deep watchers and watchers on Object/Arrays should fire even
         // when the value is the same, because the value may
         // have mutated.
         isObject(value) ||
         this.deep
-        ) {
+      ) {
         // set new value
         const oldValue = this.value;
         this.value = value;
         if (this.user) {
-            try {
+          try {
             this.cb.call(this.vm, value, oldValue);
-            } catch (e) {
+          } catch (e) {
             handleError(e, this.vm, `callback for watcher "${this.expression}"`);
-            }
+          }
         } else {
-            this.cb.call(this.vm, value, oldValue);
+          this.cb.call(this.vm, value, oldValue);
         }
-        }
+      }
     }
+  }
 }
 ```
 
@@ -200,3 +202,7 @@ get () {
 ```
 
 这里就会用到 this 上的 getter 属性 得到结果 value ，从而计算属性 computed 的属性 key 就拿到对应的值。
+
+上一篇：[Vue 数据响应-监听 watcher](./vue_learn_305_reactive_watcher.md)
+
+下一篇：[Vue 渲染-render](./vue_learn_401_render_start.md)

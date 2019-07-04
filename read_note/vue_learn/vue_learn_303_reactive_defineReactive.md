@@ -23,34 +23,35 @@ if (property && property.configurable === false) {
 }
 ```
 
-获取 **obj** 上对应 key 的访问器属性 **setter/getter**
+获取 **obj** 上对应 key 的访问器属性 **setter/getter**：
 
 ```js
 const getter = property && property.get;
 const setter = property && property.set;
+```
+
+如果传入的参数只有 2 个，且当前属性 key 没有设置过访问类型属性，则会获取次 default 值：
+
+```js
 if ((!getter || setter) && arguments.length === 2) {
   val = obj[key];
 }
 ```
 
-判断 val 是否已经是 **“深度”观察对象**（shallow：浅），在 initDate 没有涉及 val 值，暂时跳过
+之后会判断 val 是否已经是 **“深度”观察对象**（shallow：浅），在 initDate 没有涉及 val 值，暂时跳过。
 
 ```js
 let childOb = !shallow && observe(val);
 ```
 
-之后对 obj 上每个属性设置访问器属性 **setter/getter**
+准备工作结束后，会对 obj 上每个属性设置访问器属性 **setter/getter** ：
 
 ```js
 Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
-    get: function reactiveGetter () {
-
-    },
-    set: function reactiveSetter (newVal) {
-
-    }
+    get: function reactiveGetter () {},
+    set: function reactiveSetter (newVal) {}
 }
 ```
 
@@ -82,28 +83,36 @@ function reactiveSetter(newVal) {
 }
 ```
 
-每次通过 setter 设置值时，会判断新老值是否有变化，对于新设置的 newVal ，如果有嵌套对象，会继续封装 observe 将其赋予可观察能力。
+每次通过 setter 设置值时，会判断 newVal 和 oldVal 有变化，如果有设置 setter 则会用 newVal 执行次。
+
+还会判断 newVal 是否是深度可观察属性，赋值给 childOb。
+
+最后调用 notify() ，进行更新。
 
 ## getter
 
 ```js
-// 如果有原 getter ，则调用
-const value = getter ? getter.call(obj) : val;
-if (Dep.target) {
-  // 判断是否有 Watcher 对象，维护 Dep.id 等信息
-  dep.depend();
-  // 是否需要嵌套 执行
-  if (childOb) {
-    childOb.dep.depend();
-    if (Array.isArray(value)) {
-      dependArray(value);
+function reactiveGetter() {
+  // 如果有原 getter ，则调用
+  const value = getter ? getter.call(obj) : val;
+  if (Dep.target) {
+    // 判断是否有 Watcher 对象，维护 Dep.id 等信息
+    dep.depend();
+    // 是否需要嵌套 执行
+    if (childOb) {
+      childOb.dep.depend();
+      if (Array.isArray(value)) {
+        dependArray(value);
+      }
     }
   }
+  return value;
 }
-return value;
 ```
 
-具体 getter/setter 怎么实现数据响应的，就见 Dep 相关定义。
+和 setter 类似，如果有预设 getter 则会执行，之后会判断当前是否有依赖 target，有的话调用 depend() ，还会判断是否有子观察属性 childOb，也会执行 depend() 。
+
+具体 getter/setter 内 notify()、depend() 怎么实现数据响应的，就见 Dep 相关定义。
 
 上一篇：[Vue 数据响应-观察者 Observer](./vue_learn_302_reactive_Observer.md)
 

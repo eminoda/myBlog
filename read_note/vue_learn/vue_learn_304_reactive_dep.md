@@ -54,6 +54,8 @@ removeSub (sub: Watcher) {
 
 这两个方法都是对 **this.subs** 数组进行元素的增减，而 sub 就是 subscribe（订阅）的缩写，用来存放 watcher 监听对象那么一个订阅列表。
 
+## notify()
+
 先回忆 defineReactive 中的 **setter** ，其中用到了 dep.notify()
 
 ```js
@@ -65,7 +67,7 @@ set: function reactiveSetter(newVal) {
 
 **notify** 按照字面意思就是 **通知** 作用，注意里面调用的 watcher.update
 
-notify 中会浅拷贝 subs ，其是一个存放 watcher 对象的监听列表，每个 watcher 创建时，会有个递增的 id 编号。
+notify 中会浅拷贝 subs ，其是一个存放 watcher 对象的监听列表，遍历 subs 列表，通知 Watcher 更新：
 
 ```js
 notify () {
@@ -96,6 +98,8 @@ class Watcher {
 }
 ```
 
+## depend()
+
 当调用 getter 时，就会调用 **depend**
 
 ```js
@@ -113,22 +117,34 @@ get: function reactiveGetter() {
 ```js
 depend () {
     if (Dep.target) {
-      Dep.target.addDep(this)
+      Dep.target.addDep(this) // Dep
     }
 }
 ```
+
+addDep 中，会根据 dep 的 id 作为唯一序号，判断 newDepIds 新依赖列表是否有过存在，并添加。最后还会判断 depIds 有存在，也添加进去：
 
 ```js
 class Watcher {
   addDep(dep: Dep) {
     const id = dep.id;
     if (!this.newDepIds.has(id)) {
-      this.newDepIds.add(id);
-      this.newDeps.push(dep);
+      this.newDepIds.add(id); //  Set
+      this.newDeps.push(dep); // Array
       if (!this.depIds.has(id)) {
         dep.addSub(this);
       }
     }
+  }
+}
+```
+
+注意：newDepIds 和 depIds 均是一个 Set 集合，保存的 Dep.id 是非重复的；newDeps 会放入 dep 对象，dep.addSub 会向 Dep.subs 添加 watcher 实例。
+
+```js
+class Dep {
+  addSub(sub: Watcher) {
+    this.subs.push(sub); // []<Watcher>
   }
 }
 ```

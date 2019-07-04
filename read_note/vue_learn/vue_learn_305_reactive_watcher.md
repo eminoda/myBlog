@@ -83,6 +83,8 @@ export default class Watcher {
 
 初始化一系列参数，并且将表达式函数 **expOrFn** 赋值给 getter ，最后根据是否拦截在来选择执行 get() 。
 
+## Watcher.value
+
 细看下如何定义 **Watcher.value**
 
 ```js
@@ -90,6 +92,8 @@ this.value = this.lazy ? undefined : this.get(); // 是否懒计算获取
 ```
 
 **this.lazy** 根据参数列表的 options（参数列表第四个参数） 判断赋值，根据上面两处创建 Watcher 的地方，发现只有在 **initComputed** 才会 this.lazy = true.
+
+## get()
 
 看下相反逻辑 **this.get()** 做了什么？
 
@@ -160,10 +164,32 @@ return value;
 
 同时会根据 this.deep 来选择是否进行深度解析这个 value 。
 
-那 Watch、Dep、Observer、observe 怎么在整个 Vue 体系中联系起来？
+## cleanupDeps()
 
-看下一篇使用举例
+```js
+cleanupDeps () {
+  let i = this.deps.length
+  while (i--) {
+    const dep = this.deps[i]
+    if (!this.newDepIds.has(dep.id)) {
+      dep.removeSub(this)
+    }
+  }
+  let tmp = this.depIds
+  this.depIds = this.newDepIds
+  this.newDepIds = tmp
+  this.newDepIds.clear()
+  tmp = this.deps
+  this.deps = this.newDeps
+  this.newDeps = tmp
+  this.newDeps.length = 0
+}
+```
+
+遍历 Watcher.deps 依赖列表，如果依赖 id 存在于 newDepIds，则移除当前依赖；
+
+通过变量置换，将 newDepIds 互换 depIds，清空 newDepIds；deps 互换 newDeps，清空 newDeps；
 
 上一篇：[Vue 数据响应-观察订阅 dep](./vue_learn_304_reactive_dep.md)
 
-下一篇：[Vue 数据响应-使用举例](./vue_learn_306_reative_use.md)
+下一篇：[Vue 数据响应-总结](./vue_learn_306_reactive_end.md)

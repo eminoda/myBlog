@@ -16,34 +16,32 @@
 
 ## 目录介绍 :bookmark_tabs:
 
-- [准备工作](./vue_learn_prepare.md)
-- [框架结构一览](./vue_learn_frame.md)
+- [准备工作](./vue_learn_102_index_prepare.md)
+- [框架结构一览](./vue_learn_103_index_frame.md)
 
-- [初始化-开始](./vue_learn_init_start.md)
-- [初始化-选项合并](./vue_learn_init_options.md)
-- [初始化-渲染代理](./vue_learn_init_renderProxy.md)
-- [初始化-生命周期](./vue_learn_init_life.md)
-- [初始化-事件](./vue_learn_init_events.md)
-- [初始化-生命周期 钩子](./vue_learn_init_lifeHook.md)
-- [初始化-initInjections](./vue_learn_init_initInjections.md)
-- [初始化-initState](./vue_learn_init_initState.md)
-- [初始化-initProvide](./vue_learn_init_initProvide.md)
-- [初始化-总结](./vue_learn_init_end.md)
+- [Vue 初始化-开始](./vue_learn_201_init_start.md)
+- [Vue 初始化-选项合并](./vue_learn_202_init_options.md)
+- [Vue 初始化-渲染代理](./vue_learn_203_init_renderProxy.md)
+- [Vue 初始化-生命周期](./vue_learn_204_init_life.md)
+- [Vue 初始化-事件](./vue_learn_205_init_events.md)
+- [Vue 初始化-渲染 render](./vue_learn_206_init_render.md)
+- [Vue 初始化-生命周期钩子](./vue_learn_207_init_lifeHook.md)
+- [Vue 初始化-Injections](./vue_learn_208_init_inject.md)
+- [Vue 初始化-initState](./vue_learn_209_init_state.md)
+- [Vue 初始化-provide](./vue_learn_210_init_provide.md)
+- [Vue 初始化-总结](./vue_learn_211_init_end.md)
 
-- [响应式-创建观察者对象](./vue_learn_reactive_observe.md)
-- [响应式-观察者对象](./vue_learn_reactive_Observer.md)
-- [响应式-定义响应方法](./vue_learn_reactive_defineReactive.md)
-- [响应式-观察订阅 dep](./vue_learn_reactive_dep.md)
-- [响应式-监听 watcher](./vue_learn_reactive_watcher.md)
+- [Vue 数据响应-赋予观察属性 observe](./vue_learn_301_reactive_observe.md)
+- [Vue 数据响应-观察者 Observer](./vue_learn_302_reactive_Observer.md)
+- [Vue 数据响应-动态响应 defineReactive](./vue_learn_303_reactive_defineReactive.md)
+- [Vue 数据响应-观察订阅 dep](./vue_learn_304_reactive_dep.md)
+- [Vue 数据响应-监听 watcher](./vue_learn_305_reactive_watcher.md)
+- [Vue 数据响应-总结](./vue_learn_306_reactive_end.md)
 
-- [渲染-render](./vue_learn_render_parser.md)
-- [渲染-模板编译器 createCompiler](./vue_learn_render_parser.md)
+- [Vue 渲染-render](./vue_learn_401_render_start.md)
+- [Vue 渲染-词法解析 AST](./vue_learn_402_render_ast.md)
 
-- [-](-)
-- [附录 生命周期图示](./vue_learn_appendix_life.md)
-- demo
-
-- **base\_** 基础工具方法。
+- [附录 生命周期图示](./vue_learn_001_lifecycle.md)
 
 ## 感谢和参考 :sunny:
 

@@ -2,8 +2,8 @@
 title: elasticsearch-detail-document
 tags: elk
 categories:
-    - 开发
-    - elk
+  - 开发
+  - elk
 thumb_img: elastic.png
 ---
 

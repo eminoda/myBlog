@@ -1,11 +1,14 @@
 ---
 title: ELK 上手使用
-tags:
+tags: elk
+categories:
+  - 开发
+  - elk
+thumb_img: elastic.png
+date: 2019-04-10 00:00:01
 ---
 
-# ELK
-
-## 简单介绍
+## ELK 简单介绍
 
 ELK 是三个开源框架的缩写（Elasticsearch、Logstash、Kibana），用于收集海量日志，并做统计分析。
 这样一套协议栈称为 ELK Stack（Elastic Stack）
@@ -16,13 +19,17 @@ ELK 是三个开源框架的缩写（Elasticsearch、Logstash、Kibana），用�
 
 [Filebeat](https://www.elastic.co/guide/en/beats/filebeat/current/index.html)
 
-Filebeat 作为一个轻量级的日志数据收集和发送工具。安装在日志生产服务器后，将按照你指定的日志进行监控，并发送给 Elasticsearch、Logstash 等服务进行后续操作。
+> Filebeat 作为一个轻量级的日志数据收集和发送工具。安装在日志生产服务器后，将按照你指定的日志进行监控，并发送给 Elasticsearch、Logstash 等服务进行后续操作。
 
 {% asset_img filebeat.png %}
 
-[logstash](2)
+[logstash](https://www.elastic.co/guide/en/logstash/current/introduction.html)
 
-[kibana](1)
+> Logstash 是个开源的数据收集引擎，通过管道能对数据实时做处理。其周边有丰富的插件来对：输出流、过滤器、输出流等做强大的控制。
+
+[kibana](https://www.elastic.co/guide/en/kibana/current/introduction.html)
+
+> Kibana 和 Elasticsearch 一同工作，利用 Kibana 可以用图形化，更简便的方式对 Elasticsearch 中的索引进行搜索操作，也能只做图标来更好的分析数据的价值。
 
 [Elasticsearch Service 云服务（阿里云的产品）](https://www.elastic.co/cn/cloud/elasticsearch-service)
 

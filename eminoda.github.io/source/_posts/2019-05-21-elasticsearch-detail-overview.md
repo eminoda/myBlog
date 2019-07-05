@@ -2,13 +2,13 @@
 title: Elasticsearch —— 初识大概
 tags: elk
 categories:
-    - 开发
-    - elk
+  - 开发
+  - elk
 thumb_img: elastic.png
 date: 2019-05-21 22:59:06
 ---
 
-# Elasticsearch
+## Elasticsearch
 
 Elasticsearch 是高度可伸缩的开源全文搜索和分析引擎。 你可以即时存储、搜索并分析大容量数据。可靠的底层引擎和技术通常应对复杂的搜索场景和需求。
 
@@ -16,18 +16,18 @@ Elasticsearch 是高度可伸缩的开源全文搜索和分析引擎。 你可�
 
 ## [核心理念 Basic Concepts](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-concepts.html)
 
--   Near Realtime(NRT) 接近实时的搜索能力
--   Cluster & Node （集群和节点）
+- Near Realtime(NRT) 接近实时的搜索能力
+- Cluster & Node （集群和节点）
 
-    集群由多个节点组成，每个节点参与集群的索引和搜索操作，每个节点独一无二，并都指向同一个集群。
+  集群由多个节点组成，每个节点参与集群的索引和搜索操作，每个节点独一无二，并都指向同一个集群。
 
--   Index & Document （索引和文档）
+- Index & Document （索引和文档）
 
-    Document 是被索引前的基础数据单位，一个 Index 索引将收集相同特征的文档集合，从而执行索引，搜索，更新等操作。
+  Document 是被索引前的基础数据单位，一个 Index 索引将收集相同特征的文档集合，从而执行索引，搜索，更新等操作。
 
 等相关操作
 
--   Shards & Replicas 切片和备份
+- Shards & Replicas 切片和备份
 
 ## 集群相关操作
 
@@ -446,9 +446,9 @@ GET /eminoda/_search
 
 ### bool 查询
 
--   **should** or
--   **must** and
--   **must_not** all not
+- **should** or
+- **must** and
+- **must_not** all not
 
 上述三个条件可以混用，match 规则也可多条
 

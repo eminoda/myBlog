@@ -27,7 +27,7 @@ hasOwn({ test: 1 }, 'test'); //true
 - 基本类型：String,Number,Boolean,Null,Undefined,Symbol
 - 引用类型：Object,Array,Function
 
-**typeof**
+### typeof
 
 > 返回一个字符串，表示未经计算的操作数的类型。
 
@@ -51,7 +51,7 @@ typeof null; //"object"
 typeof abc; //"undefined"
 ```
 
-**instanceof**
+### instanceof
 
 > 用于测试构造函数的 prototype 属性是否出现在对象的原型链中的任何位置
 
@@ -65,7 +65,7 @@ Array instanceof Object //true
 new String('abc') instanceof String //true
 ```
 
-**toString**
+### toString
 
 > 返回一个表示该对象的字符串
 

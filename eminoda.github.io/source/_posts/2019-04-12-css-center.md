@@ -19,8 +19,8 @@ date: 2019-04-12 00:00:32
 ```html
 <p>1. text-align 方式</p>
 <div class="demo-content" style="text-align: center">
-	<span>非块级元素 inline-block; 也适用</span>
-	<div style="display:inline-block;">非块级元素</div>
+  <span>非块级元素 inline-block; 也适用</span>
+  <div style="display:inline-block;">非块级元素</div>
 </div>
 ```
 
@@ -29,7 +29,7 @@ date: 2019-04-12 00:00:32
 ```html
 <p>2. 定宽 + margin auto 方式</p>
 <div class="demo-content" style="">
-	<div style="margin:0 auto;width:200px;text-align: center;">自身定宽</div>
+  <div style="margin:0 auto;width:200px;text-align: center;">自身定宽</div>
 </div>
 ```
 
@@ -40,7 +40,7 @@ date: 2019-04-12 00:00:32
 ```html
 <p>3. flex 方式</p>
 <div class="demo-content" style="display: flex;justify-content: center;">
-	<div style="">利用 justify-content 方式</div>
+  <div style="">利用 justify-content 方式</div>
 </div>
 ```
 
@@ -51,9 +51,9 @@ date: 2019-04-12 00:00:32
 ```html
 <p>4. position + float 方式</p>
 <div class="demo-content" style="clear: both;overflow: hidden;">
-	<div style="float:left;position:relative;left:50%">
-		<div style="float:right;position:relative;;left:-50%">多设置了一个元素，与父元素交错</div>
-	</div>
+  <div style="float:left;position:relative;left:50%">
+    <div style="float:right;position:relative;;left:-50%">多设置了一个元素，与父元素交错</div>
+  </div>
 </div>
 ```
 
@@ -66,7 +66,7 @@ date: 2019-04-12 00:00:32
 ```html
 <p>1. line-height 方式</p>
 <div class="demo-content" style="height:100px;">
-	<span class="border" style="line-height: 100px;">内联元素设置和父级一致的行高</span>
+  <span class="border" style="line-height: 100px;">内联元素设置和父级一致的行高</span>
 </div>
 ```
 
@@ -77,11 +77,11 @@ date: 2019-04-12 00:00:32
 ```html
 <p>2. table 方式</p>
 <div class="demo-content">
-	<div style="height:100px; display: table;">
-		<div class="border" style="display: table-cell;vertical-align: middle;">
-			<div>父级设置 table 布局，子级使用 table cell，设置垂直居中属性</div>
-		</div>
-	</div>
+  <div style="height:100px; display: table;">
+    <div class="border" style="display: table-cell;vertical-align: middle;">
+      <div>父级设置 table 布局，子级使用 table cell，设置垂直居中属性</div>
+    </div>
+  </div>
 </div>
 ```
 
@@ -92,9 +92,9 @@ date: 2019-04-12 00:00:32
 ```html
 <p>3. flex 方式</p>
 <div class="demo-content">
-	<div class="border" style="height:100px;display: flex;align-items: center;">
-		<div>使用 flex，设置 align-items</div>
-	</div>
+  <div class="border" style="height:100px;display: flex;align-items: center;">
+    <div>使用 flex，设置 align-items</div>
+  </div>
 </div>
 ```
 
@@ -105,9 +105,9 @@ date: 2019-04-12 00:00:32
 ```html
 <p>4. position + margin 偏移 方式</p>
 <div class="demo-content">
-	<div class="border" style="height:100px;position: relative;">
-		<div style="position: absolute;top: 0;line-height: 50px;margin-top: 25px;">偏移本元素的 1/2 高</div>
-	</div>
+  <div class="border" style="height:100px;position: relative;">
+    <div style="position: absolute;top: 0;line-height: 50px;margin-top: 25px;">偏移本元素的 1/2 高</div>
+  </div>
 </div>
 ```
 
@@ -116,9 +116,9 @@ date: 2019-04-12 00:00:32
 ```html
 <p>5. position + margin auto 方式</p>
 <div class="demo-content">
-	<div class="border" style="height:100px;position: relative;">
-		<div style="position: absolute;margin:auto;top: 0;bottom: 0;height: 50px;line-height: 50px;">position 上下都为 0，margin auto</div>
-	</div>
+  <div class="border" style="height:100px;position: relative;">
+    <div style="position: absolute;margin:auto;top: 0;bottom: 0;height: 50px;line-height: 50px;">position 上下都为 0，margin auto</div>
+  </div>
 </div>
 ```
 
@@ -129,10 +129,10 @@ date: 2019-04-12 00:00:32
 ```html
 <p>6. position + transform</p>
 <div class="demo-content">
-	<div class="border" style="height:100px;position: relative;">
-		<div style="position: absolute;top: 50%;left:50%; transform: translate(-50%,-50%);height: 50px;line-height: 50px;">
-			translate 本元素的 -1/2
-		</div>
-	</div>
+  <div class="border" style="height:100px;position: relative;">
+    <div style="position: absolute;top: 50%;left:50%; transform: translate(-50%,-50%);height: 50px;line-height: 50px;">
+      translate 本元素的 -1/2
+    </div>
+  </div>
 </div>
 ```

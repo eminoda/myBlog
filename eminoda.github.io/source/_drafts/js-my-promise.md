@@ -18,14 +18,14 @@ MyPromise
 ```js
 let data = 0;
 setTimeout(function() {
-	data++;
-	setTimeout(function() {
-		data++;
-		setTimeout(function() {
-			data++;
-			console.log(data); //  3
-		}, 1000);
-	}, 1000);
+  data++;
+  setTimeout(function() {
+    data++;
+    setTimeout(function() {
+      data++;
+      console.log(data); //  3
+    }, 1000);
+  }, 1000);
 }, 1000);
 ```
 
@@ -33,22 +33,22 @@ setTimeout(function() {
 
 ```js
 var timePromiseFn = function(data) {
-	return new Promise((resolve, reject) => {
-		setTimeout(() => {
-			resolve(++data);
-		}, 1000);
-	});
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(++data);
+    }, 1000);
+  });
 };
 timePromiseFn(0)
-	.then(data => {
-		return timePromiseFn(data);
-	})
-	.then(data => {
-		return timePromiseFn(data);
-	})
-	.then(data => {
-		console.log(data);
-	});
+  .then(data => {
+    return timePromiseFn(data);
+  })
+  .then(data => {
+    return timePromiseFn(data);
+  })
+  .then(data => {
+    console.log(data);
+  });
 ```
 
 对比 callback 方式，promise 无论在编码，还是可读性上面都有这巨大的提升。
@@ -57,15 +57,15 @@ timePromiseFn(0)
 
 ```js
 function MyPromise(fn) {
-	this.uid = new Date().getTime();
-	this.resolveFn = function(data) {
-		return function(callback) {
-			callback(data);
-		};
-	};
-	this.then = function(callback) {
-		fn(this.resolveFn(data)(callback), this.rejectFn);
-	};
+  this.uid = new Date().getTime();
+  this.resolveFn = function(data) {
+    return function(callback) {
+      callback(data);
+    };
+  };
+  this.then = function(callback) {
+    fn(this.resolveFn(data)(callback), this.rejectFn);
+  };
 }
 ```
 
@@ -77,5 +77,5 @@ function MyPromise(fn) {
 
 > 我只是知识点的“加工者”， 更多内容请查阅原文链接 :thought_balloon: ， 同时感谢原作者的付出：
 
--   [Promises MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_promises)
--   [Promise 对象 阮一峰](http://es6.ruanyifeng.com/#docs/promise)
+- [Promises MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_promises)
+- [Promise 对象 阮一峰](http://es6.ruanyifeng.com/#docs/promise)

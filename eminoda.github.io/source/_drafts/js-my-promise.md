@@ -7,7 +7,12 @@ categories:
 thumb_img: javascript.jpg
 ---
 
-MyPromise
+## 起因
+
+在老项目开发某功能，为了实现方便想用 promise，但因为浏览器兼容问题没有直接使用 promise，使用了 jquery 的 deferred ，对原生 promise 有了些疑问？
+
+- jquery 怎么通过 deferred 支持类 promise 操作
+- 怎么写个 promise-polyfill
 
 ## 先了解下 Promise
 
@@ -32,14 +37,11 @@ setTimeout(function() {
 如果使用 Promise 就可以变成如下形式：
 
 ```js
-var timePromiseFn = function(data) {
-  return new Promise((resolve, reject) => {
+new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(++data);
     }, 1000);
-  });
-};
-timePromiseFn(0)
+  })
   .then(data => {
     return timePromiseFn(data);
   })
@@ -51,23 +53,40 @@ timePromiseFn(0)
   });
 ```
 
-对比 callback 方式，promise 无论在编码，还是可读性上面都有这巨大的提升。
+对比 callback 方式，promise 无论在编码方式（异步转 **同步**），还是 **可读性** 上面都有这巨大的提升。
 
 ## MyPromise 简单实现
 
 ```js
-function MyPromise(fn) {
-  this.uid = new Date().getTime();
-  this.resolveFn = function(data) {
-    return function(callback) {
+function MyPromise(lazyFn) {
+  this.lazyFn = lazyFn;
+  this._resolve = function resolve(callback) {
+    return function(data) {
       callback(data);
-    };
-  };
-  this.then = function(callback) {
-    fn(this.resolveFn(data)(callback), this.rejectFn);
-  };
+    }
+  }
 }
+
+MyPromise.prototype.then = function(callback) {
+  this.lazyFn(this._resolve(callback)); // 执行异步函数
+}
+
+new MyPromise(function(resolve) {
+  setTimeout(function() {
+    resolve('ok');
+  }, 1000);
+}).then(data => {
+  console.log(data);
+})
 ```
+
+这里的实现牵扯一个重要的概念 —— **高阶函数**
+
+this._resolve 会返回一个高阶 function，并且这个 function 的参数 data 是 resolve('ok') 中的 ok ；
+
+在新建 MyPromise 对象后，将初始化一个延迟函数 this.lazyFn ，其需要一个 resolve 函数 ，就和原生 Promise 需要 resolve 和 reject 一样；
+
+调用 then 后，传入 callback 函数，其是在延迟函数执行完，通过 this._resolve 返回的高阶函数后触发执行
 
 ## 别人怎么做的
 

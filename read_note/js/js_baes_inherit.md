@@ -56,7 +56,7 @@ Child.prototype = new Parent();
 
 再看下 instance 控制台的打印核实下：
 
-![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/js_base/inherit/inherit_prototype.png?raw=true)
+![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/imgs/js_base/inherit/inherit_prototype.png?raw=true)
 
 ## 缺点
 
@@ -102,7 +102,7 @@ var instance2 = new Child();
 console.log(instance2.books); // ["red", "green"]
 ```
 
-![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/js_base/inherit/inherit_call.png?raw=true)
+![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/imgs/js_base/inherit/inherit_call.png?raw=true)
 
 ## 优点
 
@@ -186,7 +186,7 @@ var instance2 = object(new Parent());
 instance2.pbooks; // ["red", "green", "yellow"]
 ```
 
-![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/js_base/inherit/inherit_create.png?raw=true)
+![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/imgs/js_base/inherit/inherit_create.png?raw=true)
 
 值得注意 ES5 的 **Object.create()** 规范了原型式继承
 
@@ -223,7 +223,7 @@ console.log(instance2.books); // ["red", "green"]
 console.log(instance2.pbooks); // ["red", "green", "yellow"]
 ```
 
-![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/js_base/inherit/inherit_final.png?raw=true)
+![inherit](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/imgs/js_base/inherit/inherit_final.png?raw=true)
 
 ## 特点
 

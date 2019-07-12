@@ -20,9 +20,9 @@ User.prototype.age = 11;
 
 大致如图：
 
-![prototype](https://github.com/eminoda/myBlog/blob/master/imgs/js_base/prototype.png?raw=true)
+![prototype](https://github.com/eminoda/myBlog/blob/master/read_note/imgs/js_base/prototype.png?raw=true)
 
-![说明constructor和__proto__](https://github.com/eminoda/myBlog/blob/master/imgs/js_base/prototype1.png?raw=true)
+![说明constructor和__proto__](https://github.com/eminoda/myBlog/blob/master/read_note/imgs/js_base/prototype1.png?raw=true)
 
 ## isPrototypeOf()
 

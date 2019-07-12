@@ -247,6 +247,6 @@ selector :nth-of-type
 
 也可以扫码关注我的 **微信订阅号 - [ 前端雨爸 ]**， 第一时间收到技术文章 :rocket:， 工作之余我会持续输出 :fire:
 
-![微信订阅号-前端雨爸](https://raw.githubusercontent.com/eminoda/myBlog/master/imgs/webcat-qrcode.jpg)
+![微信订阅号-前端雨爸](https://raw.githubusercontent.com/eminoda/myBlog/master/read_note/imgs/webcat-qrcode.jpg)
 
 最后感谢阅读， 你们的支持是我写作的最大动力 :tada:

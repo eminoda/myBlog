@@ -19,4 +19,4 @@
 - :email: 邮箱 245978782@qq.com。(如果 2019 年有不错的工作机会请@我。base：上海）
 - :herb: 微信公众号@前端雨爸（后期会同步文章、方便交流）
 
-![qrcode](https://github.com/eminoda/myBlog/blob/master/imgs/webcat-qrcode.jpg?raw=true)
+![qrcode](https://github.com/eminoda/myBlog/blob/master/read_note/imgs/webcat-qrcode.jpg?raw=true)

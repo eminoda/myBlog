@@ -17,7 +17,7 @@ HTTP cookie 是当用户访问网页时，由服务端给客户端发送并存�
 
 ## cookie 几个重要属性
 
-![cookie 几个重要属性](https://github.com/eminoda/myBlog/blob/master/imgs/js_base/cookies.png?raw=true)
+![cookie 几个重要属性](https://github.com/eminoda/myBlog/blob/master/read_note/imgs/js_base/cookies.png?raw=true)
 
 
 ### Domain 和 Path
@@ -136,7 +136,7 @@ document.getElementsByTagName('body')[0].appendChild(img);
 
 2. 执行命令查看
 
-    ![对应命令](https://github.com/eminoda/myBlog/blob/master/imgs/js_base/sqlite3.png?raw=true)
+    ![对应命令](https://github.com/eminoda/myBlog/blob/master/read_note/imgs/js_base/sqlite3.png?raw=true)
 
     根据上图能大概了解 cookie 的表格定义，和本地数据信息（不过这些信息都加密的）
 

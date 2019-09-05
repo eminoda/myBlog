@@ -1,25 +1,27 @@
 ---
-title: mongo数据库的备份迁移
+title: mongo 数据库的备份迁移
 tags: mongodb
 categories:
   - 开发
-  - mongodb
+  - 数据库
 thumb_img: mongodb.jpg
 date: 2018-08-14 11:18:48
 ---
 
-
 因为云服务器更换，所以牵扯到要备份数据库到新服务器。记录一笔
 
 ## 备份并导出库——[mongodump](https://docs.mongodb.com/manual/reference/program/mongodump/)
+
 配置权限链接本地库，配置输出位置
-````
+
+```
 mongodump -h 127.0.0.1:27017 --db 数据库名称 --out 备份输出位置 -u 用户名 -p 密码
-````
+```
 
 **常用命令**
 [更多详见官方文档](https://docs.mongodb.com/manual/reference/program/mongodump/#options)
-````
+
+```
 --help
 
 --verbose, -v
@@ -58,16 +60,19 @@ mongodump -h 127.0.0.1:27017 --db 数据库名称 --out 备份输出位置 -u �
 
 --out <path>, -o <path
     输出格式为 BSON files
-````
+```
 
 ## 导入备份数据库——[mongorestore](https://docs.mongodb.com/manual/reference/program/mongorestore/)
+
 之前需要把备份的数据库迁移到新服务器中
-````
+
+```
 mongorestore --db 数据库名称 /mydata/dump/xxx
-````
+```
 
 **常用命令**
-````
+
+```
 --help
 
 --verbose, -v
@@ -95,5 +100,5 @@ mongorestore --db 数据库名称 /mydata/dump/xxx
     不能同时定义path和--dir
 
 --dir string
-    
-````
+
+```

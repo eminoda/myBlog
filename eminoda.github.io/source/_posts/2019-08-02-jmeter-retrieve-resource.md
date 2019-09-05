@@ -4,12 +4,11 @@ tags:
   - jmeter
 categories:
   - 开发
-  - jmeter
+  - 自动化测试
 thumb_img: jmeter.png
 comments: true
 date: 2019-08-02 09:58:58
 ---
-
 
 通过问题形式，逐渐让大家对这内容有个认识：
 

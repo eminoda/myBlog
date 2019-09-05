@@ -3,11 +3,10 @@ title: redis 数据类型说明
 tags: redis
 categories:
   - 开发
-  - redis
+  - 数据库
 thumb_img: redis.png
 date: 2018-12-03 16:05:20
 ---
-
 
 > 全文参考：[redis 数据类型 https://redis.io/topics/data-types-intro](https://redis.io/topics/data-types-intro)
 

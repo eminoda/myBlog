@@ -2,8 +2,8 @@
 title: js 重复代码块检查
 tags: quality
 categories:
-    - 开发
-    - 工程化
+  - 开发
+  - 前端开发
 thumb_img: copy.jpg
 date: 2018-05-15 15:38:50
 ---

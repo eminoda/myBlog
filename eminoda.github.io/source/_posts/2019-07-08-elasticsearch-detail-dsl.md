@@ -3,11 +3,10 @@ title: elasticsearch 查询语言 Query DSL
 tags: elk
 categories:
   - 开发
-  - elk
+  - 运维部署
 thumb_img: elastic.png
 date: 2019-07-08 13:34:04
 ---
-
 
 ## [Query DSL](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html)
 

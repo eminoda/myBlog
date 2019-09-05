@@ -3,11 +3,10 @@ title: ES Module 和 CommonJS 的区别
 tags: js
 categories:
   - 开发
-  - js
+  - 前端开发
 thumb_img: javascript.jpg
 date: 2019-08-07 18:24:23
 ---
-
 
 ## 从一个错误开始
 

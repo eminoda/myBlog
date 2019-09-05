@@ -1,19 +1,19 @@
 ---
-title: vue 框架学习--基础js知识点
+title: vue 框架学习--基础 js 知识点
 tags: vue
 secret: false
 categories:
-    - 开发
-    - vue
+  - 开发
+  - 前端开发
 no_sketch: true
 date: 2018-07-11 13:20:46
 ---
 
 # 前言，目标：
 
--   加强 js 知识点巩固
--   学习 js 技巧
--   帮助更好的学习 vue 思想
+- 加强 js 知识点巩固
+- 学习 js 技巧
+- 帮助更好的学习 vue 思想
 
 # 关于对象 Object
 
@@ -65,16 +65,16 @@ Object.defineProperty(obj, prop, descriptor)
 
 descriptor：属性描述符。分为：
 
--   数据描述符：是一个具有值的属性，该值可能是可写的，也可能不是可写的。
-    -   configurable(false)：表示对象的属性是否可以被删除，**以及除 writable 特性外的其他特性**是否可以被修改。
-    -   enumerable(false)
-    -   value(undefined)
-    -   writable(false)
--   存取描述符：是由 getter-setter 函数对描述的属性。
-    -   get(false)
-    -   set(false)
-    -   configurable(false)
-    -   enumerable(false)
+- 数据描述符：是一个具有值的属性，该值可能是可写的，也可能不是可写的。
+  - configurable(false)：表示对象的属性是否可以被删除，**以及除 writable 特性外的其他特性**是否可以被修改。
+  - enumerable(false)
+  - value(undefined)
+  - writable(false)
+- 存取描述符：是由 getter-setter 函数对描述的属性。
+  - get(false)
+  - set(false)
+  - configurable(false)
+  - enumerable(false)
 
 **描述符必须是这两种形式之一；不能同时是两者。**
 
@@ -85,10 +85,10 @@ var o = {}; // 创建一个新对象
 
 // 在对象中添加一个属性与数据描述符的示例
 Object.defineProperty(o, 'a', {
-	value: 37,
-	writable: true,
-	enumerable: true,
-	configurable: false
+  value: 37,
+  writable: true,
+  enumerable: true,
+  configurable: false
 });
 o.a = 1;
 console.log(o.a); //1，if writable false,修改无效 还为37
@@ -99,16 +99,16 @@ console.log(o.a); //1，if writable false,修改无效 还为37
 // });
 var bValue;
 Object.defineProperty(o, 'b', {
-	get: function() {
-		console.log('get');
-		return bValue;
-	},
-	set: function(newValue) {
-		console.log('set');
-		bValue = newValue;
-	},
-	enumerable: true,
-	configurable: true
+  get: function() {
+    console.log('get');
+    return bValue;
+  },
+  set: function(newValue) {
+    console.log('set');
+    bValue = newValue;
+  },
+  enumerable: true,
+  configurable: true
 });
 
 o.b = 123;
@@ -150,20 +150,20 @@ ie8，对此方法不友好。也是 vue 至少 ie9 起步的原因之一。
 
 ```js
 function makeMap(str, expectsLowerCase) {
-	var map = Object.create(null);
-	var list = str.split(',');
-	for (var i = 0; i < list.length; i++) {
-		// 每个key，复制true
-		map[list[i]] = true;
-	}
-	// 返回一个closure
-	return expectsLowerCase
-		? function(val) {
-				return map[val.toLowerCase()];
-		  }
-		: function(val) {
-				return map[val];
-		  };
+  var map = Object.create(null);
+  var list = str.split(',');
+  for (var i = 0; i < list.length; i++) {
+    // 每个key，复制true
+    map[list[i]] = true;
+  }
+  // 返回一个closure
+  return expectsLowerCase
+    ? function(val) {
+        return map[val.toLowerCase()];
+      }
+    : function(val) {
+        return map[val];
+      };
 }
 var isBuiltInTag = makeMap('slot,component', true);
 ```
@@ -172,20 +172,20 @@ var isBuiltInTag = makeMap('slot,component', true);
 
 ```js
 _Set = (function() {
-	function Set() {
-		this.set = Object.create(null);
-	}
-	Set.prototype.has = function has(key) {
-		return this.set[key] === true;
-	};
-	Set.prototype.add = function add(key) {
-		this.set[key] = true;
-	};
-	Set.prototype.clear = function clear() {
-		this.set = Object.create(null);
-	};
+  function Set() {
+    this.set = Object.create(null);
+  }
+  Set.prototype.has = function has(key) {
+    return this.set[key] === true;
+  };
+  Set.prototype.add = function add(key) {
+    this.set[key] = true;
+  };
+  Set.prototype.clear = function clear() {
+    this.set = Object.create(null);
+  };
 
-	return Set;
+  return Set;
 })();
 ```
 
@@ -195,18 +195,18 @@ _Set = (function() {
 
 ```js
 function cached(fn) {
-	var cache = Object.create(null);
-	console.log('obj created');
-	return function cachedFn(str) {
-		console.log(cache);
-		var hit = cache[str];
-		console.log('hit:' + hit);
-		return hit || (cache[str] = fn(str));
-	};
+  var cache = Object.create(null);
+  console.log('obj created');
+  return function cachedFn(str) {
+    console.log(cache);
+    var hit = cache[str];
+    console.log('hit:' + hit);
+    return hit || (cache[str] = fn(str));
+  };
 }
 var testFn = cached(function(data) {
-	console.log('receive data:' + data);
-	return data;
+  console.log('receive data:' + data);
+  return data;
 });
 testFn('foo1');
 // obj created

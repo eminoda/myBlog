@@ -3,7 +3,7 @@ title: ELK 上手使用
 tags: elk
 categories:
   - 开发
-  - elk
+  - 运维部署
 thumb_img: elastic.png
 date: 2019-04-10 00:00:01
 ---

@@ -1,9 +1,11 @@
 ---
 title: jenkins 配置 gitlab hook
-tags: jenkins
+tags:
+  - jenkins
+  - gitlab
 categories:
-    - 开发
-    - 工程化
+  - 开发
+  - 运维部署
 thumb_img: hook.jpg
 date: 2018-05-04 15:04:26
 ---
@@ -16,28 +18,28 @@ date: 2018-05-04 15:04:26
 
 下面给出我们的环境，尽可能保持一致以免发生不可描述的问题。
 
--   gitlab v10.7.2
-    如果还是 8.x.x 的，赶紧联系运维大佬升级，不然旧版本发送的地址是 v3，而我们需要的是 v4
-    {% asset_img version.png %}
--   jenkins v2.110
--   jenkins plugins：Gitlab Authentication plugin v1.4
+- gitlab v10.7.2
+  如果还是 8.x.x 的，赶紧联系运维大佬升级，不然旧版本发送的地址是 v3，而我们需要的是 v4
+  {% asset_img version.png %}
+- jenkins v2.110
+- jenkins plugins：Gitlab Authentication plugin v1.4
 
 ## 配置 gitlab
 
 1. 开启权限，不然你可能会遇到如下错误
    {% asset_img gitlab-1.png %}
 
-    ```
-    Requests to the local network are not allowed
-    ```
+   ```
+   Requests to the local network are not allowed
+   ```
 
-    {% asset_img error-1.png %}
+   {% asset_img error-1.png %}
 
-    备注下，如果是默认安装 gitlab，其日志输出在如下位置
+   备注下，如果是默认安装 gitlab，其日志输出在如下位置
 
-    ```
-    tail -f /var/log/gitlab/gitlab-rails/production.log
-    ```
+   ```
+   tail -f /var/log/gitlab/gitlab-rails/production.log
+   ```
 
 2. 生成 token，他这个比较 6，还有有效期
    {% asset_img gitlab-2.png %}
@@ -48,10 +50,10 @@ date: 2018-05-04 15:04:26
 4. 测试一下
    {% asset_img gitlab-4.png %}
    会出现如下错误，是 jenkins 的 gitlab 插件没有配置好。[原因:https://github.com/jenkinsci/gitlab-plugin/issues/375](https://github.com/jenkinsci/gitlab-plugin/issues/375)
-    ```
-    executed successfully but returned HTTP 403
-    ```
-    {% asset_img error-2.png %}
+   ```
+   executed successfully but returned HTTP 403
+   ```
+   {% asset_img error-2.png %}
 
 ## 配置 jenkins
 

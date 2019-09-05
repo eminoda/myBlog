@@ -1,11 +1,11 @@
 ---
 title: 初识 GraphQL
 tags:
-    - graphQL
-    - http
+  - graphQL
+  - http
 categories:
-    - 开发
-    - node
+  - 开发
+  - 前端开发
 thumb_img: graphQL.png
 date: 2018-08-22 15:57:48
 ---
@@ -21,11 +21,11 @@ date: 2018-08-22 15:57:48
 
 ## Basic Types 基础类型
 
--   String
--   Int
--   Float
--   Boolean
--   ID
+- String
+- Int
+- Float
+- Boolean
+- ID
 
 **默认每个类型可以为空，可以定义！来特殊注明不能为空**
 
@@ -161,21 +161,21 @@ type Query {
 ```js
 // 定义Message对象
 function Message(input) {
-	this.message = input.message;
+  this.message = input.message;
 }
 // 模拟数据源
 var fakeDatabase = {
-	message: 'data from DB'
+  message: 'data from DB'
 };
 var root = {
-	// 实现保存数据，返回新Message对象
-	setMessage: function(input) {
-		// { input: { message: 'abc' } }
-		return new Message(input.input);
-	},
-	getMessage: function() {
-		return fakeDatabase.message;
-	}
+  // 实现保存数据，返回新Message对象
+  setMessage: function(input) {
+    // { input: { message: 'abc' } }
+    return new Message(input.input);
+  },
+  getMessage: function() {
+    return fakeDatabase.message;
+  }
 };
 ```
 
@@ -313,14 +313,14 @@ query 中，行内片段。多用于 interface 的数据
 可以看下图中\$input:
 {% asset_img variables.png %}
 
--   在 query 中，使用**\$variableName**类似占位符一样，定义静态值
--   在 query 上，声明**\$variableName**。
--   维护请求字段 variableName，传入数据
+- 在 query 中，使用**\$variableName**类似占位符一样，定义静态值
+- 在 query 上，声明**\$variableName**。
+- 维护请求字段 variableName，传入数据
 
 **注意**
 
--   声明参数，**需要用\$前缀说明**
--   \$episode: Episode = JEDI 方式定义输入参数默认值
+- 声明参数，**需要用\$前缀说明**
+- \$episode: Episode = JEDI 方式定义输入参数默认值
 
 ## Directives 指令
 
@@ -337,11 +337,11 @@ query 中，行内片段。多用于 interface 的数据
   }
 ```
 
--   @include(if: Boolean) Only include this field in the result if the argument is true
--   @skip(if: Boolean) Skip this field if the argument is true.
-    {% asset_img directives.png %}
-    **注意**
-    query 上的参数，需要指定**!**
+- @include(if: Boolean) Only include this field in the result if the argument is true
+- @skip(if: Boolean) Skip this field if the argument is true.
+  {% asset_img directives.png %}
+  **注意**
+  query 上的参数，需要指定**!**
 
 ## Mutations 行为改变
 
@@ -381,9 +381,9 @@ query 增加**\_typename**，将返回 schema 的 type
 
 这是个简单的 query 语句，但能看到如下特点：
 
--   定义一个根对象，如果你隐去 query 和 operation name
--   设置一个 hexo，当做 fields
--   根据查询的数据对象，将包含 id、name fields
+- 定义一个根对象，如果你隐去 query 和 operation name
+- 设置一个 hexo，当做 fields
+- 根据查询的数据对象，将包含 id、name fields
 
 ```
 query queryHexo{
@@ -409,19 +409,19 @@ type Query{
 }
 ```
 
--   **Hexo** GraphQL Object Type
--   id,name,age 作为 fields，在 Type 里
--   每个 field 将对应有 scalar types
+- **Hexo** GraphQL Object Type
+- id,name,age 作为 fields，在 Type 里
+- 每个 field 将对应有 scalar types
 
 ## Scalar types
 
 fields 在解析时，会有对应的类型作为区分。
 
--   Int: A signed 32‐bit integer.
--   Float: A signed double-precision floating-point value.
--   String: A UTF‐8 character sequence.
--   Boolean: true or false.
--   ID: The ID scalar type represents a unique identifier, often used to refetch an object or as the key for a cache. The ID type is serialized in the same way as a String; however, defining it as an ID signifies that it is not intended to be human‐readable.
+- Int: A signed 32‐bit integer.
+- Float: A signed double-precision floating-point value.
+- String: A UTF‐8 character sequence.
+- Boolean: true or false.
+- ID: The ID scalar type represents a unique identifier, often used to refetch an object or as the key for a cache. The ID type is serialized in the same way as a String; however, defining it as an ID signifies that it is not intended to be human‐readable.
 
 ## Enumeration types
 

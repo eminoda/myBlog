@@ -3,11 +3,10 @@ title: js 里不平凡的函数
 tags: js
 categories:
   - 开发
-  - js
+  - 前端开发
 thumb_img: javascript.jpg
 date: 2018-12-27 17:48:43
 ---
-
 
 函数 function 作为 js 里的一等公民，这样一句话做前端的总多多少少听说过。其实更为准确应该描述为 **First-class functions**。
 
@@ -25,16 +24,16 @@ date: 2018-12-27 17:48:43
 
 要成为高阶函数，要具备如下 2 个条件之一：
 
--   能让函数作为参数作为输入
--   输出一个函数
+- 能让函数作为参数作为输入
+- 输出一个函数
 
 ```js
 function sum(a, b) {
-	var s = a + b;
-	return s;
+  var s = a + b;
+  return s;
 }
 function mySum(sum, c) {
-	return sum(1, 2) + c;
+  return sum(1, 2) + c;
 }
 mySum(sum, 3); //6
 ```
@@ -47,11 +46,11 @@ mySum(sum, 3); //6
 
 ```js
 function sum(a, b) {
-	return a + b;
+  return a + b;
 }
 sum(1, 2); //3
 function pSum(c) {
-	return sum.bind(null, 1, c)(); //1+2
+  return sum.bind(null, 1, c)(); //1+2
 }
 pSum(2); //3
 ```
@@ -62,11 +61,11 @@ pSum(2); //3
 
 ```js
 function currySum(a) {
-	return function(b) {
-		return function(c) {
-			return a + b + c;
-		};
-	};
+  return function(b) {
+    return function(c) {
+      return a + b + c;
+    };
+  };
 }
 currySum(1)(2)(3); //6
 ```
@@ -77,11 +76,11 @@ currySum(1)(2)(3); //6
 
 ## 参考
 
--   [mdn-First-class_Function](https://developer.mozilla.org/en-US/docs/Glossary/First-class_Function)
--   [wiki-头等函数](https://zh.wikipedia.org/wiki/%E5%A4%B4%E7%AD%89%E5%87%BD%E6%95%B0)
--   [wiki-高阶函数](https://zh.wikipedia.org/wiki/%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0)
--   [wiki-partial application](https://en.wikipedia.org/wiki/Partial_application)
--   [currying-vs-partial-application](https://www.datchley.name/currying-vs-partial-application/)
--   [mqyqingfeng-
-    JavaScript 专题之函数柯里化](https://github.com/mqyqingfeng/Blog/issues/42)
--   [知乎-面向对象程序设计比传统的面向过程程序设计更有什么好处？](https://www.zhihu.com/question/19729316)
+- [mdn-First-class_Function](https://developer.mozilla.org/en-US/docs/Glossary/First-class_Function)
+- [wiki-头等函数](https://zh.wikipedia.org/wiki/%E5%A4%B4%E7%AD%89%E5%87%BD%E6%95%B0)
+- [wiki-高阶函数](https://zh.wikipedia.org/wiki/%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0)
+- [wiki-partial application](https://en.wikipedia.org/wiki/Partial_application)
+- [currying-vs-partial-application](https://www.datchley.name/currying-vs-partial-application/)
+- [mqyqingfeng-
+  JavaScript 专题之函数柯里化](https://github.com/mqyqingfeng/Blog/issues/42)
+- [知乎-面向对象程序设计比传统的面向过程程序设计更有什么好处？](https://www.zhihu.com/question/19729316)

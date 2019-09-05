@@ -3,7 +3,7 @@ title: Elasticsearch —— 初识大概
 tags: elk
 categories:
   - 开发
-  - elk
+  - 运维部署
 thumb_img: elastic.png
 date: 2019-05-21 22:59:06
 ---

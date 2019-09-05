@@ -1,10 +1,10 @@
 ---
 title: linux 常用命令
 tags:
-    - linux
+  - linux
 categories:
-    - 开发
-    - linux
+  - 开发
+  - 运维部署
 no_sketch: true
 date: 2017-07-28 09:47:48
 ---

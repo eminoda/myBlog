@@ -2,8 +2,8 @@
 title: 同一环境配置多个 java 版本
 tags: java
 categories:
-    - 开发
-    - java
+  - 开发
+  - Java 开发
 data: 2017-10-23 10:13:35
 ---
 

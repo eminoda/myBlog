@@ -3,11 +3,10 @@ title: 写一个我自己的 promise
 tags: js
 categories:
   - 开发
-  - js
+  - 前端开发
 thumb_img: javascript.jpg
 date: 2019-07-12 15:25:36
 ---
-
 
 ## 起因
 
@@ -287,7 +286,7 @@ function handle(self, deferred) {
 }
 ```
 
-当然只是分析最简单的 Promise 方式，关于 Promise chain 就根据 self._deferreds 和 resolve 中 newValue 类型判断对 Promise._state 做不同的标记来区分
+当然只是分析最简单的 Promise 方式，关于 Promise chain 就根据 self.\_deferreds 和 resolve 中 newValue 类型判断对 Promise.\_state 做不同的标记来区分
 
 ## 参考
 

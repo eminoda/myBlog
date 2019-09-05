@@ -1,10 +1,10 @@
 ---
 title: npm cheerio 模块
 tags:
-    - npm
+  - npm
 categories:
-    - 开发
-    - node
+  - 开发
+  - 前端开发
 thumb_img: npm.png
 date: 2019-01-24 14:51:46
 ---
@@ -44,28 +44,28 @@ var $list = $('#bugList tbody').find('tr');
 ```js
 var list = [];
 for (var i = 0; i < $list.length; i++) {
-	var $item = $list.eq(i).find('td');
-	var id = $item
-		.eq(0)
-		.find('a')
-		.text();
-	var creator = $item.eq(4).text();
-	var title = $item
-		.eq(3)
-		.find('a')
-		.text();
-	var href = $item
-		.eq(0)
-		.find('a')
-		.attr('href');
-	var index = i + 1;
-	list.push({
-		index,
-		id,
-		creator,
-		title,
-		href
-	});
+  var $item = $list.eq(i).find('td');
+  var id = $item
+    .eq(0)
+    .find('a')
+    .text();
+  var creator = $item.eq(4).text();
+  var title = $item
+    .eq(3)
+    .find('a')
+    .text();
+  var href = $item
+    .eq(0)
+    .find('a')
+    .attr('href');
+  var index = i + 1;
+  list.push({
+    index,
+    id,
+    creator,
+    title,
+    href
+  });
 }
 ```
 
@@ -117,31 +117,31 @@ Promise.all(promiseList).then(data=>{
 ```js
 // promise function
 var getTime = async href => {
-	var data = await promiseFetchUrl(href);
-	var $$ = cheerio.load(data.toString());
-	var time = $$('#legendLife table tr')
-		.eq(0)
-		.find('td')
-		.text()
-		.split('于 ')[1];
-	return time;
+  var data = await promiseFetchUrl(href);
+  var $$ = cheerio.load(data.toString());
+  var time = $$('#legendLife table tr')
+    .eq(0)
+    .find('td')
+    .text()
+    .split('于 ')[1];
+  return time;
 };
 let count = 100; // 并发次数max限制
 let loop = $list.length / count; //分批次数
 let pos = 0;
 for (var i = 0; i < loop; i++) {
-	var promiseTimeFn = [];
-	for (var j = pos; j < count + pos && j < $list.length; j++) {
-		// 组装每批 promise
-		promiseTimeFn.push(getTime(list[j].href));
-	}
-	var data = await Promise.all(promiseTimeFn);
-	// 数据处理
-	for (var d = 0; d < data.length; d++) {
-		list[d + pos].time = data[d];
-		list[d + pos].time2 = data[d].split(' ')[0];
-	}
-	// 准备下批数据
-	pos = count + pos;
+  var promiseTimeFn = [];
+  for (var j = pos; j < count + pos && j < $list.length; j++) {
+    // 组装每批 promise
+    promiseTimeFn.push(getTime(list[j].href));
+  }
+  var data = await Promise.all(promiseTimeFn);
+  // 数据处理
+  for (var d = 0; d < data.length; d++) {
+    list[d + pos].time = data[d];
+    list[d + pos].time2 = data[d].split(' ')[0];
+  }
+  // 准备下批数据
+  pos = count + pos;
 }
 ```

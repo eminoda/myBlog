@@ -2,8 +2,8 @@
 title: 阿里云 CDN 使用
 tags: cdn
 categories:
-    - 开发
-    - 网站优化
+  - 开发
+  - 前端开发
 date: 2019-02-18 15:47:55
 ---
 
@@ -25,19 +25,19 @@ date: 2019-02-18 15:47:55
 
 1. 进到 CDN 控制台，添加新配置
 
--   **加速域名** 支持泛解析。（这是给 **使用方** 的域名）
--   缓存资源类型 这里选择小文件，诸如：js、css 等
--   来源 目前选择域名来源，自定义不同的二级域名
+- **加速域名** 支持泛解析。（这是给 **使用方** 的域名）
+- 缓存资源类型 这里选择小文件，诸如：js、css 等
+- 来源 目前选择域名来源，自定义不同的二级域名
 
-    {% asset_img setting-cdn.png 示例 %}
+  {% asset_img setting-cdn.png 示例 %}
 
 2. 记录 CNAME 设置完后，稍等片刻就会出现 CNAME，之后域名解析需要使用
 
-    {% asset_img setting-cdn-result.png 示例 %}
+   {% asset_img setting-cdn-result.png 示例 %}
 
 3. **域名解析** 配置修改新增一条 CNAME 类型的记录
 
-    {% asset_img setting-domain.png 示例 %} {% asset_img setting-domain-result.png 示例 %}
+   {% asset_img setting-domain.png 示例 %} {% asset_img setting-domain-result.png 示例 %}
 
 ## 测试
 

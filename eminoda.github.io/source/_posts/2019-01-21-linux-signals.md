@@ -3,11 +3,10 @@ title: linux signals 标识
 tags: linux
 categories:
   - 开发
-  - linux
+  - 运维部署
 no_sketch: true
 date: 2019-01-21 18:02:08
 ---
-
 
 # linux standard signals
 
@@ -15,8 +14,8 @@ date: 2019-01-21 18:02:08
 
 ```js
 process.once('SIGTERM', () => {
-	printLogLevels.info && logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
-	exit(0);
+  printLogLevels.info && logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
+  exit(0);
 });
 ```
 

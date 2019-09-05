@@ -1,7 +1,7 @@
 ---
-title: jquery-deep-animate
+title: how-terrible-in-memory-leak
 tags:
-  - jquery
+  - 性能优化
 categories:
   - 开发
   - 前端开发

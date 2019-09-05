@@ -1,10 +1,10 @@
 ---
 title: git 快速入门
 tags:
-    - git
+  - git
 categories:
-    - 开发
-    - 工程化
+  - 开发
+  - 开发工具
 comments: true
 date: 2017-02-09 20:27:57
 ---
@@ -19,12 +19,12 @@ date: 2017-02-09 20:27:57
 
 3. 区别
 
-    - 无网络，用 svn，不能向数据库提交修改
-    - 控制文件方式
-      _ svn：随时间逐步增加
-      {% asset_img 3.png Subversion，CVS... %}
-      _ git：快照流
-      {% asset_img 4.png git %}
+   - 无网络，用 svn，不能向数据库提交修改
+   - 控制文件方式
+     _ svn：随时间逐步增加
+     {% asset_img 3.png Subversion，CVS... %}
+     _ git：快照流
+     {% asset_img 4.png git %}
 
 4. git 的三种状态
    {% asset_img 5.png git %}
@@ -56,57 +56,57 @@ $ git diff
 ```
 
 4. 提交
-    ```
-    $ git commit -m 'init'
-    [master 4618f45] init
-     1 file changed, 0 insertions(+), 0 deletions(-)
-     create mode 100644 index.txt
-    ```
-    ```
-    shixinghao@SC-201611201637 MINGW64 /e/my_work/github/hello-git (master)
-    $ git commit -a -m 'init'
-    ```
+   ```
+   $ git commit -m 'init'
+   [master 4618f45] init
+    1 file changed, 0 insertions(+), 0 deletions(-)
+    create mode 100644 index.txt
+   ```
+   ```
+   shixinghao@SC-201611201637 MINGW64 /e/my_work/github/hello-git (master)
+   $ git commit -a -m 'init'
+   ```
 5. 移除文件
    提交区删除
 
-    ```
-    rm index.txt
-    $ git rm index.txt
-    ```
+   ```
+   rm index.txt
+   $ git rm index.txt
+   ```
 
-    暂存区删除
+   暂存区删除
 
-    ```
-    $ git rm -f index.txt
-    ```
+   ```
+   $ git rm -f index.txt
+   ```
 
 6. 撤销
    覆盖提交
-    ```
-    $ git commit -m 'initial commit'
-    $ git add forgotten_file
-    $ git commit --amend
-    ```
-    撤销暂存区
-    ```
-    $ git reset HEAD 2.txt
-    ```
-    还原至上次提交版本
-    ```
-    $ git checkout -- 2.txt
-    ```
+   ```
+   $ git commit -m 'initial commit'
+   $ git add forgotten_file
+   $ git commit --amend
+   ```
+   撤销暂存区
+   ```
+   $ git reset HEAD 2.txt
+   ```
+   还原至上次提交版本
+   ```
+   $ git checkout -- 2.txt
+   ```
 
 ## 分支管理
 
 1. 新建分支
    {% asset_img 9.png %}
-    ```
-    $ git branch v1.0
-    ```
+   ```
+   $ git branch v1.0
+   ```
 2. 切换分支
-    ```
-    $ git checkout v1.0
-    ```
+   ```
+   $ git checkout v1.0
+   ```
 3. 分支移动
    {% asset_img 10.png checkout到testing分支 %}
    {% asset_img 11.png 分叉 %}

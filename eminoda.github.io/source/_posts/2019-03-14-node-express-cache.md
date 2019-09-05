@@ -4,7 +4,7 @@ tags:
   - express
 categories:
   - 开发
-  - node
+  - 前端开发
 thumb_img: express.png
 date: 2019-03-14 13:35:06
 ---
@@ -155,13 +155,10 @@ function View(name, options) {
  * Express support.
  */
 exports.__express = function(path, options, fn) {
-	if (
-		options.compileDebug == undefined &&
-		process.env.NODE_ENV === 'production'
-	) {
-		options.compileDebug = false;
-	}
-	exports.renderFile(path, options, fn);
+  if (options.compileDebug == undefined && process.env.NODE_ENV === 'production') {
+    options.compileDebug = false;
+  }
+  exports.renderFile(path, options, fn);
 };
 ```
 
@@ -170,14 +167,14 @@ exports.__express = function(path, options, fn) {
 ```js
 // pug 模板缓存
 function handleTemplateCache(options, str) {
-	var key = options.filename;
-	if (options.cache && exports.cache[key]) {
-		return exports.cache[key];
-	} else {
-		if (str === undefined) str = fs.readFileSync(options.filename, 'utf8');
-		var templ = exports.compile(str, options);
-		if (options.cache) exports.cache[key] = templ;
-		return templ;
-	}
+  var key = options.filename;
+  if (options.cache && exports.cache[key]) {
+    return exports.cache[key];
+  } else {
+    if (str === undefined) str = fs.readFileSync(options.filename, 'utf8');
+    var templ = exports.compile(str, options);
+    if (options.cache) exports.cache[key] = templ;
+    return templ;
+  }
 }
 ```

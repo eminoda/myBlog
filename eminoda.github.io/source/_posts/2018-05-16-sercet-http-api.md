@@ -1,11 +1,11 @@
 ---
-title: 提升接口API的安全等级
+title: 提升接口 API 的安全等级
 tags: http
 categories:
-    - 开发
-    - 其他
+  - 开发
+  - 前端开发
 thumb_img:
-    - http.jpg
+  - http.jpg
 date: 2018-05-16 17:00:13
 ---
 
@@ -74,10 +74,4 @@ Access-Control-Allow-Origin，允许哪些跨域网站可以访问我们支援�
 
 ## 参考
 
-> https://www.owasp.org/index.php/REST_Security_Cheat_Sheet
-> [RESTful API Authentication Basics](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842)
-> [How to Secure Your REST API using Proven Best Practices](https://stormpath.com/blog/secure-your-rest-api-right-way)
-> [header 的安全配置指南](https://www.cnblogs.com/doseoer/p/5676297.html)
-> [REST 架构该怎么生动地理解？](https://www.zhihu.com/question/27785028)
-> [REST 的许多文献](https://github.com/aisuhua/restful-api-design-references)
-> http://tool.oschina.net/commons/
+> https://www.owasp.org/index.php/REST_Security_Cheat_Sheet > [RESTful API Authentication Basics](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842) > [How to Secure Your REST API using Proven Best Practices](https://stormpath.com/blog/secure-your-rest-api-right-way) > [header 的安全配置指南](https://www.cnblogs.com/doseoer/p/5676297.html) > [REST 架构该怎么生动地理解？](https://www.zhihu.com/question/27785028) > [REST 的许多文献](https://github.com/aisuhua/restful-api-design-references) > http://tool.oschina.net/commons/

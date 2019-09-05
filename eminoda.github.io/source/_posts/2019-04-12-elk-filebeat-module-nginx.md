@@ -3,7 +3,7 @@ title: Filebeat 修改内置 modules （nginx）
 tags: elk
 categories:
   - 开发
-  - elk
+  - 运维部署
 thumb_img: elastic.png
 date: 2019-04-12 13:39:18
 ---

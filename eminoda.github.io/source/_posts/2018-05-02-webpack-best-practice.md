@@ -1,9 +1,9 @@
 ---
-title: webpack最佳实践
+title: webpack 最佳实践
 tags: webpack
 categories:
-    - 开发
-    - 工程化
+  - 开发
+  - 前端开发
 thumb_img: webpack2.jpg
 date: 2018-05-02 22:15:17
 ---
@@ -142,8 +142,8 @@ index.html
 
 ### 未完待续 TODO
 
--   jade、pug 如何使用 html-webpack-plugin 到出文件
--   多页面配置
--   性能提升-多线程并行操作
--   性能提升-别名 alias
--   资源文件缓存策略
+- jade、pug 如何使用 html-webpack-plugin 到出文件
+- 多页面配置
+- 性能提升-多线程并行操作
+- 性能提升-别名 alias
+- 资源文件缓存策略

@@ -3,7 +3,7 @@ title: js-base-skill
 tags: js
 categories:
   - 开发
-  - js
+  - 前端开发
 thumb_img: javascript.jpg
 ---
 

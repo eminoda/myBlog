@@ -4,7 +4,7 @@ tags:
   - node
 categories:
   - 开发
-  - node
+  - 前端开发
 thumb_img: node.png
 date: 2019-04-29 16:05:01
 ---
@@ -70,18 +70,18 @@ date: 2019-04-29 16:05:01
 const fs = require('fs');
 let pList = [];
 for (let i = 0; i < 10000; i++) {
-	let pItem = function() {
-		return new Promise((resolve, reject) => {
-			fs.readdir('./services', function(err, files) {
-				if (!err) {
-					resolve(files);
-				} else {
-					reject(false);
-				}
-			});
-		});
-	};
-	pList.push(pItem());
+  let pItem = function() {
+    return new Promise((resolve, reject) => {
+      fs.readdir('./services', function(err, files) {
+        if (!err) {
+          resolve(files);
+        } else {
+          reject(false);
+        }
+      });
+    });
+  };
+  pList.push(pItem());
 }
 
 module.exports = Promise.all(pList);
@@ -93,17 +93,17 @@ module.exports = Promise.all(pList);
 const fs = require('fs');
 let pList = [];
 for (let i = 0; i < 10000; i++) {
-	let pItem = function() {
-		return new Promise((resolve, reject) => {
-			try {
-				let files = fs.readdirSync('./services');
-				resolve(files);
-			} catch (err) {
-				reject(err);
-			}
-		});
-	};
-	pList.push(pItem());
+  let pItem = function() {
+    return new Promise((resolve, reject) => {
+      try {
+        let files = fs.readdirSync('./services');
+        resolve(files);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  };
+  pList.push(pItem());
 }
 module.exports = Promise.all(pList);
 ```
@@ -116,11 +116,11 @@ const pAll = require('./callback');
 // const pAll = require('./sync');
 
 pAll.then(data => {
-	caleTime(start);
+  caleTime(start);
 });
 
 function caleTime(start) {
-	const end = new Date().getTime();
-	console.log(end - start);
+  const end = new Date().getTime();
+  console.log(end - start);
 }
 ```

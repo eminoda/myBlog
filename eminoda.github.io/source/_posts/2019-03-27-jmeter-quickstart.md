@@ -4,11 +4,10 @@ tags:
   - jmeter
 categories:
   - 开发
-  - jmeter
+  - 自动化测试
 thumb_img: jmeter.png
 date: 2019-03-27 18:17:04
 ---
-
 
 # JMeter
 

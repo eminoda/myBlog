@@ -3,8 +3,8 @@ title: flow 静态代码检查工具
 date: 2018-12-12 10:39:24
 tags: flow
 categories:
-    - 开发
-    - node
+  - 开发
+  - 前端开发
 thumb_img: flow.png
 ---
 
@@ -22,83 +22,83 @@ thumb_img: flow.png
 
 1. 安装
 
-    ```
-    npm install flow -D
-    ```
+   ```
+   npm install flow -D
+   ```
 
 2. 环境配置
 
-    package.json
+   package.json
 
-    ```
-    "scripts": {
-        "start": "rollup -c ./script/rollup.config.js --environment TARGET:dev",
-        "flow": "flow check"
-    }
-    ```
+   ```
+   "scripts": {
+       "start": "rollup -c ./script/rollup.config.js --environment TARGET:dev",
+       "flow": "flow check"
+   }
+   ```
 
-    .flowconfig 可以通过 **flow init** 生成
+   .flowconfig 可以通过 **flow init** 生成
 
-    ```
-     [ignore]
+   ```
+    [ignore]
 
-     [include]
-     ./src/.\*
+    [include]
+    ./src/.\*
 
-     [libs]
+    [libs]
 
-     [lints]
+    [lints]
 
-     [options]
+    [options]
 
-     [strict]
+    [strict]
 
-    ```
+   ```
 
 3. 配合 rollup，运行
 
-    ```
-    // 检查代码，如果Error将会输出在控台
-    npm run flow
-    // 执行rollup构建
-    npm run start
-    ```
+   ```
+   // 检查代码，如果Error将会输出在控台
+   npm run flow
+   // 执行rollup构建
+   npm run start
+   ```
 
-    rollup.config.js
+   rollup.config.js
 
-    ```js
-    const flow = require('rollup-plugin-flow-no-whitespace');
-    export default {
-    	input: './src/main.js',
-    	output: {
-    		file: './packages/output.bundle.js',
-    		format: 'cjs',
-    		name: 'test'
-    	},
-    	plugins: [flow()]
-    };
-    ```
+   ```js
+   const flow = require('rollup-plugin-flow-no-whitespace');
+   export default {
+     input: './src/main.js',
+     output: {
+       file: './packages/output.bundle.js',
+       format: 'cjs',
+       name: 'test'
+     },
+     plugins: [flow()]
+   };
+   ```
 
-    output.bundle.js 输出文件（能看到类型检查的代码被 ignore 了）
+   output.bundle.js 输出文件（能看到类型检查的代码被 ignore 了）
 
-    ```js
-    'use strict';
+   ```js
+   'use strict';
 
-    //
-    function foo(x) {
-    	if (x) {
-    		return x;
-    	}
-    	return 'default string';
-    }
+   //
+   function foo(x) {
+     if (x) {
+       return x;
+     }
+     return 'default string';
+   }
 
-    function Test() {
-    	this.name = 'test';
-    	this.say = foo();
-    }
+   function Test() {
+     this.name = 'test';
+     this.say = foo();
+   }
 
-    module.exports = Test;
-    ```
+   module.exports = Test;
+   ```
 
 ## [.flowconfig](https://flow.org/en/docs/config/)
 
@@ -158,12 +158,12 @@ concat(1, 2); // Error!
 
 ### Primitive Types 基本数据类型
 
--   Booleans - boolean
--   Strings - string
--   Numbers - number
--   null - null
--   undefined - void
--   Symbols （Flow 暂不支持）
+- Booleans - boolean
+- Strings - string
+- Numbers - number
+- null - null
+- undefined - void
+- Symbols （Flow 暂不支持）
 
 ### Maybe Types 可能的类型
 

@@ -4,10 +4,9 @@ tags:
   - http
 categories:
   - 开发
-  - 其他
+  - 前端开发
 date: 2019-02-13 18:25:11
 ---
-
 
 服务端怎么做 form 表单提交？
 
@@ -21,7 +20,7 @@ date: 2019-02-13 18:25:11
 
 ```html
 <form action="xxx" ...>
-	...
+  ...
 </form>
 ```
 
@@ -36,20 +35,20 @@ date: 2019-02-13 18:25:11
 ```html
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>platform</title>
-	</head>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>platform</title>
+  </head>
 
-	<body>
-		<form name="form1" id="form1" action="${ctx.query.url}" method="${ctx.query.method}">
-			${inputList}
-		</form>
-		<script>
-			// “自动” 提交
-			document.getElementById('form1').submit();
-		</script>
-	</body>
+  <body>
+    <form name="form1" id="form1" action="${ctx.query.url}" method="${ctx.query.method}">
+      ${inputList}
+    </form>
+    <script>
+      // “自动” 提交
+      document.getElementById('form1').submit();
+    </script>
+  </body>
 </html>
 ```
 

@@ -4,11 +4,10 @@ tags:
   - git
 categories:
   - 开发
-  - 工程化
+  - 开发工具
 comments: true
 date: 2019-08-02 09:58:48
 ---
-
 
 在码云上有个 work 的项目，每次拉取都需要输入账号/密码，很烦。
 

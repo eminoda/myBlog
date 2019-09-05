@@ -1,10 +1,10 @@
 ---
 title: egg agent 怎么通知 master 我准备好了
 tags:
-    - egg
+  - egg
 categories:
-    - 开发
-    - node
+  - 开发
+  - 前端开发
 thumb_img: egg.png
 date: 2019-02-11 13:32:13
 ---
@@ -71,7 +71,7 @@ spawn 的 eggArgs 实际会运行如下 script：
 ```js
 // egg-cluster\index.js
 exports.startCluster = function(options, callback) {
-	new Master(options).ready(callback);
+  new Master(options).ready(callback);
 };
 ```
 
@@ -95,8 +95,8 @@ agent.ready(err => {
 
 可能就会产生这几个疑问：
 
--   process.send 肯定会把 **agent-start** 发送出去，master 怎么接收到 **agent-start** 事件？
--   agent_worker fork 完后是不是默认就加载 ready 方法了？
+- process.send 肯定会把 **agent-start** 发送出去，master 怎么接收到 **agent-start** 事件？
+- agent_worker fork 完后是不是默认就加载 ready 方法了？
 
 ## EventEmitter
 
@@ -161,9 +161,9 @@ forkAgentWorker(){
 
 首先来看下 [**get-ready**](https://www.npmjs.com/package/get-ready) 有什么用？
 
--   通过 ready.mixin 将目标对象 obj 绑定到 ready 共享属性上
--   定义 obj.ready(fn)，将 fn 推到 READY_CALLBACKS 队列中
--   传入指定的 flagOrFunction 类型（true），来执行 ready 中预定义好的 READY_CALLBACKS 队列
+- 通过 ready.mixin 将目标对象 obj 绑定到 ready 共享属性上
+- 定义 obj.ready(fn)，将 fn 推到 READY_CALLBACKS 队列中
+- 传入指定的 flagOrFunction 类型（true），来执行 ready 中预定义好的 READY_CALLBACKS 队列
 
 来看下 agent 相关整个链路怎么做的：
 
@@ -266,44 +266,44 @@ start() {
 const ready = require('get-ready');
 
 class Life {
-	constructor() {
-		ready.mixin(this);
-	}
-	start(fn) {
-		this.ready = fn;
-		this.ready(true);
-	}
+  constructor() {
+    ready.mixin(this);
+  }
+  start(fn) {
+    this.ready = fn;
+    this.ready(true);
+  }
 }
 
 class Core {
-	constructor() {
-		this.lifecycle = new Life();
-	}
-	ready(fn) {
-		return this.lifecycle.start(fn);
-	}
+  constructor() {
+    this.lifecycle = new Life();
+  }
+  ready(fn) {
+    return this.lifecycle.start(fn);
+  }
 }
 class Agent extends Core {
-	constructor() {
-		super();
-	}
+  constructor() {
+    super();
+  }
 }
 
 class Master {
-	constructor() {
-		ready.mixin(this);
-		this.ready(() => {
-			console.log('master ready');
-		});
-		// this.ready(true);
-		this.callAgent();
-	}
-	callAgent() {
-		const agent = new Agent();
-		agent.ready(err => {
-			console.log('agent ready');
-		});
-	}
+  constructor() {
+    ready.mixin(this);
+    this.ready(() => {
+      console.log('master ready');
+    });
+    // this.ready(true);
+    this.callAgent();
+  }
+  callAgent() {
+    const agent = new Agent();
+    agent.ready(err => {
+      console.log('agent ready');
+    });
+  }
 }
 new Master().ready(undefined); //agent ready
 ```

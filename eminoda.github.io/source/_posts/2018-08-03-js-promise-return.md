@@ -1,10 +1,10 @@
 ---
 title: prmoise 返回遇到个问题
 tags:
-    - js
+  - js
 categories:
-    - 开发
-    - js
+  - 开发
+  - 前端开发
 no_sketch: true
 date: 2018-08-03 23:37:36
 ---
@@ -13,10 +13,10 @@ date: 2018-08-03 23:37:36
 
 ```js
 test('book>>saveBook', () => {
-	expect.assertions(1);
-	return spiderService.getBookBasicInfo().then(data => {
-		expect(data).not.toBeNull();
-	});
+  expect.assertions(1);
+  return spiderService.getBookBasicInfo().then(data => {
+    expect(data).not.toBeNull();
+  });
 });
 ```
 

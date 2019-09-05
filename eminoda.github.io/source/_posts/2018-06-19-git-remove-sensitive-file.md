@@ -2,8 +2,8 @@
 title: git 隐藏敏感文件
 tags: git
 categories:
-    - 开发
-    - 工程化
+  - 开发
+  - 开发工具
 no_sketch: true
 date: 2018-06-19 13:49:46
 ---
@@ -71,6 +71,6 @@ To https://github.com/eminoda/NextInnovation
 
 # 参考
 
--   [git-filter-branch 使用场景说明](https://git-scm.com/book/zh/v2/Git-内部原理-维护与数据恢复)
--   [git filter branch](https://blog.csdn.net/lwfcgz/article/details/49453375)
--   [github 处理敏感文件](https://help.github.com/articles/removing-sensitive-data-from-a-repository/)
+- [git-filter-branch 使用场景说明](https://git-scm.com/book/zh/v2/Git-内部原理-维护与数据恢复)
+- [git filter branch](https://blog.csdn.net/lwfcgz/article/details/49453375)
+- [github 处理敏感文件](https://help.github.com/articles/removing-sensitive-data-from-a-repository/)

@@ -3,11 +3,10 @@ title: jenkins 执行脚本成功，但进程未启动
 tags: jenkins
 categories:
   - 开发
-  - 工程化
+  - 运维部署
 thumb_img: jenkins.png
 date: 2019-02-13 18:25:27
 ---
-
 
 记录个问题，jenkins 成功执行了脚本，但是后台却未见服务进程。
 

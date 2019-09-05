@@ -2,8 +2,8 @@
 title: 初识 jenkins
 tags: jenkins
 categories:
-    - 开发
-    - 工程化
+  - 开发
+  - 运维部署
 date: 2018-04-27 10:58:57
 thumb_img: jenkins.png
 ---
@@ -18,11 +18,11 @@ thumb_img: jenkins.png
 
 ### 核心点
 
--   减少风险
--   减少重复过程
--   任何时间、任何地点生成可部署的软件
--   增强项目的可见性
--   建立团队对开发产品的信心
+- 减少风险
+- 减少重复过程
+- 任何时间、任何地点生成可部署的软件
+- 增强项目的可见性
+- 建立团队对开发产品的信心
 
 ## [什么是 jenkins？](https://jenkins.io/doc/#what-is-jenkins)
 

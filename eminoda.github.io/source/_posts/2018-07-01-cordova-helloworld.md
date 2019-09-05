@@ -2,8 +2,8 @@
 title: 使用 cordova 接触混合开发大门
 tags: cordova
 categories:
-    - 开发
-    - 混合开发
+  - 开发
+  - 前端开发
 thumb_img: cordova.png
 date: 2018-07-01 23:53:53
 ---
@@ -17,21 +17,21 @@ date: 2018-07-01 23:53:53
 
 ## 特点
 
--   跨平台重用代码
-    支持多个平台，android、ios...
--   支持离线场景应用
-    暂时不知道干什么用，可能类似 PWA 这些功能，ws 之类。
--   访问设备原生 API
-    不多说，肯定能调用原生 App 的 SDK。不然还要转个安卓环境干嘛，只是支持到什么程度。
+- 跨平台重用代码
+  支持多个平台，android、ios...
+- 支持离线场景应用
+  暂时不知道干什么用，可能类似 PWA 这些功能，ws 之类。
+- 访问设备原生 API
+  不多说，肯定能调用原生 App 的 SDK。不然还要转个安卓环境干嘛，只是支持到什么程度。
 
 ## 还有哪些可以做混合开发
 
--   phoneGap
-    更古老的技术，网上说被收购了，然后其核心就是 Cordova。
--   ReactNative
-    不太喜欢非人类的 JSX，看了 React 一个 Demo 就没什么兴趣了
--   Weex
-    阿里大厂的 KPI 作品，也是造轮子，不过应该尝试下。
+- phoneGap
+  更古老的技术，网上说被收购了，然后其核心就是 Cordova。
+- ReactNative
+  不太喜欢非人类的 JSX，看了 React 一个 Demo 就没什么兴趣了
+- Weex
+  阿里大厂的 KPI 作品，也是造轮子，不过应该尝试下。
 
 # 如何开始一个 HelloWorld
 
@@ -54,12 +54,12 @@ date: 2018-07-01 23:53:53
 
 3. 建个项目
 
--   了解默认模板常见的 project 的结构
-    {% asset_img project.png %}
--   配置 AVD，后续 Cordova 会用到（当然可以使用 Cordova-cli，可惜第一次接触嫌麻烦，暂时没看）
-    {% asset_img version.png %}
-    注意版本，如果过高可能使用 Cordova 会出现一些错误。
-    {% asset_img error.png %}
+- 了解默认模板常见的 project 的结构
+  {% asset_img project.png %}
+- 配置 AVD，后续 Cordova 会用到（当然可以使用 Cordova-cli，可惜第一次接触嫌麻烦，暂时没看）
+  {% asset_img version.png %}
+  注意版本，如果过高可能使用 Cordova 会出现一些错误。
+  {% asset_img error.png %}
 
 ## [Cordova](http://cordova.apache.org/docs/en/latest/guide/cli/index.html)
 

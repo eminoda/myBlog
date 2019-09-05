@@ -3,7 +3,7 @@ title: css 水平和垂直居中的几种方式
 tags: css
 categories:
   - 开发
-  - css
+  - 前端开发
 thumb_img: css.png
 date: 2019-04-12 00:00:32
 ---

@@ -1,11 +1,11 @@
 ---
 title: node 和 java 性能对比
 tags:
-    - 测试
-    - ab
+  - 测试
+  - ab
 categories:
-    - 开发
-    - 测试
+  - 开发
+  - 前端开发
 date: 2018-11-08 17:33:36
 thumb_img: node.png
 ---
@@ -40,20 +40,20 @@ thumb_img: node.png
 
 ```js
 router.all('/api/java', async function(ctx, next) {
-	let uid = ctx.cookies.get('uid');
-	// request代理给后端java API接口
-	ctx.body = await new Http({ ctx }).request({
-		url: '/user/getbalance'
-	});
+  let uid = ctx.cookies.get('uid');
+  // request代理给后端java API接口
+  ctx.body = await new Http({ ctx }).request({
+    url: '/user/getbalance'
+  });
 });
 ```
 
 ```js
 router.all('/api/node', async function(ctx, next) {
-	let uid = ctx.cookies.get('uid');
-	// 通过sequelize从mysql查询
-	let data = await Promise.all([user.balance(uid), user.integral(uid), user.coupon(uid), user.memberProp(uid)]);
-	ctx.body = data;
+  let uid = ctx.cookies.get('uid');
+  // 通过sequelize从mysql查询
+  let data = await Promise.all([user.balance(uid), user.integral(uid), user.coupon(uid), user.memberProp(uid)]);
+  ctx.body = data;
 });
 ```
 
@@ -154,6 +154,6 @@ file locks                      (-x) unlimited
 
 # 参考
 
--   [linux 命令](http://man.linuxde.net/sysctl)
--   [sysctl](https://www.cnblogs.com/felixzh/p/8295471.html)
--   [ulimit](https://blog.csdn.net/hexuan1/article/details/45191549)
+- [linux 命令](http://man.linuxde.net/sysctl)
+- [sysctl](https://www.cnblogs.com/felixzh/p/8295471.html)
+- [ulimit](https://blog.csdn.net/hexuan1/article/details/45191549)

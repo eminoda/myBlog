@@ -3,7 +3,7 @@ title: SEO 黑帽那些事
 tags: seo
 categories:
   - 开发
-  - seo
+  - 前端开发
 ---
 
 一直想了解 SEO，尤其市场那些人老是在说 **白帽**、**黑帽**，现在有空就参考很早前收藏的一篇 blog [黑帽 SEO 剖析之手法篇](https://thief.one/2017/09/28/1/)，想了解更多可以直接去看这篇 blog。

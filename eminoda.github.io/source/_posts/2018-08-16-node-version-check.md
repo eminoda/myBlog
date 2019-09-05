@@ -1,10 +1,10 @@
 ---
 title: node 版本升级还需谨慎
 tags:
-    - node
+  - node
 categories:
-    - 开发
-    - node
+  - 开发
+  - 前端开发
 no_sketch: true
 date: 2018-08-16 19:29:46
 ---

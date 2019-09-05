@@ -1,10 +1,10 @@
 ---
-title: git merge分支遇到的奇葩现象
+title: git merge 分支遇到的奇葩现象
 tags:
-    - git
+  - git
 categories:
-    - 开发
-    - 工程化
+  - 开发
+  - 开发工具
 comments: true
 date: 2018-01-24 13:39:43
 ---

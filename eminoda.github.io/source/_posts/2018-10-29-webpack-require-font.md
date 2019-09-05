@@ -1,9 +1,9 @@
 ---
-title: webpack 中使用sass-loader 如何正确加载font字体
+title: webpack 中使用 sass-loader 如何正确加载 font 字体
 tags: webpack
 categories:
-    - 开发
-    - 工程化
+  - 开发
+  - 前端开发
 thumb_img: webpack.png
 date: 2018-10-29 17:27:44
 ---
@@ -95,8 +95,8 @@ iconfont.scss // success
 
 官方其实给出了 2 个方案：
 
--   Add the missing url rewriting using the resolve-url-loader. Place it before the sass-loader in the loader chain.
--   Library authors usually provide a variable to modify the asset path. bootstrap-sass for example has an \$icon-font-path. Check out this working bootstrap example.
+- Add the missing url rewriting using the resolve-url-loader. Place it before the sass-loader in the loader chain.
+- Library authors usually provide a variable to modify the asset path. bootstrap-sass for example has an \$icon-font-path. Check out this working bootstrap example.
 
 具体什么含义，可以参考 webpack 中文社区的解释。[https://webpack.docschina.org/loaders/sass-loader/](https://webpack.docschina.org/loaders/sass-loader/)
 

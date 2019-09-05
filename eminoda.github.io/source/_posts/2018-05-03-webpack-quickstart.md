@@ -1,9 +1,9 @@
 ---
-title: webpack快速入门
+title: webpack 快速入门
 tags: webpack
 categories:
-    - 开发
-    - 工程化
+  - 开发
+  - 前端开发
 thumb_img: webpack.jpg
 date: 2018-05-03 16:11:17
 ---
@@ -48,108 +48,108 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
-	// 全局作用域
-	context: __dirname,
-	// 模块入口
-	entry: {
-		index: './src/index.js'
-	},
-	// 文件输出
-	output: {
-		filename: '[name].bundle.js', //多个chunk
-		path: path.resolve(__dirname, 'dist'), //输出路径
-		publicPath: process.env.NODE_ENV === 'production' ? 'http://cdn.foo.com/assets' : '/' //资源文件设置CDN路径
-	},
-	// loader模块加载处理
-	module: {
-		rules: [
-			{
-				// 代码检查
-				test: /\.js$/, //匹配哪些文件
-				loader: 'eslint-loader',
-				enforce: 'pre', //前置loader
-				exclude: /(node_modules|libs)/, //排除路径
-				options: {
-					emitError: true,
-					emitWarning: true
-				}
-			},
-			{
-				// es6编译
-				test: /\.js$/,
-				exclude: /(node_modules|bower_components)/,
-				use: {
-					loader: 'babel-loader',
-					options: {
-						presets: ['env']
-					}
-				}
-			},
-			{
-				// 图片
-				test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-				loader: 'url-loader',
-				options: {
-					limit: 8000, //限制大小
-					name: 'static/images/[name].[hash:7].[ext]'
-				}
-			},
-			{
-				// 字体文件导出
-				test: /\.(woff|eot|ttf|svg)(\?.*)?$/,
-				loader: 'url-loader',
-				options: {
-					// fallback: 'file-loader',// file-loader已集成到url-loader中
-					limit: 10,
-					name: 'static/fonts/[name].[hash:7].[ext]'
-				}
-			},
-			{
-				// css预编译
-				test: /\.scss$/,
-				// 使用插件
-				use: ExtractTextPlugin.extract({
-					fallback: 'style-loader',
-					use: [
-						{
-							loader: 'css-loader' // translates CSS into CommonJS
-						},
-						{
-							loader: 'resolve-url-loader' // 解决Sass Bug
-						},
-						{
-							loader: 'sass-loader?sourceMap' // compiles Sass to CSS
-						}
-					]
-				})
-			}
-		]
-	},
-	// 插件
-	plugins: [
-		// 删除旧文件
-		new CleanWebpackPlugin(['dist'], {
-			root: __dirname,
-			verbose: true
-		}),
-		// html导出
-		new HtmlWebpackPlugin({
-			title: 'Development',
-			filename: 'index.html',
-			template: 'index.html'
-		}),
-		// css导出
-		new ExtractTextPlugin('[name].[hash:7].css')
-	],
-	// source map 生成方式
-	devtool: 'inline-source-map',
-	// 本地服务
-	devServer: {
-		contentBase: path.join(__dirname, 'dist'),
-		compress: false,
-		port: 4200,
-		open: false
-	}
+  // 全局作用域
+  context: __dirname,
+  // 模块入口
+  entry: {
+    index: './src/index.js'
+  },
+  // 文件输出
+  output: {
+    filename: '[name].bundle.js', //多个chunk
+    path: path.resolve(__dirname, 'dist'), //输出路径
+    publicPath: process.env.NODE_ENV === 'production' ? 'http://cdn.foo.com/assets' : '/' //资源文件设置CDN路径
+  },
+  // loader模块加载处理
+  module: {
+    rules: [
+      {
+        // 代码检查
+        test: /\.js$/, //匹配哪些文件
+        loader: 'eslint-loader',
+        enforce: 'pre', //前置loader
+        exclude: /(node_modules|libs)/, //排除路径
+        options: {
+          emitError: true,
+          emitWarning: true
+        }
+      },
+      {
+        // es6编译
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['env']
+          }
+        }
+      },
+      {
+        // 图片
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 8000, //限制大小
+          name: 'static/images/[name].[hash:7].[ext]'
+        }
+      },
+      {
+        // 字体文件导出
+        test: /\.(woff|eot|ttf|svg)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          // fallback: 'file-loader',// file-loader已集成到url-loader中
+          limit: 10,
+          name: 'static/fonts/[name].[hash:7].[ext]'
+        }
+      },
+      {
+        // css预编译
+        test: /\.scss$/,
+        // 使用插件
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader' // translates CSS into CommonJS
+            },
+            {
+              loader: 'resolve-url-loader' // 解决Sass Bug
+            },
+            {
+              loader: 'sass-loader?sourceMap' // compiles Sass to CSS
+            }
+          ]
+        })
+      }
+    ]
+  },
+  // 插件
+  plugins: [
+    // 删除旧文件
+    new CleanWebpackPlugin(['dist'], {
+      root: __dirname,
+      verbose: true
+    }),
+    // html导出
+    new HtmlWebpackPlugin({
+      title: 'Development',
+      filename: 'index.html',
+      template: 'index.html'
+    }),
+    // css导出
+    new ExtractTextPlugin('[name].[hash:7].css')
+  ],
+  // source map 生成方式
+  devtool: 'inline-source-map',
+  // 本地服务
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    compress: false,
+    port: 4200,
+    open: false
+  }
 };
 ```
 
@@ -180,11 +180,11 @@ entry: {
 
 ### [output](https://webpack.js.org/configuration/output/)
 
--   filename
-    可以根据需求，定义不同的变量，以下几个变量在不同需求场景使用不同。
-    {% asset_img example-1.png %}
--   publicPath
-    定义一个类似 CDN 的域名，然后你可以资源文件（image，fonts...）丢上去，比如你 nginx 有个 cache 的目录，配合 hash，你也不用担心每次构建的缓存问题，是不是很方便。
+- filename
+  可以根据需求，定义不同的变量，以下几个变量在不同需求场景使用不同。
+  {% asset_img example-1.png %}
+- publicPath
+  定义一个类似 CDN 的域名，然后你可以资源文件（image，fonts...）丢上去，比如你 nginx 有个 cache 的目录，配合 hash，你也不用担心每次构建的缓存问题，是不是很方便。
 
 ### [module](https://webpack.js.org/configuration/module/)
 
@@ -212,16 +212,16 @@ module: {
 
 上面例子中用的 Loaders：
 
--   eslint-loader 代码审查
--   babel-loader es6 编译-->es5
--   url-loader&file-loader 对资源文件 base64 编译，或者超出预定大小，导出到指定目录
--   style-loader&css-loader&sass-loader css 编译使用的一套 comb
+- eslint-loader 代码审查
+- babel-loader es6 编译-->es5
+- url-loader&file-loader 对资源文件 base64 编译，或者超出预定大小，导出到指定目录
+- style-loader&css-loader&sass-loader css 编译使用的一套 comb
 
 ### [plugins](https://webpack.js.org/configuration/plugins/)
 
 解决光使用 Loader 无法完成的一些事情
 上面例子中用的 plugins：
 
--   clean-webpack-plugin 清除项目旧文件
--   html-webpack-plugin 将 entry 的 module 导入到指定 html
--   extract-text-webpack-plugin 将 css 从 js 中导出，html 中引入
+- clean-webpack-plugin 清除项目旧文件
+- html-webpack-plugin 将 entry 的 module 导入到指定 html
+- extract-text-webpack-plugin 将 css 从 js 中导出，html 中引入

@@ -1,10 +1,10 @@
 ---
 title: Node 页面模板之 Nunjucks
 tags:
-    - nunjucks
+  - nunjucks
 categories:
-    - 开发
-    - node
+  - 开发
+  - 前端开发
 thumb_img: nunjucks.png
 date: 2018-09-06 15:46:51
 ---
@@ -16,11 +16,11 @@ date: 2018-09-06 15:46:51
 
 # 为何选择 nunjuks？
 
--   mozilla 项目
--   有完善的文档，简约设计，详细 API，还有 **中文版本**
--   模板 html 风格。不像 jade 那么重视严谨的缩进
--   包含主流模板功能。继承、过滤器、逻辑判断、循环...
--   可支持到 IE8
+- mozilla 项目
+- 有完善的文档，简约设计，详细 API，还有 **中文版本**
+- 模板 html 风格。不像 jade 那么重视严谨的缩进
+- 包含主流模板功能。继承、过滤器、逻辑判断、循环...
+- 可支持到 IE8
 
 # nunjuck 常用 API
 
@@ -93,14 +93,14 @@ child.njk
 
 ## [标签 Tag](https://mozilla.github.io/nunjucks/templating.html#tags)
 
--   if
--   for
--   set
--   extends
--   block
--   include
--   filter
--   ...
+- if
+- for
+- set
+- extends
+- block
+- include
+- filter
+- ...
 
 ## 注释 Comments
 
@@ -112,10 +112,10 @@ child.njk
 
 1. 逻辑 Logic
 
--   and
--   or
--   not **注意没有!foo 这样的判断**
--   组合
+- and
+- or
+- not **注意没有!foo 这样的判断**
+- 组合
 
 ```
 {% if users and showUsers %}...{% endif %}
@@ -140,11 +140,11 @@ const env = nunjucksService.createEnvironment(path.join(__dirname, 'views'), {})
 nunjucksService.setFilter(env);
 // 设置njk中间件，以适应koa模式
 app.use(
-	nunjucksService.createMiddleware({
-		env: env,
-		ext: '.html',
-		path: path.join(__dirname, 'views')
-	})
+  nunjucksService.createMiddleware({
+    env: env,
+    ext: '.html',
+    path: path.join(__dirname, 'views')
+  })
 );
 ```
 
@@ -155,28 +155,28 @@ const bluebird = require('bluebird');
 const path = require('path');
 const nunjucks = require('nunjucks');
 module.exports = {
-	// 创建环境
-	createEnvironment: function(path, options) {
-		return new nunjucks.Environment(
-			// 由于基于node，所以要建立一个文件系统体系
-			new nunjucks.FileSystemLoader(path, options)
-		);
-	},
-	// 模板渲染中间件
-	createMiddleware: function(options) {
-		options.env.renderAsync = bluebird.promisify(options.env.render);
-		return async (ctx, next) => {
-			ctx.render = async (view, data) => {
-				view += options.ext || '.html';
-				// 将ctx的data数据，交给njk render
-				return options.env.renderAsync(path.resolve(options.path, view), data).then(html => {
-					ctx.type = 'html';
-					ctx.body = html;
-				});
-			};
-			await next();
-		};
-	}
+  // 创建环境
+  createEnvironment: function(path, options) {
+    return new nunjucks.Environment(
+      // 由于基于node，所以要建立一个文件系统体系
+      new nunjucks.FileSystemLoader(path, options)
+    );
+  },
+  // 模板渲染中间件
+  createMiddleware: function(options) {
+    options.env.renderAsync = bluebird.promisify(options.env.render);
+    return async (ctx, next) => {
+      ctx.render = async (view, data) => {
+        view += options.ext || '.html';
+        // 将ctx的data数据，交给njk render
+        return options.env.renderAsync(path.resolve(options.path, view), data).then(html => {
+          ctx.type = 'html';
+          ctx.body = html;
+        });
+      };
+      await next();
+    };
+  }
 };
 ```
 
@@ -197,22 +197,22 @@ router.get('/', async (ctx, next) => {
 ```js
 const views = require('koa-views');
 app.use(
-	views(__dirname + '/views', {
-		// 指定模板引擎，default 同extension
-		map: {
-			suffix: 'nunjucks'
-		},
-		extension: 'nunjucks', //模板后缀,default html
-		options: {
-			nunjucks: {
-				configure: [
-					path.resolve(__dirname, 'views'),
-					{
-						noCache: false
-					}
-				]
-			}
-		}
-	})
+  views(__dirname + '/views', {
+    // 指定模板引擎，default 同extension
+    map: {
+      suffix: 'nunjucks'
+    },
+    extension: 'nunjucks', //模板后缀,default html
+    options: {
+      nunjucks: {
+        configure: [
+          path.resolve(__dirname, 'views'),
+          {
+            noCache: false
+          }
+        ]
+      }
+    }
+  })
 );
 ```

@@ -2,8 +2,8 @@
 title: http 运营商劫持
 tags: http
 categories:
-    - 开发
-    - 其他
+  - 开发
+  - 前端开发
 no_sketch: true
 date: 2018-08-17 14:21:21
 ---
@@ -48,48 +48,48 @@ sinaweibo://cardlist?containerid=102803&luicode=10000404&lfid=yunyi_9999_005
 
 目前大致发现 2 种方式的劫持
 
--   iframe 嵌套。运营商会把我们网站嵌套于 iframe 下，在 iframe 外添加广告浮窗内容
--   body 注入广告代码。查看问题页面源码，会莫名多出非本站的 html 标签，或者引入了第三方 script
+- iframe 嵌套。运营商会把我们网站嵌套于 iframe 下，在 iframe 外添加广告浮窗内容
+- body 注入广告代码。查看问题页面源码，会莫名多出非本站的 html 标签，或者引入了第三方 script
 
 解决流程（伪代码）
 
 ```js
 // 判断父子窗口的location
 if (window.self != window.top) {
-	// 非本站地址
-	if (!whiteList) {
-		// 标记hijack flag
-		// 重定向，正确地址
-	}
+  // 非本站地址
+  if (!whiteList) {
+    // 标记hijack flag
+    // 重定向，正确地址
+  }
 }
 
 // 判断script标签
 let sTag = document.getElementsByTagName('script');
 // script标签不是白名单维护
 if (sTag != whiteList) {
-	// 标记hijack flag
+  // 标记hijack flag
 }
 
 // 判断body异常注入html
 // 可以使用MutationObserver来判断
 var targetNode = document.getElementById('bodyAll');
 var observer = new MutationObserver(function(mutationsList) {
-	for (var mutation of mutationsList) {
-		if (mutation.type == 'childList') {
-			// A child node has been added or removed.
-			// mutation.addedNodes 获取添加的Node信息
-			console.log(mutation.addedNodes[0]);
-			// 判断是否非法
-			// 标记hijack flag
-		} else if (mutation.type == 'attributes') {
-			console.log('The ' + mutation.attributeName + ' attribute was modified.');
-		}
-	}
+  for (var mutation of mutationsList) {
+    if (mutation.type == 'childList') {
+      // A child node has been added or removed.
+      // mutation.addedNodes 获取添加的Node信息
+      console.log(mutation.addedNodes[0]);
+      // 判断是否非法
+      // 标记hijack flag
+    } else if (mutation.type == 'attributes') {
+      console.log('The ' + mutation.attributeName + ' attribute was modified.');
+    }
+  }
 });
 observer.observe(targetNode, {
-	attributes: true,
-	childList: true,
-	subtree: true
+  attributes: true,
+  childList: true,
+  subtree: true
 });
 ```
 

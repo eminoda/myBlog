@@ -1,11 +1,11 @@
 ---
 title: Restful 最佳实践
 tags:
-    - restful
-    - http
+  - restful
+  - http
 categories:
-    - 开发
-    - node
+  - 开发
+  - 前端开发
 thumb_img: restful.png
 date: 2018-08-24 15:58:11
 ---
@@ -24,11 +24,11 @@ restful（Representational State Transfer）近年来听到的次数逐渐增多
 
 这是 rest 最明显的特点，通过 Http 请求方法来判断**同一资源**的不同操作方式的展现。
 
--   同一资源在不同 http method 实现不同需求
--   接口最好用复数
--   **资源获取**（users，products）以名词代替动词
--   **非资源**（calc...）以动词定义
--   接口以资源定义，不要按照功能语义功能
+- 同一资源在不同 http method 实现不同需求
+- 接口最好用复数
+- **资源获取**（users，products）以名词代替动词
+- **非资源**（calc...）以动词定义
+- 接口以资源定义，不要按照功能语义功能
 
 切记不要使用如下方式：
 
@@ -57,12 +57,12 @@ restful（Representational State Transfer）近年来听到的次数逐渐增多
 
 同一接口在不同的 method 下，不同错误处理，返回的状态码不同。
 
--   200 OK
--   400 Bad Request
--   401 Unauthorized
--   404 Not Found
--   403 Forbidden
--   500 Internal Server Error
+- 200 OK
+- 400 Bad Request
+- 401 Unauthorized
+- 404 Not Found
+- 403 Forbidden
+- 500 Internal Server Error
 
 ## 版本控制
 
@@ -76,10 +76,10 @@ HATEOAS(hypermedia as the engine of application state)
 整个 rest 构建的服务，以超文本作为应用状态来驱动。客户端对资源的获取渐进式的方式按需获取。
 {% asset_img HATEOAS.png HATEOAS %}
 
--   第一个层次（Level 0）的 Web 服务只是使用 HTTP 作为传输方式，实际上只是远程方法调用（RPC）的一种具体形式。SOAP 和 XML-RPC 都属于此类。
--   第二个层次（Level 1）的 Web 服务引入了资源的概念。每个资源有对应的标识符和表达。
--   第三个层次（Level 2）的 Web 服务使用不同的 HTTP 方法来进行不同的操作，并且使用 HTTP 状态码来表示不同的结果。如 HTTP GET 方法来获取资源，HTTP DELETE 方法来删除资源。
--   第四个层次（Level 3）的 Web 服务使用 HATEOAS。在资源的表达中包含了链接信息。客户端可以根据链接来发现可以执行的动作。
+- 第一个层次（Level 0）的 Web 服务只是使用 HTTP 作为传输方式，实际上只是远程方法调用（RPC）的一种具体形式。SOAP 和 XML-RPC 都属于此类。
+- 第二个层次（Level 1）的 Web 服务引入了资源的概念。每个资源有对应的标识符和表达。
+- 第三个层次（Level 2）的 Web 服务使用不同的 HTTP 方法来进行不同的操作，并且使用 HTTP 状态码来表示不同的结果。如 HTTP GET 方法来获取资源，HTTP DELETE 方法来删除资源。
+- 第四个层次（Level 3）的 Web 服务使用 HATEOAS。在资源的表达中包含了链接信息。客户端可以根据链接来发现可以执行的动作。
 
 定义了 4 个 level，不过我们大多停留在 0,1 级，说白了就是不规范的 rest
 

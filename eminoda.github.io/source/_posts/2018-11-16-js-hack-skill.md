@@ -2,8 +2,8 @@
 title: js 那些"奇技淫巧"
 tags: js
 categories:
-    - 开发
-    - js
+  - 开发
+  - 前端开发
 thumb_img: javascript.jpg
 date: 2018-11-16 17:07:14
 ---
@@ -28,12 +28,12 @@ Math 对象提供简单的数学计算，但对于保留小数做四舍五入等
 
 ```js
 function round(num, digit = 2) {
-	let unit = 10;
-	let extend = 10;
-	for (var i = 1; i < digit; i++) {
-		extend = extend * unit;
-	}
-	return Math.round(num * extend) / extend;
+  let unit = 10;
+  let extend = 10;
+  for (var i = 1; i < digit; i++) {
+    extend = extend * unit;
+  }
+  return Math.round(num * extend) / extend;
 }
 round(1.12945, 2); //1.13
 ```
@@ -113,10 +113,10 @@ var copy = Object.assign(obj, obj1);// { a: 2, b: 3 }
 
 ```js
 var obj1 = {
-	a: 0,
-	b: {
-		c: 0
-	}
+  a: 0,
+  b: {
+    c: 0
+  }
 };
 var obj2 = Object.assign({}, obj1); //merge 空对象{}和obj1
 
@@ -135,9 +135,9 @@ console.log(obj2); //{ a: 0, b: { c: 3 } }
 
 其他
 
--   原型链上的属性不会被 copy
--   非 enumerable 类型的属性不会被 copy
--   IE 需要注意兼容
+- 原型链上的属性不会被 copy
+- 非 enumerable 类型的属性不会被 copy
+- IE 需要注意兼容
 
 # 除了 apply、call，bind 某些地方更适合
 
@@ -193,7 +193,7 @@ console.log(userGetName2()); //aaaa
 ```
 
 2. 偏函数
-    > 使一个函数拥有预设的初始参数。这些参数（如果有的话）作为 bind()的第二个参数跟在 this（或其他对象）后面，之后它们会被插入到目标函数的参数列表的开始位置，传递给绑定函数的参数会跟在它们的后面。
+   > 使一个函数拥有预设的初始参数。这些参数（如果有的话）作为 bind()的第二个参数跟在 this（或其他对象）后面，之后它们会被插入到目标函数的参数列表的开始位置，传递给绑定函数的参数会跟在它们的后面。
 
 ```
 function argumentsChangeArray() {
@@ -241,10 +241,10 @@ arr.reduce(callback,[initialValue])
 
 callback
 
--   accumulator: 累计器，return 上一次结果
--   currentValue：当前处理值
--   currentIndex：当前处理的索引
--   array：正在调用的数据
+- accumulator: 累计器，return 上一次结果
+- currentValue：当前处理值
+- currentIndex：当前处理的索引
+- array：正在调用的数据
 
 initialValue：初始值，默认为 arr 的第一位元素
 
@@ -253,9 +253,9 @@ initialValue：初始值，默认为 arr 的第一位元素
 ```js
 const array1 = [1, 2, 3, 4];
 const reducer = function(accumulator, currentValue, index) {
-	console.log(`第${index}调用---`);
-	console.log(`accumulator:${accumulator},currentValue:${currentValue}`);
-	return accumulator + currentValue;
+  console.log(`第${index}调用---`);
+  console.log(`accumulator:${accumulator},currentValue:${currentValue}`);
+  return accumulator + currentValue;
 };
 // 1 + 2 + 3 + 4
 console.log(array1.reduce(reducer)); //10
@@ -302,19 +302,19 @@ console.log(global.getAge()); //age
 ```js
 // 缓存策略
 function cached(fn) {
-	const cache = Object.create(null);
-	return function cachedFn(str) {
-		const hit = cache[str];
-		if (hit) {
-			console.log('got hit');
-		}
-		// 缓存中是否命中，未缓存则根据 fn 创建缓存方法
-		return hit || (cache[str] = fn(str));
-	};
+  const cache = Object.create(null);
+  return function cachedFn(str) {
+    const hit = cache[str];
+    if (hit) {
+      console.log('got hit');
+    }
+    // 缓存中是否命中，未缓存则根据 fn 创建缓存方法
+    return hit || (cache[str] = fn(str));
+  };
 }
 const camelizeRE = /-(\w)/g;
 let camelize = cached(function(str) {
-	return str.replace(camelizeRE, (_, c) => (c ? c.toUpperCase() : ''));
+  return str.replace(camelizeRE, (_, c) => (c ? c.toUpperCase() : ''));
 });
 
 camelize('abc-abc'); //"abcAbc"
@@ -325,8 +325,8 @@ camelize('abc-abc'); // got hit "abcAbc"
 
 # 参考来源
 
--   [mozilla](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference)
--   [逗号操作符 & (0, function)()](https://www.jianshu.com/p/cd188bda72df)
--   [void 0 & undefined](https://github.com/hanzichi/underscore-analysis/issues/1)
--   [apply call bind](http://web.jobbole.com/83642/)
--   [JavaScript 专题之偏函数](https://github.com/mqyqingfeng/Blog/issues/43)
+- [mozilla](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference)
+- [逗号操作符 & (0, function)()](https://www.jianshu.com/p/cd188bda72df)
+- [void 0 & undefined](https://github.com/hanzichi/underscore-analysis/issues/1)
+- [apply call bind](http://web.jobbole.com/83642/)
+- [JavaScript 专题之偏函数](https://github.com/mqyqingfeng/Blog/issues/43)

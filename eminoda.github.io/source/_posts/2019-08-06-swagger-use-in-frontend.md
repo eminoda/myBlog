@@ -3,11 +3,10 @@ title: Swagger 在前端的使用
 tags: eslint
 categories:
   - 开发
-  - 工程化
+  - 前端开发
 thumb_img: swagger.png
 date: 2019-08-06 18:23:59
 ---
-
 
 一直游走于客户端开发，服务端没怎么涉及。之前团队有过这样的议题：Rap2 vs Swagger 哪个好？我真不知道怎么回答，因为没用过两者。
 

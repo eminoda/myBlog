@@ -3,11 +3,10 @@ title: Elasticsearch Document 文档操作
 tags: elk
 categories:
   - 开发
-  - elk
+  - 运维部署
 thumb_img: elastic.png
 date: 2019-07-05 16:37:22
 ---
-
 
 ## [Reading and Writing documents](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html#_introduction)
 

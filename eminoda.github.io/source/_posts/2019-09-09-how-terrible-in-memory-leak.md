@@ -9,7 +9,6 @@ thumb_img: node.png
 date: 2019-09-09 18:21:29
 ---
 
-
 线上环境居然遇到了内存泄露，经过 3 天的摸索，算是解决了：
 
 > 更换 pm2 版本，由 v3.5.1 降为 v3.4.1
@@ -18,7 +17,7 @@ date: 2019-09-09 18:21:29
 
 ## 前言（鼓励）
 
-有幸，我这次有充足的时间去排查，没有其他事情干扰。但线上出现**内存泄漏**，解决起来比业务代码 bug 更难解决，那种头皮发麻的难受。
+有幸，我这次有充足的时间去排查，没有其他事情干扰。但线上出现**内存泄漏**，解决起来比业务代码 bug 更难解决，那种头皮发麻的难受。原因如下：
 
 - 项目代码复杂。排查“泄漏点”，犹如大海捞针
 - 开放的前端模式。顾及不暇的 node_modules 模块
@@ -35,15 +34,15 @@ date: 2019-09-09 18:21:29
 - 闭包
 - ...
 
-其实不管什么原因，主要还是 **各种引用** 得不到 V8 GC 的释放。如下，扔一段很经典的代码：
+Anyway，其实不管什么原因，主要还是 **各种引用** 得不到 V8 GC 的释放。扔一段很经典的代码：
 
 ```js
 function calc(data) {
-  return Math.round((data / 1024 / 1024) * 100) / 100 + ' MB';
+  return Math.round((data / 1024 / 1024) * 100) / 100 + " MB";
 }
 function logger() {
   let mem = process.memoryUsage();
-  console.log(new Date(), 'memory now:', calc(mem.rss));
+  console.log(new Date(), "memory now:", calc(mem.rss));
 }
 var theThing = null;
 var replaceThing = function() {
@@ -51,21 +50,23 @@ var replaceThing = function() {
   var originalThing = theThing;
   var unused = function foo() {
     if (originalThing) {
-      console.log('未被调用，但 originalThing 有个 someMethod 的引用');
+      console.log("未被调用，但 originalThing 有个 someMethod 的引用");
     }
   };
   theThing = {
-    longStr: new Array(1000000).join('*'),
+    longStr: new Array(1000000).join("*"),
     someMethod: function() {
-      console.log('没做任何事情，但我是闭包');
+      console.log("没做任何事情，但我是闭包");
     }
   };
-  console.log('parse');
+  console.log("parse");
 };
 setInterval(replaceThing, 10);
 ```
 
-执行没多久，就从 20M 飚到 几百 M。究其原因，还是因为闭包引用没有及时被销毁：
+执行没多久，就从 20M 飚到 几百 M。究其原因，还是因为闭包引用没有及时被销毁。
+
+具体原因如下：
 
 虽然 **unused** 没有被调用，但是其中包含 **originalThing** 并指向 **theThing** **，theThing** 在定义时有个 **someMethod** 方法，其就是个闭包（可以访问到 **originalThing**） ，该闭包在 **unused** 中由于引用了 **originalThing** 一直没有被释放。
 
@@ -87,7 +88,9 @@ npm install heapdump -S
 error: #error This version of node/NAN/v8 requires a C++11 compiler
 ```
 
-需要更新 linux 系统的 gcc 等库，原因是原版本过低
+原版本过低，需要更新 linux 系统的 gcc 等相关库。
+
+参考如下安装说明：
 
 ```shell
 # 安装 repo 仓库
@@ -111,9 +114,13 @@ ln -s /opt/rh/devtoolset-2/root/usr/bin/g++ /usr/bin/g++
 gcc --version
 ```
 
-当然系统是 window 可能还会有更坑的问题：安装 node-gyp、python 出错
+当然系统是 window 可能还会有更坑的问题：安装 node-gyp、python 出错。
 
-推荐如下工具，一键安装相关组件依赖（我们只要静静的等待，因为时间有些久）。他会帮你安装 window 对应的 **NET Framework**，python
+推荐如下 npm 模块：
+
+> windows-build-tools
+
+一键安装相关组件依赖（我们只要静静的等待，因为时间有些久）。他会帮你安装 window 对应的 **NET Framework**，python 这些插件。
 
 ```js
 npm install --global --production windows-build-tools
@@ -124,21 +131,21 @@ npm install --global --production windows-build-tools
 线上很简单的做了一个控制台输出，用于定位问题：
 
 ```js
-var heapdump = require('heapdump');
+var heapdump = require("heapdump");
 let startMem = process.memoryUsage();
 
 function calc(data) {
-  return Math.round((data / 1024 / 1024) * 10000) / 10000 + ' MB';
+  return Math.round((data / 1024 / 1024) * 10000) / 10000 + " MB";
 }
 // 使用的是 koa
-router.all('/foo', async (ctx, next) => {
+router.all("/foo", async (ctx, next) => {
   let mem = process.memoryUsage();
-  logger.debug('memory before', calc(startMem.rss), 'memory now:', calc(mem.rss), 'diff increase', calc(mem.rss - startMem.rss));
+  logger.debug("memory before", calc(startMem.rss), "memory now:", calc(mem.rss), "diff increase", calc(mem.rss - startMem.rss));
   // ...
 });
 ```
 
-这样就能实时看到系统的内存消耗（对比刚启动时）
+这样就能实时看到系统的内存消耗（对比刚启动时）:
 
 ```txt
 2019-09-06 16:30 +08:00: [2019-09-06T16:30:06.700] [DEBUG] transfer - memory before 55.5898 MB memory now: 95.1484 MB diff increase 39.5586 MB
@@ -149,11 +156,11 @@ router.all('/foo', async (ctx, next) => {
 2019-09-06 16:30 +08:00: [2019-09-06T16:30:12.952] [DEBUG] transfer - memory before 55.5898 MB memory now: 94.9688 MB diff increase 39.3789 MB
 ```
 
-添加个快照路由，在按照需要抓取内存此刻使用情况
+添加个快照路由，在按照需要抓取内存此刻使用情况:
 
 ```js
-router.all('/snapshot', async (ctx, next) => {
-  heapdump.writeSnapshot('./dump-' + Date.now() + '.heapsnapshot', function(err) {
+router.all("/snapshot", async (ctx, next) => {
+  heapdump.writeSnapshot("./dump-" + Date.now() + ".heapsnapshot", function(err) {
     if (err) console.error(err);
   });
 });
@@ -163,15 +170,21 @@ router.all('/snapshot', async (ctx, next) => {
 
 {% asset_img devtools.png profile %}
 
+一切顺利就能很快定位到问题代码。但实际要更困难，更摸不着头脑。
+
 ## 猜测的可能点
 
 如果按照上述的“检查”操作还是没有定位到问题点，可能这段会对你有所帮助。
 
-首先此项目是基于 node 的中间层服务，对 api 接口进行转换。用于由后端 api 服务的“升级”平滑各客户端的发版时差。
+首先要知道自己着手的项目的用途，所用技术，它对你排查问题更有指向意义。
 
-技术栈：sequelize + koa + pm2 （你最好熟悉项目的主要框架，定位问题有极大帮助）
+比如：此项目是基于 node 的中间层服务，对 api 接口进行转换。用于由后端 api 服务的“升级”平滑各客户端的发版时差。（服务可能在 api 调用上有性能瓶颈？）
 
-有幸有个 **项目 B** 和此项目类似，技术上略有差异，就猜测了几个可能的 **内存泄露** 原因（附参考文章）：
+技术栈：sequelize + koa + pm2 （熟悉项目的主要框架，从大技术方向着手）
+
+有幸有个 项目 B 和此项目类似，技术上略有差异。
+
+综上所述，就猜测了几个可能的 **内存泄露** 原因（附参考文章）：
 
 - 代码问题
   - 代码逻辑全局缓存问题
@@ -221,7 +234,7 @@ router.all('/snapshot', async (ctx, next) => {
 
    {% asset_img pm2-memory-leak.png @pm2/io %}
 
-   对于为何这段 if/else 会造成内存泄漏，有空再研究下。
+   对于为何这段 if/else 会造成内存泄漏，有空再研究下。估计类似 dom 的 event 绑定没有解除所致。
 
 ## 参考
 

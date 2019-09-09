@@ -6,7 +6,9 @@ categories:
   - 开发
   - 前端开发
 thumb_img: node.png
+date: 2019-09-09 18:21:29
 ---
+
 
 线上环境居然遇到了内存泄露，经过 3 天的摸索，算是解决了：
 
@@ -26,9 +28,52 @@ thumb_img: node.png
 
 ## 内存增长的原因
 
+可以看下这篇文章 [Finding And Fixing Node.js Memory Leaks: A Practical Guide](https://marmelab.com/blog/2018/04/03/how-to-track-and-fix-memory-leak-with-nodejs.html)
+
+- 全局变量
+- 代码缓存
+- 闭包
+- ...
+
+其实不管什么原因，主要还是 **各种引用** 得不到 V8 GC 的释放。如下，扔一段很经典的代码：
+
+```js
+function calc(data) {
+  return Math.round((data / 1024 / 1024) * 100) / 100 + ' MB';
+}
+function logger() {
+  let mem = process.memoryUsage();
+  console.log(new Date(), 'memory now:', calc(mem.rss));
+}
+var theThing = null;
+var replaceThing = function() {
+  logger();
+  var originalThing = theThing;
+  var unused = function foo() {
+    if (originalThing) {
+      console.log('未被调用，但 originalThing 有个 someMethod 的引用');
+    }
+  };
+  theThing = {
+    longStr: new Array(1000000).join('*'),
+    someMethod: function() {
+      console.log('没做任何事情，但我是闭包');
+    }
+  };
+  console.log('parse');
+};
+setInterval(replaceThing, 10);
+```
+
+执行没多久，就从 20M 飚到 几百 M。究其原因，还是因为闭包引用没有及时被销毁：
+
+虽然 **unused** 没有被调用，但是其中包含 **originalThing** 并指向 **theThing** **，theThing** 在定义时有个 **someMethod** 方法，其就是个闭包（可以访问到 **originalThing**） ，该闭包在 **unused** 中由于引用了 **originalThing** 一直没有被释放。
+
+{% asset_img scope-ref.png 层层嵌套的引用 %}
+
 ## 对内存进行“检查”
 
-如果你对这块有查询过相关关键字，heapdump 这模块应该频繁出现，这里说下如何使用它来监控项目的内存情况。当然还有 memwatch ...
+如果你对这块有查询过相关资料， **heapdump** 这模块应该频繁出现，这里说下如何使用它来监控项目的内存情况。当然还有 **memwatch** ...
 
 ### 安装
 
@@ -42,27 +87,33 @@ npm install heapdump -S
 error: #error This version of node/NAN/v8 requires a C++11 compiler
 ```
 
-需要更新 linux 系统的 gcc 等库，版本不合适
+需要更新 linux 系统的 gcc 等库，原因是原版本过低
 
 ```shell
-# 安装 repo
+# 安装 repo 仓库
 wget http://people.centos.org/tru/devtools-2/devtools-2.repo
 mv devtools-2.repo /etc/yum.repos.d
+
+# 安装新库
 yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++
-# 新建、重置快捷方式
+
+# 备份原库
 mv /usr/bin/gcc /usr/bin/gcc-4.4.7
 mv /usr/bin/g++ /usr/bin/g++-4.4.7
 mv /usr/bin/c++ /usr/bin/c++-4.4.7
+
+# 创建快捷方式，将新库链到需要目录
 ln -s /opt/rh/devtoolset-2/root/usr/bin/gcc /usr/bin/gcc
 ln -s /opt/rh/devtoolset-2/root/usr/bin/c++ /usr/bin/c++
 ln -s /opt/rh/devtoolset-2/root/usr/bin/g++ /usr/bin/g++
-# 检查版本
+
+# 检查版本，确定生效
 gcc --version
 ```
 
 当然系统是 window 可能还会有更坑的问题：安装 node-gyp、python 出错
 
-推荐如下工具，一键安装相关组件依赖
+推荐如下工具，一键安装相关组件依赖（我们只要静静的等待，因为时间有些久）。他会帮你安装 window 对应的 **NET Framework**，python
 
 ```js
 npm install --global --production windows-build-tools
@@ -70,7 +121,7 @@ npm install --global --production windows-build-tools
 
 ### 使用
 
-线上很简单的做了一个控制台输出：
+线上很简单的做了一个控制台输出，用于定位问题：
 
 ```js
 var heapdump = require('heapdump');
@@ -108,17 +159,17 @@ router.all('/snapshot', async (ctx, next) => {
 });
 ```
 
-导入到 chrome 的 profile 面板中，查看具体信息
+导入到 chrome 的 profile 面板中，对比前后两个文件的变化，定位问题
 
 {% asset_img devtools.png profile %}
 
 ## 猜测的可能点
 
-按照上面的“检查”操作，还是没有定位到问题点。终究还是要分析项目本身。
+如果按照上述的“检查”操作还是没有定位到问题点，可能这段会对你有所帮助。
 
 首先此项目是基于 node 的中间层服务，对 api 接口进行转换。用于由后端 api 服务的“升级”平滑各客户端的发版时差。
 
-技术栈：sequelize + koa + pm2
+技术栈：sequelize + koa + pm2 （你最好熟悉项目的主要框架，定位问题有极大帮助）
 
 有幸有个 **项目 B** 和此项目类似，技术上略有差异，就猜测了几个可能的 **内存泄露** 原因（附参考文章）：
 
@@ -140,7 +191,7 @@ router.all('/snapshot', async (ctx, next) => {
 
 | 可能原因           | 测试方式                    | 验证结果 | 备注                                                                |
 | ------------------ | --------------------------- | -------- | ------------------------------------------------------------------- |
-| 代码问题           | ab 压测                     | ok       | 需增加重视，问题潜在点                                              |
+| 代码问题           | ab 压测                     | ok       | 但需增加重视                                                        |
 | sequlize 版本问题  | ab 压测                     | ok       | 暂不尝试。目前使用 4.42.0，线上无法承担更换版本的风险               |
 | Ladash \_.template | ab 压测                     | ok       | 保持现状                                                            |
 | log4js 有背压问题  | ab 压测                     | ok       | pm2 & log4js 使用不够友好，在有替代方案前（比如 winston），保持现状 |
@@ -170,7 +221,7 @@ router.all('/snapshot', async (ctx, next) => {
 
    {% asset_img pm2-memory-leak.png @pm2/io %}
 
-   对于为何这段 if/else 会造成内存泄漏，还需要之后看下 pm2 相关逻辑（放到 todo list 中，谁知道也请公众号留言回复）
+   对于为何这段 if/else 会造成内存泄漏，有空再研究下。
 
 ## 参考
 
@@ -185,3 +236,8 @@ router.all('/snapshot', async (ctx, next) => {
 - [PM2 cluster + log4js？并不理想的组合](https://claude-ray.github.io/2018/12/21/pm2-cluster-log4js/)
 - [pm2 memory leak](https://github.com/Unitech/pm2/issues/4302)
 - [记录一次安装 heapdump,报 node-gyp rebuild failed 的问题](https://blog.csdn.net/f_9628/article/details/88708763)
+- [Finding And Fixing Node.js Memory Leaks: A Practical Guide](https://marmelab.com/blog/2018/04/03/how-to-track-and-fix-memory-leak-with-nodejs.html)
+- [JavaScript 内存优化](https://www.cnblogs.com/mliudong/p/3635294.html)
+- [An interesting kind of JavaScript memory leak](https://blog.meteor.com/an-interesting-kind-of-javascript-memory-leak-8b47d2e7f156?gi=3db08c12c287)
+- [4 类 JavaScript 内存泄漏及如何避免](https://jinlong.github.io/2016/05/01/4-Types-of-Memory-Leaks-in-JavaScript-and-How-to-Get-Rid-Of-Them/)
+- [JavaScript 闭包详解](https://juejin.im/post/5b3ae7b8f265da62cb1db9e0)

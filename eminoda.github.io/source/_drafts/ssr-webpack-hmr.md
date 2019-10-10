@@ -51,6 +51,14 @@ class Server {
     // socket 实现（默认 sockjs）
     this.socketServer = new SocketServerImplementation(this);
   }
+  // server 开启监听时，创建 socket
+  listen(port, hostname, fn) {
+    // ...
+    return this.listeningApp.listen(port, hostname, err => {
+      this.createSocketServer();
+      // ...
+    });
+  }
 }
 ```
 
@@ -58,18 +66,245 @@ class Server {
 
 准备了 sockjs 通讯的简单 Demo ，[点击访问 sockjs](https://gitee.com/eminoda/ssr-learn/tree/sockjs)
 
-### 给客户端注入 socket 代码
+### 给客户端注入 HMR 代码
 
-在更新 compiler 时，会插入 entry 文件
+#### hot entry
+
+更新 compiler 时，在原有配置上会插入额外的 hot entry 文件。
 
 node_modules\webpack-dev-server\lib\utils\updateCompiler.js
+
 ```js
 addEntries(webpackConfig, options);
 ```
 
-### 服务端发送信息
+addEntries 会根据配置的 hot 选项，加载指定的 entry 文件：
 
+```js
+if (options.hotOnly) {
+  hotEntry = require.resolve("webpack/hot/only-dev-server");
+} else if (options.hot) {
+  hotEntry = require.resolve("webpack/hot/dev-server");
+}
+```
 
+这两者最大的不同，就是在异常情况下，是否对浏览器进行强刷：window.location.reload();
+
+#### HotModuleReplacementPlugin
+
+这是根据 hot 配置，自动添加到 webpack 配置中的：
+
+```js
+config.plugins.push(new webpack.HotModuleReplacementPlugin());
+```
+
+#### hot-update.json
+
+添加通过 ajax 方式向服务端请求 hot-update.json 的逻辑
+
+node_modules\webpack\lib\HotModuleReplacement.runtime.js
+
+```js
+function hotDownloadManifest(requestTimeout) {
+  requestTimeout = requestTimeout || 10000;
+  return new Promise(function(resolve, reject) {
+    // ...
+    var request = new XMLHttpRequest();
+    // var requestPath = __webpack_require__.p + "" + hotCurrentHash + ".hot-update.json";
+    var requestPath = $require$.p + $hotMainFilename$;
+    request.onreadystatechange = function() {
+      // ...
+      // success
+      try {
+        var update = JSON.parse(request.responseText);
+      } catch (e) {
+        reject(e);
+        return;
+      }
+      resolve(update);
+    };
+  });
+}
+```
+
+#### hot-update.js
+
+向服务端请求 hot-update.js 的逻辑
+
+```js
+function hotDownloadUpdateChunk(chunkId) {
+  var script = document.createElement("script");
+  script.charset = "utf-8";
+  // script.src = __webpack_require__.p + "" + chunkId + "." + hotCurrentHash + ".hot-update.js";
+  script.src = $require$.p + $hotChunkFilename$;
+  if ($crossOriginLoading$) script.crossOrigin = $crossOriginLoading$;
+  document.head.appendChild(script);
+}
+```
+
+在热更新中，HotModuleReplacementPlugin 会触发 JsonpMainTemplatePlugin
+
+```js
+mainTemplate.hooks.bootstrap.tap("HotModuleReplacementPlugin", (source, chunk, hash) => {
+  source = mainTemplate.hooks.hotBootstrap.call(source, chunk, hash);
+  // ...
+});
+```
+
+查看 JsonpMainTemplatePlugin 就能知道为何每次 HMR 后，新代码就出现在页面上，见下说明：
+
+#### JsonpMainTemplatePlugin
+
+```js
+mainTemplate.hooks.hotBootstrap.tap("JsonpMainTemplatePlugin", (source, chunk, hash) => {
+  // ...
+  const runtimeSource = Template.getFunctionContent(require("./JsonpMainTemplate.runtime"));
+});
+```
+
+这个 JsonpMainTemplate.runtime 有 html head 中添加标签的逻辑，最后交给 HotModuleReplacementPlugin 中的 source ，这样就能在 html 看到新增的代码：
+
+```html
+<script charset="utf-8" src="app.a924ad7db1acc3cd4b8e.hot-update.js"></script>
+```
+
+### 服务端的处理
+
+#### HotModuleReplacementPlugin
+
+生成热更新配置 json
+
+```js
+{"h":"ba41c82ba5dfb16b4a29","c":{"app":true}}
+```
+
+node_modules\webpack\lib\HotModuleReplacementPlugin.js
+
+```js
+compilation.hooks.additionalChunkAssets.tap("HotModuleReplacementPlugin", () => {
+  const records = compilation.records;
+  // ...
+  const hotUpdateMainContent = {
+    h: compilation.hash,
+    c: {}
+  };
+  for (const key of Object.keys(records.chunkHashs)) {
+    const chunkId = isNaN(+key) ? key : +key;
+    // ...
+    hotUpdateMainContent.c[chunkId] = true;
+  }
+});
+```
+
+随着构建的进度，向 client 发送数据
+
+node_modules\webpack-dev-server\lib\Server.js
+
+```js
+sockWrite(sockets, type, data) {
+  sockets.forEach((socket) => {
+    this.socketServer.send(socket, JSON.stringify({ type, data }));
+  });
+}
+```
+
+### 客户端的处理
+
+客户端如何接受解析服务端发送过来的信息，比如 {type:'ok',msg:'foo'} 。
+
+如下只是其中的一个，示意开始热更新客户端代码：
+
+node_modules\webpack-dev-server\client\index.js
+
+```js
+var onSocketMessage = {
+  ok: function ok() {
+    sendMessage("Ok");
+    // ...
+    reloadApp(options, status);
+  }
+};
+```
+
+如果是 hot 模式，则发送 webpackHotUpdate 事件：
+
+node_modules\webpack-dev-server\client\utils\reloadApp.js
+
+```js
+function reloadApp(_ref, _ref2) {
+  // ...
+  if (hot) {
+    // ...
+    hotEmitter.emit("webpackHotUpdate", currentHash);
+  }
+}
+```
+
+webpackHotUpdate 事件的监听，以及触发后执行 check 的逻辑：
+
+node_modules\webpack\hot\only-dev-server.js
+
+```js
+if(module.hot) {
+  var check = function check() {
+    module.hot
+      .check()
+      .then(function(updatedModules) {
+        if (!updatedModules) {
+          // ...
+          return;
+        }
+        return module.hot
+          .apply({
+          // ...
+          })
+          .then(function(renewedModules) {
+            // 未更新完毕，继续 check
+            if (!upToDate()) {
+              check();
+            }
+            require("./log-apply-result")(updatedModules, renewedModules);
+
+            if (upToDate()) {
+              log("info", "[HMR] App is up to date.");
+            }
+          });
+      })
+      .catch(function(err) {
+      // ...
+      });
+
+  // webpack 热更新状态
+  hotEmitter.on("webpackHotUpdate", function(currentHash) {
+    lastHash = currentHash;
+    // 未更新完毕，查看状态，执行 check
+    if (!upToDate()) {
+      var status = module.hot.status();
+      if (status === "idle") {
+        // 确认更新情况
+        log("info", "[HMR] Checking for updates on the server...");
+        check();
+      }
+    }
+  }
+}
+```
+
+拉取 hot-update.json
+
+```js
+function hotCheck(apply) {
+  if (hotStatus !== "idle") {
+    throw new Error("check() is only allowed in idle status");
+  }
+  hotApplyOnUpdate = apply;
+  hotSetStatus("check");
+  return hotDownloadManifest(hotRequestTimeout).then(function(update) {
+    // ...
+    return promise;
+  }
+}
+```
 
 ### 全览整个 HMR 过程（图）
 

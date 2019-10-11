@@ -1,8 +1,10 @@
 ---
-title: webpack HMR 热更新
+title: 探索 webpack-dev-server 的 HMR
 tags:
   - ssr
   - webpack
+  - webpack-dev-server
+  - hmr
 categories:
   - 开发
   - 前端开发
@@ -13,7 +15,7 @@ thumb_img: webpack.png
 
 试想下：开发时，你对客户端的 js、css 做了小改动，浏览器没有再次向服务端发起请求，页面的修改区域就更新了代码，那多美好。
 
-本篇先从 webpack-dev-server 着手，探索 webpack HMR 更新机制，以及结合服务端 SSR 做一些实践。
+本篇先从 webpack-dev-server 着手，探索 webpack HMR 更新机制，~~以及结合服务端 SSR 做一些实践。~~（篇幅过长，另开一篇说明）
 
 ## webpack-dev-server 自带的 HMR
 

@@ -1,9 +1,7 @@
 ---
 title: 探索 webpack-dev-server 的 HMR
 tags:
-  - ssr
   - webpack
-  - webpack-dev-server
   - hmr
 categories:
   - 开发
@@ -415,17 +413,7 @@ Accepting the updated printMe module!
 [HMR] App is up to date.
 ```
 
-### 全览整个 HMR 过程（图）
-
-## 开发模式
-
-### webpack-dev-middleware
-
-### webpack-hot-middleware
-
-### eventsource 通讯
-
-### koa 的兼容方式
+## 全览整个 HMR 过程（图）
 
 ## 参考
 
@@ -433,10 +421,3 @@ Accepting the updated printMe module!
 
 - [koa2 + webpack 热更新](https://www.cnblogs.com/liuyt/p/7217024.html?utm_source=itdadao&utm_medium=referral)
 - [JS 实时通信三把斧系列之三: eventsource](https://www.jianshu.com/p/3d7b0bbf435a)
-- [webpack 是如何实现 HMR 的以及实现的原理](https://blog.csdn.net/gitchat/article/details/78341649)
-- [知乎 - Webpack HMR 原理解析](https://zhuanlan.zhihu.com/p/30669007)
-- [掘金 - webpack 实现 HMR 及其实现原理](https://juejin.im/post/5d145d4e6fb9a07eee5ededa)
-
-```
-
-```

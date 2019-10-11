@@ -415,6 +415,18 @@ Accepting the updated printMe module!
 
 ## 全览整个 HMR 过程（图）
 
+{% asset_img wds-hrm.png 整个 HMR 过程 %}
+
+1. 设置 hot ，开启 HMR 功能（会对 webpack 的构建配置做修改，添加 entry 和 plugin）
+2. webpack 监听、构建本地代码
+3. 将构建结果推送到内存中（client 的请求将从这里获取）
+4. webpack-dev-server 开启 express 服务，并创建 stock 连接
+5. 实时对客户端发送 server 端的进度状态
+6. 如有代码更新，执行 check 进行检查
+7. 做是否需要更新 client 代码的判断
+8. 拉取 hot-update.json ,获取更新 chunk，判断 chunk 是否有不同
+9. 若有差异，拉取 hot-update.js ，热替换 client 代码
+
 ## 参考
 
 > 我只是知识点的“加工者”， 更多内容请查阅原文链接 :thought_balloon: ， 同时感谢原作者的付出：

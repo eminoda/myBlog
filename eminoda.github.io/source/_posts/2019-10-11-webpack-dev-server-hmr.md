@@ -7,9 +7,8 @@ categories:
   - 开发
   - 前端开发
 thumb_img: webpack.png
-date: 2019-10-12 00:23:12
+date: 2019-10-11 00:23:12
 ---
-
 
 相比直接刷新浏览器，通过 webpack 的 HMR 模式更能对开发效率有显著提升。
 
@@ -19,12 +18,16 @@ date: 2019-10-12 00:23:12
 
 ## webpack-dev-server 自带的 HMR
 
-可以接触 webpack-dev-server 来开启一个服务，它具备代理、静态文件等功能，当然还有本篇的重点功能 ——
+可以借助 webpack-dev-server 来开启一个服务，它具备代理、静态文件等功能，当然还有本篇的重点功能 ——
 Hot Module Reload（HMR）
 
 ### 零障碍开启 HMR
 
-我已经参照 webpack 官网的 Guide 写了个 Demo ，[点击访问 webpack-hmr-practice](https://gitee.com/eminoda/ssr-learn/tree/webpack-hmr-practice)
+我已经参照 webpack 官网的 Guide 写了个 Demo :
+
+> [点击访问 https://gitee.com/eminoda/ssr-learn/tree/webpack-hmr-practice](https://gitee.com/eminoda/ssr-learn/tree/webpack-hmr-practice)
+
+![hrm-reload](https://gitee.com/eminoda/ssr-learn/raw/webpack-hmr-practice/doc/hrm-reload.gif)
 
 ## webpack-dev-server 如何实现 HMR
 
@@ -67,7 +70,11 @@ class Server {
 
 #### socket 怎么通讯？
 
-不清楚 socket 的同学可以看下这个 Demo，体验 socket 怎么桥接服务端和客户端的通讯问题， [点击访问 sockjs](https://gitee.com/eminoda/ssr-learn/tree/sockjs)
+不清楚 socket 的同学可以看下这个 Demo，体验 socket 怎么桥接服务端和客户端的通讯问题:
+
+> [点击访问 https://gitee.com/eminoda/ssr-learn/tree/sockjs](https://gitee.com/eminoda/ssr-learn/tree/sockjs)
+
+![sockjs](https://gitee.com/eminoda/ssr-learn/raw/sockjs/sockjs.gif)
 
 ### 注入客户端 HMR 代码
 
@@ -436,4 +443,3 @@ Accepting the updated printMe module!
 - [webpack 是如何实现 HMR 的以及实现的原理](https://blog.csdn.net/gitchat/article/details/78341649)
 - [知乎 - Webpack HMR 原理解析](https://zhuanlan.zhihu.com/p/30669007)
 - [掘金 - webpack 实现 HMR 及其实现原理](https://juejin.im/post/5d145d4e6fb9a07eee5ededa)
-

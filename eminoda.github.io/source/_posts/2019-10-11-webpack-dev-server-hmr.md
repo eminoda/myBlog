@@ -14,12 +14,12 @@ date: 2019-10-11 00:23:12
 
 试想下：开发时，你对客户端的 js、css 做了小改动，浏览器没有再次向服务端发起请求，页面的修改区域就更新了代码，那多美好。
 
-本篇先从 webpack-dev-server 着手，探索 webpack HMR 更新机制，~~以及结合服务端 SSR 做一些实践。~~（篇幅过长，另开一篇说明）
+本篇先从 webpack-dev-server 着手，探索 webpack HMR 更新机制，~~以及结合 webpack 在服务端的 SSR 构建做一些实践。~~（篇幅过长，[另开一篇说明：开发中如何接入 HRM 到服务端](/2019/10/12/weback-middleware-in-hmr-development/)）
 
 ## webpack-dev-server 自带的 HMR
 
 可以借助 webpack-dev-server 来开启一个服务，它具备代理、静态文件等功能，当然还有本篇的重点功能 ——
-Hot Module Reload（HMR）
+**Hot Module Reload（HMR）**
 
 ### 零障碍开启 HMR
 

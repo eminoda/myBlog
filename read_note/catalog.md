@@ -24,3 +24,4 @@
 - [node 基础 -- exports 和 module.exports 的区别？](https://github.com/eminoda/myBlog/issues/7)
 - [node 基础 -- npm install --save-dev 和 --save 的区别？](https://github.com/eminoda/myBlog/issues/8)
 - [node 基础 -- path](https://github.com/eminoda/myBlog/issues/20)
+- [node 基础 -- child_process](https://github.com/eminoda/myBlog/issues/22)

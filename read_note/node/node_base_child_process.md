@@ -1,5 +1,5 @@
 ---
-node 基础 —— child_process
+node 基础 -- child_process
 ---
 
 # child_process

@@ -53,7 +53,7 @@ thumb_img: vue.png
 | 搜狗（PC 调试）       | Mozilla 5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1                                                                                                                                              |
 | **Chrome（PC 调试）** | Mozilla 5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1                                                                                                                                            |
 
-很看到 Chrome 浏览器在 scrollTop 在 **document.documentElement.scrollTop** 上获取不到值，导致了 mint-ui 判断是否加载到页面底部的逻辑“失效”，导致上拉加载失败。
+可以看到 Chrome 浏览器在 scrollTop 在 **document.documentElement.scrollTop** 上获取不到值，导致了 mint-ui 判断是否加载到页面底部的逻辑“失效”，导致上拉加载失败。
 
 只要在原有判断基础上做如下处理即可：
 
@@ -65,7 +65,7 @@ Math.max(document.body.scrollTop, document.documentElement.scrollTop);
 
 当然也可以使用 **window.pageYOffset (window.scrollY)** ，上述所测的浏览器都支持这属性。
 
-另外我也同时列了 UC 做个特例说明，因为就算更正了判断逻辑，还是上拉加载还是有问题，这就涉及下个需要剖析的问题 —— **屏幕可视高度**。
+另外我也同时列了 UC 浏览器，把它做个特例说明，因为就算更正了判断逻辑，还是上拉加载还是有问题，这就涉及下个需要剖析的问题 —— **屏幕可视高度**。
 
 ### 屏幕可视高度
 
@@ -103,4 +103,4 @@ Math.max(document.documentElement.clientHeight, window.innerHeight);
 
 对应 demo 可以查看 [https://github.com/eminoda/mint-ui-test](https://github.com/eminoda/mint-ui-test)
 
-浏览器兼容问题处理起来很困难，需要你对相关 js api 都较高的熟悉程度，同时还需要反复的实践来摸索最终的答案。希望通过此文能对解决类似问题有个触类旁通的指引，也可以帮助到有类似问题的同学。
+能看出，浏览器兼容问题处理起来很困难，需要你对相关 js api 都较高的熟悉程度，同时还需要反复的实践来摸索最终的答案。希望通过此文能对解决类似问题有个触类旁通的指引，也可以帮助到有类似问题的同学。

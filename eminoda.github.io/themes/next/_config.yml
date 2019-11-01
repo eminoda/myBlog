@@ -239,9 +239,9 @@ post_wordcount:
 wechat_subscriber:
   enabled: true
   qcode: /images/qrcode/webcat.jpg
-  description: 前端攻城狮的日常，【长按关注】看看↓↓↓?
-  description2: 好好学习，天天向上!
-  description3: 欢迎留言，一起讨论前端问题
+  description: 【长按关注】看看↓↓↓?
+  description2: 【前端雨爸】分享前端技术实践，持续输出前端技术文章
+  description3: 欢迎留言，评论交流，一起讨论前端问题
 
 # Reward
 #reward_comment: Donate comment here

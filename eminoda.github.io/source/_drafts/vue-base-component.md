@@ -2,8 +2,8 @@
 title: vue 基础-组件
 tags: vue
 categories:
-    - 开发
-    - 前端开发
+  - 开发
+  - 前端开发
 thumb_img: vue.png
 ---
 
@@ -19,9 +19,9 @@ thumb_img: vue.png
 
 ```html
 <div id="components-demo">
-    <button-counter></button-counter>
-    <button-counter></button-counter>
-    <button-counter></button-counter>
+  <button-counter></button-counter>
+  <button-counter></button-counter>
+  <button-counter></button-counter>
 </div>
 ```
 
@@ -47,11 +47,11 @@ data: function () {
 
 ```js
 Vue.component("my-component-name", {
-    /* ... */
+  /* ... */
 });
 
 Vue.component("MyComponentName", {
-    /* ... */
+  /* ... */
 });
 ```
 
@@ -61,7 +61,7 @@ Vue.component("MyComponentName", {
 
 ```js
 Vue.component("my-component-name", {
-    // ... 选项 ...
+  // ... 选项 ...
 });
 ```
 
@@ -71,17 +71,17 @@ Vue.component("my-component-name", {
 
 ```js
 var ComponentA = {
-    /* ... */
+  /* ... */
 };
 var ComponentB = {
-    /* ... */
+  /* ... */
 };
 new Vue({
-    el: "#app",
-    components: {
-        "component-a": ComponentA,
-        "component-b": ComponentB
-    }
+  el: "#app",
+  components: {
+    "component-a": ComponentA,
+    "component-b": ComponentB
+  }
 });
 ```
 
@@ -97,9 +97,9 @@ html 是对大小写不敏感的，最终会转成小写字符，如果 prop 这
 
 ```js
 Vue.component("blog-post", {
-    // 在 JavaScript 中是 camelCase 的
-    props: ["postTitle"],
-    template: "<h3>{{ postTitle }}</h3>"
+  // 在 JavaScript 中是 camelCase 的
+  props: ["postTitle"],
+  template: "<h3>{{ postTitle }}</h3>"
 });
 ```
 
@@ -139,37 +139,37 @@ props: ["title", "likes", "isPublished", "commentIds", "author"];
 
 ```js
 Vue.component("my-component", {
-    props: {
-        // 基础的类型检查 (`null` 和 `undefined` 会通过任何类型验证)
-        propA: Number,
-        // 多个可能的类型
-        propB: [String, Number],
-        // 必填的字符串
-        propC: {
-            type: String,
-            required: true
-        },
-        // 带有默认值的数字
-        propD: {
-            type: Number,
-            default: 100
-        },
-        // 带有默认值的对象
-        propE: {
-            type: Object,
-            // 对象或数组默认值必须从一个工厂函数获取
-            default: function() {
-                return { message: "hello" };
-            }
-        },
-        // 自定义验证函数
-        propF: {
-            validator: function(value) {
-                // 这个值必须匹配下列字符串中的一个
-                return ["success", "warning", "danger"].indexOf(value) !== -1;
-            }
-        }
+  props: {
+    // 基础的类型检查 (`null` 和 `undefined` 会通过任何类型验证)
+    propA: Number,
+    // 多个可能的类型
+    propB: [String, Number],
+    // 必填的字符串
+    propC: {
+      type: String,
+      required: true
+    },
+    // 带有默认值的数字
+    propD: {
+      type: Number,
+      default: 100
+    },
+    // 带有默认值的对象
+    propE: {
+      type: Object,
+      // 对象或数组默认值必须从一个工厂函数获取
+      default: function() {
+        return { message: "hello" };
+      }
+    },
+    // 自定义验证函数
+    propF: {
+      validator: function(value) {
+        // 这个值必须匹配下列字符串中的一个
+        return ["success", "warning", "danger"].indexOf(value) !== -1;
+      }
     }
+  }
 });
 ```
 
@@ -198,7 +198,7 @@ data() {
 
 意思是不要试图在子组件中修改 prop 的属性值，这样会让子组件意外父级组件的状态，从而导致你的应用的数据流向难以理解。
 
-有两种方式去变向实现这样的问题：
+有两种方式去变向实现这样的需求：
 
 1. 在子组件的 data 属性中，新增加一个属性，来代替原 prop 属性的更改
 
@@ -273,7 +273,7 @@ prop 会用一个默认的 value 来接收父组件中 v-model 传来的值，�
 
 ```js
 props: {
-    value: String;
+  value: String;
 }
 ```
 
@@ -291,14 +291,14 @@ props: {
 
 ```js
 Vue.component("base-checkbox", {
-    model: {
-        prop: "value",
-        event: "change"
-    },
-    props: {
-        value: Boolean // 注意 checkout 为布尔类型
-    },
-    template: `
+  model: {
+    prop: "value",
+    event: "change"
+  },
+  props: {
+    value: Boolean // 注意 checkout 为布尔类型
+  },
+  template: `
     <input
       type="checkbox"
       :checked="value"
@@ -337,8 +337,8 @@ vue 专门提供了 this.\$listeners 来获取父组件写的事件监听器。�
 
 ```html
 <div>
-    <!-- 注意这里的这里的 $attrs inputListeners 写法，类似 v-model=xxx -->
-    <input v-bind="$attrs" :value="value" v-on="inputListeners" />
+  <!-- 注意这里的这里的 $attrs inputListeners 写法，类似 v-model=xxx -->
+  <input v-bind="$attrs" :value="value" v-on="inputListeners" />
 </div>
 ```
 
@@ -399,3 +399,259 @@ this.$emit("update:title", newTitle);
 ```html
 <text-document v-bind.sync="doc"></text-document>
 ```
+
+# 插槽 slot
+
+## 用法
+
+navigation-link 标签内的 innerHtml 内容，最终会被子组件“吸收”，在 slot 占位符中被替换显示。
+
+```html
+<navigation-link url="/profile">
+  Your Profile
+</navigation-link>
+```
+
+```html
+<a v-bind:href="url" class="nav-link">
+  <slot></slot>
+</a>
+```
+
+## 编译作用域
+
+父级模板里的所有内容都是在父级作用域中编译的；子模板里的所有内容都是在子作用域中编译的。
+
+即：在 navigation-link 标签内部写的内容，虽然会被 slot 替换，但作用域依旧属于父级模板。
+
+```html
+<!-- url 不会显示 /profile -->
+<navigation-link url="/profile">
+  Clicking here will send you to: {{ url }}
+</navigation-link>
+```
+
+## 后备内容
+
+当没有定义插槽内容时，默认会以 Submit 文案显示。
+
+```html
+<slot>Submit</slot>
+```
+
+## 具名插槽
+
+为 slot 标签取个名字，因为会出现多个想往 slot 替换的模板。
+
+```html
+<!-- <base-layout> component -->
+<div class="container">
+  <header>
+    <slot name="header"></slot>
+  </header>
+  <main>
+    <slot></slot>
+  </main>
+  <footer>
+    <slot name="footer"></slot>
+  </footer>
+</div>
+```
+
+父模板这样定义，通过 **v-slot:name** 来指定往哪里插值：
+
+```html
+<base-layout>
+  <template v-slot:header>
+    <h1>Here might be a page title</h1>
+  </template>
+
+  <p>A paragraph for the main content.</p>
+  <p>And another one.</p>
+
+  <template v-slot:footer>
+    <p>Here's some contact info</p>
+  </template>
+</base-layout>
+```
+
+## 具名插槽的缩写
+
+和 v-bind 和 v-on 类似，只要把 **v-slot:name** 换成 #name 。
+
+```html
+<current-user #header> </current-user>
+```
+
+```html
+<base-layout>
+  <template #header>
+    <h1>Here might be a page title</h1>
+  </template>
+</base-layout>
+```
+
+如果需要使用 **作用域插槽**，可以写成：#name=slotProps
+
+## 作用域插槽
+
+根据 **编译作用域** 我们已经知道，父模板中为子组件 slot 替换的内容，是获取不到子组件作用域的数据的。
+
+同时子组件的 slot 可以通过 **后备内容** 来默认显示数据。
+
+但怎么通过父模板的定义，来让 slot 能动态显示数据呢？看下下面的例子：
+
+```html
+<!-- 定义 v-slot:default 作用域插槽 -->
+<current-user>
+  <template v-slot:default="slotProps">
+    {{ slotProps.user.firstName }}
+  </template>
+</current-user>
+```
+
+```html
+<!-- 子组件 可以直接根据父插槽作用域 slotProps 来获取旗下的属性 -->
+<span>
+  <slot v-bind:user="user">
+    {{ user.lastName }}
+  </slot>
+</span>
+```
+
+# 动态组件
+
+我们已经知道通过 **is** 特性，可以动态切换组件模板：
+
+```html
+<component v-bind:is="currentTabComponent"></component>
+```
+
+每次切换时，替换的组件都是重新渲染的 vue 组件实例，可以从生命周期的触发看到：
+
+{% asset_img keeplive.gif %}
+
+我们可以通过 <keep-alive> 来缓存替换的组件标签，另外所有切换的组件只需要设置一个名字即可：
+
+```html
+<keep-alive>
+  <component v-bind:is="currentTabComponent"></component>
+</keep-alive>
+```
+
+{% asset_img keeplive2.gif %}
+
+# 异步组件
+
+目的为了缩小整个应用的大小，将一些组件按需加载，提升总体体验。
+
+看下 component-b 组件的异步加载示范：
+
+```js
+// 一般组件注册
+Vue.component("component-a", ComponentA);
+// 异步组件注册
+Vue.component("component-b", () => import("./component/ComponentB"));
+```
+
+import 是 webpack（import 异步加载 api） + es5（模块引用） 的组合写法，将返回一个 Promise 函数。
+
+# 处理边界情况
+
+## 访问元素 & 组件
+
+### 访问根实例
+
+```js
+this.$root.foo;
+```
+
+### 访问父级组件实例
+
+```js
+this.$parent.foo;
+```
+
+### 访问子组件实例或子元素
+
+```html
+<base-input ref="usernameInput"></base-input>
+```
+
+```js
+this.$refs.usernameInput;
+```
+
+注意：\$refs 只会在组件渲染完成之后生效，并且它们不是响应式的。
+
+### 依赖注入
+
+**provide** 选项允许我们指定我们想要提供给后代组件的数据/方法
+
+```js
+// parent
+provide: function () {
+  return { getMap: this.getMap }
+}
+```
+
+```js
+// child
+inject: ["getMap"];
+```
+
+# 组件之间的循环引用
+
+可能我们会存在 parent component 中引用 child component ，没有问题。但 child component 又可能会使用 parent component。
+
+```html
+<!-- <tree-folder>  -->
+<p>
+  <span>{{ folder.name }}</span>
+  <tree-folder-contents :children="folder.children" />
+</p>
+```
+
+```html
+<!-- <tree-folder-contents> -->
+<ul>
+  <li v-for="child in children">
+    <tree-folder v-if="child.children" :folder="child" />
+    <span v-else>{{ child.name }}</span>
+  </li>
+</ul>
+```
+
+这就出现了循环引用，会在 webpack 打包时出现这种错误：
+
+```js
+Failed to mount component: template or render function not defined.
+```
+
+面对这种 **悖论** 有如下解决方案：
+
+1. 将 parent component 改为全局组件
+
+2. 将组件导入方式改为异步
+
+```js
+components: {
+  TreeFolderContents: () => import("./tree-folder-contents.vue");
+}
+```
+
+3. 设置生命周期钩子 beforeCreate 注册它：
+
+```js
+beforeCreate: function () {
+  this.$options.components.TreeFolderContents = require('./tree-folder-contents.vue').default
+}
+```
+
+# 总结
+
+组件篇幅过程，本文大致只说明了 80% 内容。
+
+列举了组件注册方式、props 属性的运用、父子组件的时间通讯、slot 插槽显示、以及组件加载等一些常见的用法。
+
+更多细节可继续查阅官网：[深入了解组件](https://cn.vuejs.org/v2/guide/components-registration.html)。

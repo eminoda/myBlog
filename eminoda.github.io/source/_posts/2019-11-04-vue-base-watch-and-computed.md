@@ -1,11 +1,13 @@
 ---
-title: vue 基础-计算属性和侦听器
+title: vue 基础-计算属性 computed
 tags: vue
 categories:
-    - 开发
-    - 前端开发
+  - 开发
+  - 前端开发
 thumb_img: vue.png
+date: 2019-11-04 15:28:33
 ---
+
 
 # 前言
 
@@ -17,9 +19,17 @@ thumb_img: vue.png
 
 在页面模板中使用 js 的表达式做一些简单功能逻辑非常方便，但太多的运算逻辑会使得模板过重难以维护。
 
+你可以对比如下两种实现，如果你是该项目的维护者，你会选择哪种？
+
 ```html
 <div id="example">
-    {{ message.split('').reverse().join('') }}
+  {{ message.split('').reverse().join('') }}
+</div>
+```
+
+```html
+<div id="example">
+  {{ reversedMessage }}
 </div>
 ```
 
@@ -31,27 +41,27 @@ thumb_img: vue.png
 
 ```html
 <div id="example">
-    <p>Original message: "{{ message }}"</p>
-    <p>Computed reversed message: "{{ reversedMessage }}"</p>
+  <p>Original message: "{{ message }}"</p>
+  <p>Computed reversed message: "{{ reversedMessage }}"</p>
 </div>
 ```
 
 ```js
 var vm = new Vue({
-    el: "#example",
-    data: {
-        message: "Hello"
-    },
-    computed: {
-        // 计算属性的 getter
-        reversedMessage: function() {
-            // `this` 指向 vm 实例
-            return this.message
-                .split("")
-                .reverse()
-                .join("");
-        }
+  el: "#example",
+  data: {
+    message: "Hello"
+  },
+  computed: {
+    // 计算属性的 getter
+    reversedMessage: function() {
+      // `this` 指向 vm 实例
+      return this.message
+        .split("")
+        .reverse()
+        .join("");
     }
+  }
 });
 ```
 
@@ -62,14 +72,14 @@ var vm = new Vue({
 ```js
 // src\core\instance\state.js
 function initComputed(vm: Component, computed: Object) {
-    for (const key in computed) {
-        const userDef = computed[key]; // 获取计算属性的 getter 方法
-        if (!(key in vm)) {
-            // 遍历 vm 属性
-            // 定义动态响应，vm 属性发生变化时，会触发对应的计算属性
-            defineComputed(vm, key, userDef);
-        }
+  for (const key in computed) {
+    const userDef = computed[key]; // 获取计算属性的 getter 方法
+    if (!(key in vm)) {
+      // 遍历 vm 属性
+      // 定义动态响应，vm 属性发生变化时，会触发对应的计算属性
+      defineComputed(vm, key, userDef);
     }
+  }
 }
 ```
 
@@ -98,7 +108,7 @@ computed: {
 
 当给 this.fullName 赋值时就会被触发调用。
 
-## 计算属性缓存 vs 方法
+# 计算属性缓存 vs 方法
 
 可以通过 methods 达到一样效果
 
@@ -128,9 +138,9 @@ computed: {
 }
 ```
 
-相反 methods 就会每次执行当前的方法。如果有相对大运算量的逻辑，就会消耗性能。不过缓存的使用要根据不同业务需求走。
+相反 methods 就会每次执行当前的方法。如果有相对大运算量的逻辑，method 就会消耗性能。不过缓存特性的使用要根据不同业务需求走。
 
-## 计算属性 vs 侦听属性
+# 计算属性 vs 侦听属性
 
 有一些数据需要随着其它数据变动而变动时，就会联想使用 watch，但是多数场景还是 computed 更为适用，体会如下例子：
 
@@ -162,33 +172,33 @@ watch 里监听了 firstName 和 lastName ，目的就是为了动态更新 full
 
 ```js
 export default {
-    name: "HelloWorld",
-    data() {
-        return {
-            message: "1 2 3",
-            msg: "not change"
-        };
-    },
-    computed: {},
-    watch: {
-        msg(newQuestion, oldQuestion) {
-            if (oldQuestion !== newQuestion) {
-                this.message = "4 5 6";
-            }
-        }
-    },
-    methods: {},
-    created() {
-        let self = this;
-        // 一个简单的异步操作
-        setTimeout(function() {
-            self.msg = "change";
-        }, 3000);
+  name: "HelloWorld",
+  data() {
+    return {
+      message: "1 2 3",
+      msg: "not change"
+    };
+  },
+  computed: {},
+  watch: {
+    msg(newQuestion, oldQuestion) {
+      if (oldQuestion !== newQuestion) {
+        this.message = "4 5 6";
+      }
     }
+  },
+  methods: {},
+  created() {
+    let self = this;
+    // 一个简单的异步操作
+    setTimeout(function() {
+      self.msg = "change";
+    }, 3000);
+  }
 };
 ```
 
-页面在隔 3 秒后，message 将更新为 4 5 6 。
+如上，watch 监听 msg 字段，3 秒后，msg 发生更改后，message 就联动更新在页面模板上，更新为 4 5 6。这样的处理就变得很合适。
 
 # 总结
 

@@ -65,10 +65,16 @@ npm run serve
 
 **ES Module** 分别有两种：
 
-- 配合 webpack 2 或 Rollup 现在主流构建工具使用的脚本，结合 tree-shaking 实现代码进一步的简化。
-- 浏览器直接使用，可设置 <script type="module"\> 直接导入。
+- 构建工具使用：配合 webpack 2 或 Rollup 现在主流构建工具使用的脚本，结合 tree-shaking 实现代码进一步的简化。
+- 浏览器直接使用：现代浏览器，可设置 <script type="module"\> 直接导入。
 
 ## ES Moudle vs CommonJS
+
+首先要知道 node.js 内部的模块引用方式，就是通过 CommonJS 来加载的。
+
+ES Moudle 就是社区为了统一模块加载方案，用来取代 CommonJS 和 AMD 规范的新方案。
+
+由于这个方案设计思想就是：尽量使得代码静态化，在编译时期就能确保各个模块间的依赖关系。这就是为何配合 webpack 等现代打包工具的 tree-shaking 特性能让代码体积更小的原因之一。
 
 举个代码例子说明 CommonJS vs ESM
 

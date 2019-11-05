@@ -114,6 +114,8 @@ Vue.component("blog-post", {
 
 ## 数据类型
 
+props 可以是 array or object，其中对象类型的方式可以允许更多的高级选项（如，类型检测、自定义校验、设置默认值）。
+
 可以通过这样的定义，来指定各自属性的类型：
 
 ```js
@@ -136,6 +138,13 @@ props: ["title", "likes", "isPublished", "commentIds", "author"];
 ```
 
 ## 数据类型的验证判断
+
+当然我们可以更细化的设置 props 属性，基于对象语法提供了如下选项：
+
+- type: 定义数据类型：String、Number、Boolean、Array、Object、Date、Function、Symbol
+- default：默认值，如果父组件没有设置传入值得话。Object 和 Array 必须通过函数的方式返回（因为内部 vue 会通过 call 来调用）
+- required：Boolean。设置当前属性是否必选。
+- validator：Function。自定义校验函数。
 
 ```js
 Vue.component("my-component", {
@@ -198,15 +207,26 @@ data() {
 
 意思是不要试图在子组件中修改 prop 的属性值，这样会让子组件意外父级组件的状态，从而导致你的应用的数据流向难以理解。
 
+```js
+props: {
+    userName:String
+},
+methods: {
+  check() {
+    this.userName = 123; // error。vue 不允许在子组件中，再次修改 prop 值的情况
+  }
+}
+```
+
 有两种方式去变向实现这样的需求：
 
 1. 在子组件的 data 属性中，新增加一个属性，来代替原 prop 属性的更改
 
 ```js
-props: ['initialCounter'],
+props: ['userName'],
 data: function () {
   return {
-    counter: this.initialCounter
+    nickName: this.userName
   }
 }
 ```
@@ -214,10 +234,10 @@ data: function () {
 2. 如果需要对 prop 进行转换，相当于一个 filter 功能，可以用计算属性来替代
 
 ```js
-props: ['size'],
+props: ['userName'],
 computed: {
-  normalizedSize: function () {
-    return this.size.trim().toLowerCase()
+  nickName: function () {
+    return this.userName.trim().toLowerCase()
   }
 }
 
@@ -269,7 +289,7 @@ methods: {
 <input type="text" :value="value" @input="$emit('input', $event.target.value)" />
 ```
 
-prop 会用一个默认的 value 来接收父组件中 v-model 传来的值，并且 input 的事件会发送出去：
+prop 会用一个默认的 value 来接收父组件中 v-model 传来的值，并且  input  事件会随着用户输入触发而发送出去：
 
 ```js
 props: {
@@ -375,6 +395,12 @@ vue 专门提供了 this.\$listeners 来获取父组件写的事件监听器。�
 ```
 
 这样当 focus 父组件后，就会触发选中方法。
+
+上例注释已经可以说明问题了。我在针对其中细节补充下：
+
+- 通过自带的  \$attrs 来获取父组件模板中额外定义的属性，如，type=text
+
+- 定义计算属性 inputListeners  返回一个事件监听对象。这个对象以 this.\$listeners 为基础可以扩展我们自定义的事件方法。（如上图，定义了 input 以用来使得父模板定义的 v-model 的正常工作）
 
 ### .sync
 

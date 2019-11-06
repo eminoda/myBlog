@@ -2,10 +2,12 @@
 title: vue 基础-数据显示
 tags: vue
 categories:
-    - 开发
-    - 前端开发
+  - 开发
+  - 前端开发
 thumb_img: vue.png
+date: 2019-11-06 14:17:13
 ---
+
 
 # 前言
 

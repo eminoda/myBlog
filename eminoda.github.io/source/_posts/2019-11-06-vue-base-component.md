@@ -5,7 +5,9 @@ categories:
   - 开发
   - 前端开发
 thumb_img: vue.png
+date: 2019-11-06 14:17:31
 ---
+
 
 # 前言
 
@@ -439,9 +441,16 @@ navigation-link 标签内的 innerHtml 内容，最终会被子组件“吸收�
 ```
 
 ```html
+<!-- 子组件 -->
 <a v-bind:href="url" class="nav-link">
   <slot></slot>
 </a>
+```
+
+最后渲染的 html :
+
+```html
+<a data-v-7299320c="" href="/profile" class="nav-link">Your Profile</a>
 ```
 
 ## 编译作用域
@@ -459,7 +468,9 @@ navigation-link 标签内的 innerHtml 内容，最终会被子组件“吸收�
 
 ## 后备内容
 
-当没有定义插槽内容时，默认会以 Submit 文案显示。
+如果你熟悉 webpack ，那么就很好理解 fallback 后备这词的含义。
+
+如果父模板未设置相关插槽内容，那么最后默认显示的将以 slot 标签之间的内容。
 
 ```html
 <slot>Submit</slot>
@@ -467,7 +478,7 @@ navigation-link 标签内的 innerHtml 内容，最终会被子组件“吸收�
 
 ## 具名插槽
 
-为 slot 标签取个名字，因为会出现多个想往 slot 替换的模板。
+为  slot  标签取个名字，因为多样性的模板出现多个想往  slot  替换的模板。
 
 ```html
 <!-- <base-layout> component -->
@@ -484,7 +495,7 @@ navigation-link 标签内的 innerHtml 内容，最终会被子组件“吸收�
 </div>
 ```
 
-父模板这样定义，通过 **v-slot:name** 来指定往哪里插值：
+子模板在 slot 定义 name=xxx ，父模板这样定义，通过 **v-slot:name** 来指定往哪里插值：
 
 ```html
 <base-layout>
@@ -544,6 +555,8 @@ navigation-link 标签内的 innerHtml 内容，最终会被子组件“吸收�
   </slot>
 </span>
 ```
+
+假设在子模板中，已经通过 props 或者 data 定义好了 user 对象（这是前提），然后在父模板中就可以根据 slotProps 这样一个钩子（自定义的 scope 对象）来取到 user 的所有属性，就像这段插值表达式写在子模板中一样。
 
 # 动态组件
 

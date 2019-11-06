@@ -5,7 +5,9 @@ categories:
   - 开发
   - 前端开发
 thumb_img: vue.png
+date: 2019-11-06 14:17:38
 ---
+
 
 # 前言
 
@@ -15,7 +17,7 @@ thumb_img: vue.png
 
 ## 示例
 
-vue 提供了 transition 属性，来对如下特殊的指令或者标签做 **“进入/离开”过渡** 效果：
+vue 提供了 transition 组件标签，来对如下特殊的指令或者标签做 **“进入/离开”过渡** 效果：
 
 - v-if
 - v-show
@@ -206,6 +208,8 @@ v-enter --> v-enter-active --> v-enter-to --> v-leave --> v-leave-active --> v-l
 
 ## JavaScript 钩子
 
+可以在标签上绑定过渡各个时期的钩子，通过 js 来调用触发相关事件的事件。
+
 ```html
 <transition v-on:before-enter="beforeEnter" v-on:enter="enter" v-on:after-enter="afterEnter" v-on:enter-cancelled="enterCancelled" v-on:before-leave="beforeLeave" v-on:leave="leave" v-on:after-leave="afterLeave" v-on:leave-cancelled="leaveCancelled">
   <!-- ... -->
@@ -294,6 +298,8 @@ methods: {
 如果相同元素模板的 key 一致，效果如下：
 
 {% asset_img key.gif 相同 key %}
+
+注意，这不是期望的效果。可能你会感觉到生硬，因为相同 key 的元素切换时没有过渡效果。
 
 设置不同 key 后，动效得以生效：
 

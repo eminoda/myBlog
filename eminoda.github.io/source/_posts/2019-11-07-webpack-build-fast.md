@@ -1,10 +1,11 @@
 ---
-title: webpack 构建提速
+title: webpack 构建优化 - 提速“10倍”
 tags: webpack
 categories:
   - 开发
   - 前端开发
 thumb_img: webpack.png
+date: 2019-11-07 11:26:25
 ---
 
 # 前言
@@ -40,7 +41,7 @@ thumb_img: webpack.png
 
 # 怎么优化
 
-你可以随便搜索下，遍地都是 webpack 的构建优化策略，但我们需要根据自己的项目来分析，直接切入问题要点。
+你可以随便搜索下，遍地都是 webpack 的构建优化策略，但我们需要根据自己项目的实际情况来分析，来直接切入问题要点。
 
 介绍两款分析工具：
 
@@ -57,7 +58,7 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPl
 plugins: [new BundleAnalyzerPlugin()];
 ```
 
-等待 webpack 构建，最后打开默认的 http://127.0.0.1:8888 查看即可。
+等待 webpack 构建，最后打开默认的 http://127.0.0.1:8888 ，查看即可。
 
 {% asset_img analyzer.png 分析结果 %}
 
@@ -204,13 +205,31 @@ fast-sass-loader 将 sass 文件扁平化使 node-sass 不会重复编译同个�
 
 **时间：21.6s -> 18.3s**
 
+使用 happypack plugins ，它将尽可能利用硬件资源，多线程方式来编译代码。
+
+```js
+// loader
+{
+  test: /\.scss$/,
+  use: ['happypack/loader?id=scss']
+}
+```
+
+```js
+// plugin
+new HappyPack({
+  id: "scss",
+  loaders: ["style-loader", "css-loader", "fast-sass-loader?sourceMap=true"]
+});
+```
+
 虽说开启多线程会加快编译的速度，但就目前情况而言减少幅度很少，不像网上那么明显。
 
 考虑原因是，基本已经优化的差不多了，代码编译已经瞬时可以完成了，不再需要多线程的帮助了。开启多线程还会增加额外的判断。
 
 # 优化多页面
 
-**时间：21.6s -> 5~8s**
+**时间：21.6s -> 最低 4s**
 
 大方向似乎没什么可以优化的了，回过头继续思考我们这个项目的形式。此项目是多页面应用，这意味着如果有 50 个 entry 入口文件，那么在使用 html-webpack-plugin 处理对应 chunks 时就会有 50 个插件来工作，他们之间唯一的不同就是 chunks 参数不一样，仅此而已。我已经试过将该插件“停工”后，整个编译时间就几秒，所以必须针对其做一定的优化。
 
@@ -224,98 +243,53 @@ new HtmlWebpackPlugin({
 
 社区有解决方案，你可以试下 [html-webpack-plugin-for-multihtml](https://github.com/daifee/html-webpack-plugin-for-multihtml)，不过即使这样我更想通过简单粗暴的办法来质变它。
 
-我们的业务模块，大体会分为 A，B，C，D，E ...，如果今天开发的需求是设计 A 的，能不能只编译 A 模块相关的 entry 文件呢？假设分了 5 个大类，那现在编译时间就是缩短 5 倍。
+我们的业务模块，大体会分为 A，B，C，D，E ...，如果今天开发的需求是涉及 A 的，能不能只编译 A 模块相关的 entry 文件呢？假设分了 5 个大类，那么现在只编译其中的一类，连小学生都知道编译时间就是缩短 5 倍。
 
 {% asset_img splitEntry.png 模块分割 %}
 
-我录制了一个简单的控制台键入设置，当选择好编译模块后，在执行 npm run build 之类的脚本。
+我录制了一个简单的控制台键入设置，当选择好编译模块后，再执行 npm run build 之类的脚本。
 
 {% asset_img cmd.gif inquirer 示范 %}
 
-```js
-var inquirer = require('inquirer');
-const { exec } = require('child_process');
-class Command {
-	constructor() {
-		this.entryModels = ['user', 'trade', 'tradeclient', 'agent', 'protocol', 'partner', 'news', 'activity'];
-		this.scriptParams = {
-			entryModels: [],
-			entryEnd: ''
-		};
-	}
-	async run() {
-		let self = this;
-		return inquirer
-			.prompt(
-				/* Pass your questions in here */
-				{
-					name: 'loaderAll',
-					type: 'list',
-					message: '选择编译模式',
-					choices: ['全量编译', '按需编译'],
-					pageSize: 2
-				}
-			)
-			.then(data => {
-				if (data.loaderAll == '全量编译') {
-					self.scriptParams.entryModels = ['all'];
-					return Promise.resolve(self.scriptParams);
-				} else {
-					return inquirer
-						.prompt([
-							{
-								name: 'entryEnd',
-								type: 'list',
-								message: '选择终端',
-								choices: ['pc', 'mobile'],
-								pageSize: 2,
-								validate: function(input, answers) {
-									console.log(input, answers);
-									return !answers ? '请选择终端' : true;
-								}
-							}
-						])
-						.then(data => {
-							self.scriptParams.entryEnd = data.entryEnd;
-							return inquirer.prompt([
-								/* Pass your questions in here */
-								{
-									name: 'entryModels',
-									default: self.entryModels[0],
-									type: 'checkbox',
-									message: '输入加载模块',
-									choices: self.entryModels,
-									pageSize: self.entryModels.length
-								}
-							]);
-						})
-						.then(data => {
-							self.scriptParams.entryModels = data.entryModels;
-							return Promise.resolve(self.scriptParams);
-						});
-				}
-			});
-	}
-}
+通过这样可以 0 侵入业务代码，可选择化的编译需要的模块，使编译构建时间主动大幅降低。
 
-try {
-	new Command().run().then(data => {
-		var workerProcess = exec('cross-env NODE_ENV=development ENV=dev node node_modules/webpack/bin/webpack.js --progress --config build/webpack.dev.conf.js', {});
-
-		workerProcess.stdout.on('data', function(data) {
-			console.log(data);
-		});
-
-		workerProcess.stderr.on('data', function(data) {
-			console.log(data);
-		});
-	});
-} catch (err) {
-	console.err(err);
-}
-
-```
 # 总结
 
-[详解 CommonsChunkPlugin 的配置和用法](https://segmentfault.com/a/1190000012828879)
-[多页面 webpack 构建优化不完全指北](https://www.jianshu.com/p/3efc24316533)
+虽然就目前项目构建情况来说优化结果符合预期了（小范围构建已经 **达到秒级**），当然还有很多优化的细节和方向，我这边简单列举下：
+
+- [devtool](https://webpack.js.org/configuration/devtool/#devtool)
+
+  这是 webpack 自带，用于调试时对代码进行 debugger 。
+
+- [resolve](https://webpack.js.org/configuration/resolve/#resolve)
+
+  可以对引用的模块进行别名设置，减少路径的搜索负担。
+
+- cache-loader
+
+  你可以考虑把 loader 工作加到缓存中，你已经看到 babel-loader 里面的 cache 作用有多大。
+
+- DllPlugin
+
+  个人认为这是个双刃剑，如果要用的话可能在配置上增加复杂度，而且在有 externals 时，最好做个权衡。
+
+- uglify-parallel
+
+  如果你在代码“丑化”时，遇到了比较大的耗时，可以用下这个插件。
+
+- webpack 升级
+
+  这个对于老项目冲击会比较大，再没有健全的自动化体系前需要慎重。但如果项目较小，又不想做过多的优化尝试，直接可以试下这方法。
+
+- hot 热更新
+
+  这可能是另外一个话题了，如果你觉得再次编译也慢的话尝试开启热更新，我这项目由于不想对业务代码做侵入，就暂不尝试。
+
+  如果你有兴趣，可以看下 [探索 webpack-dev-server 的 HMR](http://eminoda.github.io/2019/10/11/webpack-dev-server-hmr/)，希望你一切顺利。
+
+# 参考
+
+> 我只是知识点的“加工者”， 更多内容请查阅原文链接 :thought_balloon: ， 同时感谢原作者的付出：
+
+- [详解 CommonsChunkPlugin 的配置和用法](https://segmentfault.com/a/1190000012828879)
+- [多页面 webpack 构建优化不完全指北](https://www.jianshu.com/p/3efc24316533)

@@ -41,7 +41,6 @@ Vue.filter("drawStatus", function(value) {
 一般，后端返回时间存储格式和前端展示会有差异，封装 **moment** 工具库，以过滤器 filter 形式来简化这种格式化操作。
 
 ```js
-Vue.filter("timeFormat", function(value, format) {
   return value ? moment(value).format(format || "YYYY-MM-DD HH:mm:ss") : "";
 });
 ```

@@ -322,7 +322,108 @@ const routes = [
 
 ## 路由守卫
 
+守卫这个思想，最初我是在 angular 看到的，然而 vue 里也有对应的概念。但在整个程序设计语言中，还是觉得用 java 里的拦截器描述最为恰当。
 
+### 全局前置守卫 beforeEach
+
+beforeEach 接受 to、from、next 三个参数，前两者分别是路由对象，代表到哪里去、从哪里来。
+
+next 是整个方法最后 resolve 的回调钩子。如果始终没有在这方法中执行，那么永远进入不到后续路由中。
+
+我们能在里面做什么？看这个例子：
+
+```js
+const routers = new Router({
+  routes
+});
+
+// 拦截
+routers.beforeEach((to, from, next) => {
+  // 特定路由做验证
+  if (to.name == "guard") {
+    console.log("验证用户登录");
+  }
+  next();
+});
+```
+
+可以对需要的路由做个判断，目标地址如果是需要用户授权的页面，可以在这里统一的做用户信息的判断，来决定是否“放”到后续 to 路由。
+
+### 全局后置路由 afterEach
+
+这是一个 to 路由跳转后，执行的路由方法。与 beforeEach 不同，它不具备 next 参数，也就不具备“守卫”功能。
+
+我们可以统一在此处做些状态信息的处理，以便 component 能更好的处理。
+
+```js
+routers.afterEach((to, from) => {
+  console.log("路由请求结束");
+});
+```
+
+### 全局解析守卫
+
+在 afterEach 之前被调用，当路由组件被解析后则触发。
+
+```js
+routers.beforeResolve((to, from, next) => {
+  console.log("beforeResolve 路由解析");
+  next();
+});
+```
+
+### 路由独享的守卫 beforeEnter
+
+上面这两个都是全局范围的，如果只想让某个特定路由执行特殊“任务”，可以在路由定义上使用 beforeEnter，它和 beforeEach 一样具备守卫功能，即可以调用 next：
+
+```js
+{
+  name: 'notFound',
+  path: '*',
+  component: NotFound,
+  beforeEnter: (to, from, next) => {
+    console.log(from, 'error');
+    next();
+  }
+}
+```
+
+### 组件内的守卫 beforeRouteXXX
+
+为了更细粒度的控制组件的交互，vue-router 也提供了组件内部的路由方法，他们和 data、methods 等组件属性一样使用。
+
+使用示例如下：
+
+```js
+export default {
+  data() {
+    return {};
+  },
+  // 组件还未进入前触发，注意：无法使用 this 来调用相关方法
+  beforeRouteEnter(to, from, next) {
+    console.log("component beforeRouteEnter");
+    next();
+  },
+  // 动态路由切换地址时才会触发
+  beforeRouteUpdate(to, from, next) {
+    console.log("component beforeRouteUpdate");
+    next();
+  },
+  // 准备跳转其他路由时触发
+  beforeRouteLeave(to, from, next) {
+    console.log("component beforeRouteLeave");
+    next();
+  }
+};
+```
+
+### 路由执行顺序
+
+分两块：不同路由切换、动态路由切换
+
+记肯定记不住的，我画了一个简单的图供参考：
+
+{% asset_img router-order.png 路由顺序 %}
 
 ## 路由名称
 
@@ -359,6 +460,21 @@ this.$router.push({ name: "dynamic", params: { dynamic: 1 } }).catch(err => {
 ```
 
 所以，涉及动态路由时，需要非常小心。
+
+## 异步路由
+
+所有 js 打包在一个 bundle 是非常消耗服务器资源的，这毕竟是单页面应用的通病。
+
+但可以通过路由和 webpack 的机制，利用异步路由动态加载所需要的组件 chunk js，达到一定的优化效果。
+
+代码如下：
+
+```js
+const RouterIndex = () => require.ensure([], () => require("./pages/Router/Index.vue"), "RouterIndex");
+const DynamicRouter = () => import("./pages/Router/DynamicRouter.vue");
+const NotFound = () => import("./pages/Router/NotFound.vue");
+const Params = () => import("./pages/Router/Params.vue");
+```
 
 ## 404 后备选项
 

@@ -5,7 +5,9 @@ categories:
   - 开发
   - 前端开发
 thumb_img: vue.png
+date: 2019-12-03 14:28:49
 ---
+
 
 # 前言
 
@@ -25,14 +27,14 @@ thumb_img: vue.png
 
 ## 感谢和参考 :sunny:
 
-由于一直在**搬砖**，让自己在技术面前依旧是**新人**，因为我从未深度了解**它们**。所以开始这段旅程前，需要很多人的指点和引导。再次感谢社区那些无私奉献的大佬们。
+由于一直在 **搬砖**，让自己在技术面前依旧是新人，因为我从未深度了解它们。所以开始这段旅程前，需要很多人的指点和引导。再次感谢社区那些无私奉献的大佬们。
 
 参考链接：
 
 - [Vue 技术内幕--hcysun](http://hcysun.me/vue-design/) 超详细的解读，还有不错的排版，佩服作者的辛苦付出
 - [停止学习框架](https://juejin.im/post/5c1a839f518825780008537d) 这是我为何重视源码的契机
 
-## 提前准备
+# 提前准备
 
 如果你对如下工具或者知识点不是特别熟悉，有必要事先做个学习准备：
 
@@ -48,9 +50,9 @@ thumb_img: vue.png
 
   整个学习过程还是需要对官方 api 有个比较高的熟悉度，只有用过了，当看到源码才会有更深的理解和思考。
 
-## Vue 对象在创建的整个过程？
+# Vue 对象在创建的整个过程？
 
-这是个简单的 vue 对象创建，并实例化：
+这是一个简单的 vue 对象创建示例：
 
 ```js
 var app = new Vue({
@@ -61,9 +63,9 @@ var app = new Vue({
 });
 ```
 
-那从声明定义，到对象创建，里面到底经历了什么？下面来简单看下：
+那声明定义，到对象创建，之间到底经历了什么？
 
-function Vue 定义在哪里？
+先从 Vue 的函数 function 声明开始：
 
 ```js
 // src\core\instance\index.js
@@ -73,7 +75,7 @@ function Vue(options) {
 }
 ```
 
-声明完后，立即会混合相关 vue 原型方法。
+先不看内部的 \_init 方法，因为我们知道当 new 对象后，自然首先就会进入该方法。声明完后，立即会混合相关 vue 原型方法：
 
 ```js
 initMixin(Vue);
@@ -83,7 +85,16 @@ lifecycleMixin(Vue);
 renderMixin(Vue);
 ```
 
-initMixin 准备了对象创建后调用的 init 原型方法，并在其中还有生命周期、事件等相关初始化方法。
+这些 Mixin 方法会在 Vue 对象上定义一些我们熟知的 **原型方法**：
+
+- 状态类：\$watch、\$set、\$delete
+- 事件类：\$on、\$once、\$off、\$emit
+- 生命周期类：\$forceUpdate、\$destroy、\_update
+- 渲染类：\$nextTick、\_render
+
+有机会我们会具体看这些方法是如何工作的。
+
+先具体看下 **initMixin** ，因为它和一开始的函数声明关系最密切，定义了原型 **\_init** 方法：
 
 ```js
 // src\core\instance\init.js
@@ -107,51 +118,23 @@ export function initMixin(Vue) {
 }
 ```
 
-你能看到 init 中有两个 callHook ，他们是生命周期钩子的调用，结合 **生命周期图谱** 基本有个初步的猜想认识。
+里面定义了一系列 vue 相关的初始化工作，结合 vue 的 **生命周期图谱**，会让容易理解这些初始化方法和 beforeCreate，created 两个生命周期钩子的执行顺序。
 
-当然 init 是实例化后才调用的，这里不做展开。继续看余下的声明定义。
+{% asset_img lifecycle-init.png 生命周期图谱 %}
 
-在 initGlobalAPI 方法中做些 Vue 属性定义。
+紧接着之后的声明，在 **initGlobalAPI** 方法中知道 Vue 定义了哪些全局 API 的？
 
 ```js
 // src\core\index.js
 initGlobalAPI(Vue);
 ```
 
-```js
-// src\core\global-api\index.js
-export function initGlobalAPI(Vue: GlobalAPI) {
-  // ...
-  Object.defineProperty(Vue, "config", configDef);
-  // ...
-  Vue.util = {
-    warn,
-    extend,
-    mergeOptions,
-    defineReactive
-  };
+包括 Vue.config、Vue.set、Vue.delete、Vue.nextTick、Vue.observable、Vue.mixin、Vue.use、Vue.extend 等，这些你都能在官网的 [全局 API](https://cn.vuejs.org/v2/api/#%E5%85%A8%E5%B1%80-API) 找到对应的说明。
 
-  Vue.set = set;
-  Vue.delete = del;
-  Vue.nextTick = nextTick;
-  Vue.observable = <T>(obj: T): T => {
-    observe(obj);
-    return obj;
-  };
-  // ...
-  initUse(Vue);
-  initMixin(Vue);
-  initExtend(Vue);
-  initAssetRegisters(Vue);
-}
-```
-
-定义 runtime 的 \$mount 方法：
+注意最后的页面挂载，你能在“完整版”的 vue.js 中看到两处 \$mount 的方法定义：
 
 ```js
 // src\platforms\web\runtime\index.js
-
-Vue.prototype.__patch__ = inBrowser ? patch : noop;
 
 // public mount method
 Vue.prototype.$mount = function(el?: string | Element, hydrating?: boolean): Component {
@@ -160,7 +143,7 @@ Vue.prototype.$mount = function(el?: string | Element, hydrating?: boolean): Com
 };
 ```
 
-最后的 vue 完整版，再次定义了 $mount 方法，集成了 render 等函数，其内部调用上面的 $mount 方法。
+第二处是“完整版”打包入口文件这里，再次定义了 $mount 方法，集成了 render 等函数，其内部调用上面的 $mount 方法。
 
 ```js
 // src\platforms\web\entry-runtime-with-compiler.js
@@ -171,3 +154,19 @@ Vue.prototype.$mount = function(el?: string | Element, hydrating?: boolean): Com
   return mount.call(this, el, hydrating);
 };
 ```
+
+\$mount 在 \_init() 方法中被调用，就这样我们能看到模板被挂载到页面上，其中的逻辑在 **生命周期图谱** 上也展示的很清楚：
+
+{% asset_img lifecycle-mount.png 生命周期图谱 %}
+
+之后，会根据数据的更新机制来完成页面的动态响应：
+
+{% asset_img lifecycle-react.png 生命周期图谱 %}
+
+当然这里一句话带过了，详细原理见后续文章。
+
+# 总结
+
+做了 vue 代码学习的准备工作。
+
+并结合 vue 整个生命周期过程，讲了一个简单的 vue 从声明到创建中间的所经历过程，大致对其中过程有个初步的概念。

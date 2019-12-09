@@ -8,16 +8,17 @@ thumb_img: vue.png
 date: 2019-12-03 14:28:49
 ---
 
-
 # 前言
 
 ## 初衷:heart:
 
-从 angular 转到 vue ，到现在也用了两年多了。作为前端开发一直在“无脑”用着官方提供的 API，完成迭代需求。
+从 **angular** 转到 **vue** ，到现在也用了两年多了。作为前端开发一直在“无脑”用着官方提供的 API，完成迭代需求。
 
-表面看似熟悉这门技术框架，但根本不了解其内部机制，就和几根稻草顶着一块砖头一样 **软弱不堪**。
+表面看似熟悉这门技术框架，但根本不了解其内部机制，如同几根稻草顶着一块砖头一样 **软弱不堪**。
 
 赶在 vue 3.0 还没有正式发布前，做最后的冲刺，以更好的姿态面对将来的挑战 :punch:
+
+当然如果在看的你也和我一样未看过 vue 源码，希望这个系列能帮助到你。
 
 几个小目标 :triangular_flag_on_post:：
 
@@ -27,7 +28,7 @@ date: 2019-12-03 14:28:49
 
 ## 感谢和参考 :sunny:
 
-由于一直在 **搬砖**，让自己在技术面前依旧是新人，因为我从未深度了解它们。所以开始这段旅程前，需要很多人的指点和引导。再次感谢社区那些无私奉献的大佬们。
+由于一直在 **搬砖**，让自己在底层技术面前依旧是新人，因为我从未深度了解它们。所以开始这段旅程前，需要很多人的指点和引导。再次感谢社区那些无私奉献的大佬们。
 
 参考链接：
 
@@ -36,7 +37,7 @@ date: 2019-12-03 14:28:49
 
 # 提前准备
 
-如果你对如下工具或者知识点不是特别熟悉，有必要事先做个学习准备：
+在开始学习之前，需要对如下工具或者语法有个概念：
 
 - ES6
 
@@ -44,7 +45,7 @@ date: 2019-12-03 14:28:49
 
 - flow & rollup
 
-  vue 源码基于这两个工具做类型检查以及代码构建的，不影响阅读学习，但知道是最好的。
+  vue 源码基于这两个工具做类型检查以及代码构建的，不影响阅读学习，但知道是最好的。我也准备了两篇快速入门：[flow 静态代码检查工具](https://eminoda.github.io/2018/12/12/flow-quickstart/), [rollup 5 分钟入门](https://eminoda.github.io/2018/12/11/rollup-quickstart/)
 
 - vue api
 
@@ -52,7 +53,7 @@ date: 2019-12-03 14:28:49
 
 # Vue 对象在创建的整个过程？
 
-这是一个简单的 vue 对象创建示例：
+如下是一个简单的 vue 对象创建示例：
 
 ```js
 var app = new Vue({
@@ -63,9 +64,7 @@ var app = new Vue({
 });
 ```
 
-那声明定义，到对象创建，之间到底经历了什么？
-
-先从 Vue 的函数 function 声明开始：
+刚学习前我们一直不知道这个对象的创建内部经历了什么？以这个 Demo 为起点，我们先从 Vue 的函数 function 声明开始：
 
 ```js
 // src\core\instance\index.js
@@ -75,7 +74,9 @@ function Vue(options) {
 }
 ```
 
-先不看内部的 \_init 方法，因为我们知道当 new 对象后，自然首先就会进入该方法。声明完后，立即会混合相关 vue 原型方法：
+先不看内部的 \_init 方法，因为我们知道当 new 对象后，自然首先就会进入该方法。
+
+当 function Vue 声明完后，立即会混合相关 vue 原型方法：
 
 ```js
 initMixin(Vue);
@@ -118,11 +119,11 @@ export function initMixin(Vue) {
 }
 ```
 
-里面定义了一系列 vue 相关的初始化工作，结合 vue 的 **生命周期图谱**，会让容易理解这些初始化方法和 beforeCreate，created 两个生命周期钩子的执行顺序。
+里面定义了一系列 vue 相关的初始化工作，结合 vue 的 **生命周期图谱**，会让容易理解这些初始化方法和 beforeCreate，created 两个生命周期钩子的意义。
 
 {% asset_img lifecycle-init.png 生命周期图谱 %}
 
-紧接着之后的声明，在 **initGlobalAPI** 方法中知道 Vue 定义了哪些全局 API 的？
+紧接着之后的声明，在 **initGlobalAPI** 方法中知道 Vue 定义了哪些 **全局 API** 的？
 
 ```js
 // src\core\index.js
@@ -131,7 +132,9 @@ initGlobalAPI(Vue);
 
 包括 Vue.config、Vue.set、Vue.delete、Vue.nextTick、Vue.observable、Vue.mixin、Vue.use、Vue.extend 等，这些你都能在官网的 [全局 API](https://cn.vuejs.org/v2/api/#%E5%85%A8%E5%B1%80-API) 找到对应的说明。
 
-注意最后的页面挂载，你能在“完整版”的 vue.js 中看到两处 \$mount 的方法定义：
+注意最后的页面挂载，你能在“完整版”的 vue.js 中看到两处 **\$mount** 的方法定义。
+
+第一处：
 
 ```js
 // src\platforms\web\runtime\index.js
@@ -143,7 +146,7 @@ Vue.prototype.$mount = function(el?: string | Element, hydrating?: boolean): Com
 };
 ```
 
-第二处是“完整版”打包入口文件这里，再次定义了 $mount 方法，集成了 render 等函数，其内部调用上面的 $mount 方法。
+第二处是“完整版”打包入口文件这里，再次定义了 **\$mount** 方法，集成了 render 等函数，其内部调用上面的 **\$mount** 方法。
 
 ```js
 // src\platforms\web\entry-runtime-with-compiler.js
@@ -159,11 +162,11 @@ Vue.prototype.$mount = function(el?: string | Element, hydrating?: boolean): Com
 
 {% asset_img lifecycle-mount.png 生命周期图谱 %}
 
-之后，会根据数据的更新机制来完成页面的动态响应：
+之后，会根据数据的更新机制来完成页面的数据动态响应：
 
 {% asset_img lifecycle-react.png 生命周期图谱 %}
 
-当然这里一句话带过了，详细原理见后续文章。
+当然以上的过程都简单带过了，详细原理见后续文章。
 
 # 总结
 

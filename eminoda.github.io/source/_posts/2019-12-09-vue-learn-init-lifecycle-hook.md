@@ -5,6 +5,7 @@ categories:
   - 开发
   - 前端开发
 thumb_img: vue.png
+date: 2019-12-09 13:29:51
 ---
 
 # 前言
@@ -31,7 +32,7 @@ callHook(vm, "beforeCreate");
 
 注意所有的钩子在 mergeOptions 阶段已被 mergeHook 策略处理过了。
 
-并且父子 vue 上定义的钩子方法不会存在覆盖情况，他们会按父先子后的顺序存入数组中：
+并且如果存在继承关系的 vue 实例上定义的钩子方法不会存在覆盖情况，他们会按父先子后的顺序存入数组中：
 
 ```js
 function mergeHook(parentVal: ?Array<Function>, childVal: ?Function | ?Array<Function>): ?Array<Function> {
@@ -106,4 +107,4 @@ function invokeWithErrorHandling(handler: Function, context: any, args: null | a
 
 # 总结
 
-接触了第一个生命周期钩子 beforeCreate ，进入 callHook 看了生命周期方法是如何执行起作用的。
+接触了第一个生命周期钩子 beforeCreate ，进入 callHook 看了生命周期方法是如何执行触发的。

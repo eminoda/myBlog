@@ -5,11 +5,12 @@ categories:
   - 开发
   - 前端开发
 thumb_img: vue.png
+date: 2019-12-09 13:29:28
 ---
 
-# 代理 Proxy
+# 前言
 
-紧接着 mergeOptions 的方法后，接下来就进入了渲染代理 \_renderProxy 属性的定义。
+紧接着 **mergeOptions** 的方法后，接下来就进入了渲染代理 **\_renderProxy** 属性的定义。
 
 ```js
 if (process.env.NODE_ENV !== "production") {
@@ -21,7 +22,7 @@ if (process.env.NODE_ENV !== "production") {
 
 在开始 initProxy 前，先对 Proxy 对象有个简单的认识。
 
-## Proxy
+# Proxy 对象
 
 > Proxy 用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种“元编程”（meta programming），即对编程语言进行编程。
 
@@ -32,9 +33,9 @@ if (process.env.NODE_ENV !== "production") {
 - 元编程：
   如果我们 handler 处理较为不同，可能得到的最终结果会是“加工处理”后的，并且它比我们写代码更为高效。
 
-## initProxy
+# 初始化代理 initProxy
 
-了解 Proxy 后，我们来进入到 initProxy 方法中看下，首先是 Proxy 的 set 定义：
+了解 **Proxy** 后，我们来进入到 **initProxy** 方法中看下，首先是 **Proxy** 的 **set** 定义：
 
 ```js
 const isBuiltInModifier = makeMap("stop,prevent,self,ctrl,shift,alt,meta,exact");
@@ -106,6 +107,6 @@ const hasHandler = {
 
 # 总结
 
-需要注意的是，通过 Proxy 元编程方式对设置的对象做了验证拦截处理，比让我们在开发中有个更详细的错误提示
+需要注意的是，通过 Proxy 元编程方式对设置的对象做了验证拦截处理，比让我们在开发中有个更详细的错误提示。
 
-这个对象 target 就是 vm （即整个 this 引用），最后整个代理是交付给 vm.\_renderProxy 属性，我们在看到相关渲染方式时在关注它的作用。
+这个对象 target 就是 vm （即整个 this 引用），最后整个代理是交付给 **vm.\_renderProxy** 属性，我们在看到相关渲染方式时再关注它的作用。

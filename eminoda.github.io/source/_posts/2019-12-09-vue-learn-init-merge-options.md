@@ -5,13 +5,14 @@ categories:
   - 开发
   - 前端开发
 thumb_img: vue.png
+date: 2019-12-09 13:29:16
 ---
 
 # 前言
 
-上篇，借助生命周期图简单介绍了整个 Vue 的声明过程，这篇开始进入 Vue.prototype.\_init 方法，以其为起始点，看整个 Vue 的内部代码逻辑。
+上篇，借助生命周期图简单介绍了整个 Vue 的声明过程，这篇开始正式进入 **Vue.prototype.\_init** 方法，以其为起始点，看整个 Vue 的内部代码逻辑。
 
-# 初始化 \_init 方法
+# 初始化 \_init()
 
 先看下整个初始化的代码（因为排版，略作删减，有需要还是 clone 整个项目查看，后续不再做说明）：
 
@@ -55,7 +56,7 @@ Vue.prototype._init = function(options?: Object) {
 
 # 属性合并 mergeOptions
 
-我们定义 Vue 对象的参数，会被 \_init 方法接收，并作为 options 选项参数：
+我们定义 **Vue** 对象的参数，会被 **\_init** 方法接收，并作为 options 选项对象参数：
 
 ```js
 {
@@ -70,7 +71,7 @@ Vue.prototype._init = function(options?: Object) {
 Vue.prototype._init = function(options?: Object) {};
 ```
 
-之后会判断 options.\_isComponent ，当然肯定为 false ，程序会调用 **mergeOptions** 方法，进行合并选项参数：
+之后会判断 options.\_isComponent ，当然现在肯定为 false ，随后程序会调用 **mergeOptions** 方法，进行合并选项参数的工作：
 
 ```js
 vm.$options = mergeOptions(resolveConstructorOptions(vm.constructor), options || {}, vm);
@@ -129,7 +130,7 @@ var child = new Child({ name: "eminoda", nickname: "e", age: 29 });
 
 ## normalize 标准化选项
 
-做完 Constructor 解析后，就进入 mergeOptions 方法了，然后迎来针对 props、inject、directives 的标准化解析：
+解析完 **Constructor** 后，就进入 **mergeOptions** 方法了，然后迎来针对 props、inject、directives 的 **标准化解析**：
 
 ```js
 export function mergeOptions(parent: Object, child: Object, vm?: Component): Object {
@@ -142,7 +143,11 @@ export function mergeOptions(parent: Object, child: Object, vm?: Component): Obj
 }
 ```
 
-因为 Vue 为方便我们的“各种”形式传参，做了很多标准化的转化：
+因为 Vue 为方便我们的“各种”方式的使用，做了多样的 api，最后都要通过标准化的转化让 vue 内部来正确使用：
+
+下面是这三个属性的转化说明：
+
+### props
 
 ```
 props: Array<string> | Object
@@ -176,6 +181,8 @@ function normalizeProps(options: Object, vm: ?Component) {
 }
 ```
 
+### inject
+
 ```
 inject: Array<string> | { [key: string]: string | Symbol | Object }
 ```
@@ -199,6 +206,8 @@ function normalizeInject(options: Object, vm: ?Component) {
 }
 ```
 
+### directives
+
 ```
 directives: Object
 ```
@@ -218,9 +227,9 @@ function normalizeDirectives(options: Object) {
 }
 ```
 
-### mergeField 字段合并
+## mergeField 字段合并
 
-分别遍历 parent 和 child 的属性字段，根据特定字段的 **合并策略** 进行 merge 操作。
+当标准化后，会分别遍历 parent 和 child 的属性字段，根据特定字段的 **合并策略** 进行 merge 操作。
 
 ```js
 const options = {};
@@ -247,95 +256,122 @@ function mergeField(key) {
 // src\core\util\options.js
 ```
 
-策略说明：
+### 默认策略 defaultStrat
 
-- defaultStrat 默认策略: el、propsData
+属性：el、propsData
 
-  最简单的方式来合并字段，如果 child 不存在就用 parent
+以最简单的方式来合并字段，如果 child 不存在就用 parent
 
-  ```js
-  const defaultStrat = function(parentVal: any, childVal: any): any {
-    return childVal === undefined ? parentVal : childVal;
-  };
-  ```
+```js
+const defaultStrat = function(parentVal: any, childVal: any): any {
+  return childVal === undefined ? parentVal : childVal;
+};
+```
 
-- 数组拼接策略：lifecycle
+### 特殊定义
 
-  ```js
-  LIFECYCLE_HOOKS.forEach(hook => {
-    strats[hook] = mergeHook;
-  });
-  ```
+属性：lifecycle
 
-- 直接定义策略：component、directive、filter
+根据预设的生命周期数组，挨个遍历初始化钩子 hook 的策略
 
-  ```js
-  ASSET_TYPES.forEach(function(type) {
-    strats[type + "s"] = mergeAssets;
-  });
-  ```
+```js
+const LIFECYCLE_HOOKS = ["beforeCreate", "created", "beforeMount", "mounted", "beforeUpdate", "updated", "beforeDestroy", "destroyed", "activated", "deactivated", "errorCaptured", "serverPrefetch"];
+```
 
-- extend 覆盖策略：props、methods、inject、computed
+```js
+LIFECYCLE_HOOKS.forEach(hook => {
+  strats[hook] = mergeHook;
+});
+```
 
-  以 child 优先，覆盖 parent 属性值
+属性：component、directive、filter 策略：
 
-- mergeData 对象合并策略：用于 mergeDataOrFn 策略中的基础方案
+如上三个 api 设置 s 命名，定义合并策略
 
-  会根据遍历 to、from 各自对象上的属性，互相作对比，以 to 优先
+```js
+ASSET_TYPES.forEach(function(type) {
+  strats[type + "s"] = mergeAssets;
+});
+```
 
-  ```js
-  function mergeData(to: Object, from: ?Object): Object {
-    if (!from) return to;
-    let key, toVal, fromVal;
+### 继承策略
 
-    const keys = hasSymbol ? Reflect.ownKeys(from) : Object.keys(from);
+属性：props、methods、inject、computed
 
-    for (let i = 0; i < keys.length; i++) {
-      key = keys[i];
-      // in case the object is already observed...
-      if (key === "__ob__") continue;
-      toVal = to[key];
-      fromVal = from[key];
-      if (!hasOwn(to, key)) {
-        set(to, key, fromVal);
-      } else if (toVal !== fromVal && isPlainObject(toVal) && isPlainObject(fromVal)) {
-        mergeData(toVal, fromVal);
-      }
-    }
-    return to;
+以 child 优先，覆盖 parent 属性值
+
+```js
+function (parentVal,childVal,vm,key): ?Object {
+  if (!parentVal) return childVal
+  const ret = Object.create(null)
+  extend(ret, parentVal)
+  if (childVal) extend(ret, childVal)
+    return ret
   }
-  ```
+}
+```
 
-- mergeDataOrFn 方法执行策略：data、provide
+### 数据合并方法策略 mergeDataOrFn
 
-  如果参数是 function 类型，会通过 call 来做预执行操作，将结果作为 parent 和 child 的合并前提。
+属性：data、provide
 
-  ```js
-  export function mergeDataOrFn(parentVal: any, childVal: any, vm?: Component): ?Function {
-    if (!vm) {
-      // in a Vue.extend merge, both should be functions
-      if (!childVal) {
-        return parentVal;
+如果参数是 function 类型，会通过 call 来做预执行操作，将结果作为 parent 和 child 的合并前提。
+
+```js
+export function mergeDataOrFn(parentVal: any, childVal: any, vm?: Component): ?Function {
+  if (!vm) {
+    // in a Vue.extend merge, both should be functions
+    if (!childVal) {
+      return parentVal;
+    }
+    if (!parentVal) {
+      return childVal;
+    }
+    return function mergedDataFn() {
+      return mergeData(typeof childVal === "function" ? childVal.call(this, this) : childVal, typeof parentVal === "function" ? parentVal.call(this, this) : parentVal);
+    };
+  } else {
+    return function mergedInstanceDataFn() {
+      // instance merge
+      const instanceData = typeof childVal === "function" ? childVal.call(vm, vm) : childVal;
+      const defaultData = typeof parentVal === "function" ? parentVal.call(vm, vm) : parentVal;
+      if (instanceData) {
+        return mergeData(instanceData, defaultData);
+      } else {
+        return defaultData;
       }
-      if (!parentVal) {
-        return childVal;
-      }
-      return function mergedDataFn() {
-        return mergeData(typeof childVal === "function" ? childVal.call(this, this) : childVal, typeof parentVal === "function" ? parentVal.call(this, this) : parentVal);
-      };
-    } else {
-      return function mergedInstanceDataFn() {
-        // instance merge
-        const instanceData = typeof childVal === "function" ? childVal.call(vm, vm) : childVal;
-        const defaultData = typeof parentVal === "function" ? parentVal.call(vm, vm) : parentVal;
-        if (instanceData) {
-          return mergeData(instanceData, defaultData);
-        } else {
-          return defaultData;
-        }
-      };
+    };
+  }
+}
+```
+
+### 数据合并策略 mergeData
+
+用于 **mergeDataOrFn** 策略中的基础方案
+
+会根据遍历 to、from 各自对象上的属性，互相作对比，以 to 优先
+
+```js
+function mergeData(to: Object, from: ?Object): Object {
+  if (!from) return to;
+  let key, toVal, fromVal;
+
+  const keys = hasSymbol ? Reflect.ownKeys(from) : Object.keys(from);
+
+  for (let i = 0; i < keys.length; i++) {
+    key = keys[i];
+    // in case the object is already observed...
+    if (key === "__ob__") continue;
+    toVal = to[key];
+    fromVal = from[key];
+    if (!hasOwn(to, key)) {
+      set(to, key, fromVal);
+    } else if (toVal !== fromVal && isPlainObject(toVal) && isPlainObject(fromVal)) {
+      mergeData(toVal, fromVal);
     }
   }
-  ```
+  return to;
+}
+```
 
 所有属性遍历完后，得到最终的 options 交付给 **vm.\$options** 。

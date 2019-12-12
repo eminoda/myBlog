@@ -195,7 +195,7 @@ Object.defineProperty(obj, key, {
 });
 ```
 
-注意这里的 **enumerable** 为 **false** ，会在遍历 value 是屏蔽掉当前属性 **\_\_ob\_\_** 。
+注意这里的 **enumerable** 为 **false** ，会在遍历 value 是屏蔽掉当前属性 **\_\_ob\_\_** 。这个属性 **\_\_ob\_\_** 以后有什么用，我们在 **Dep** 对象中再看。
 
 先跳过 **Array.isArray(value)** 判断，直接调用 **this.walk** 方法：
 

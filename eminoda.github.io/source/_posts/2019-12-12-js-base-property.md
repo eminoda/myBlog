@@ -278,7 +278,7 @@ let forzenUser = Object.freeze({
   name: "eminoda"
 });
 _testObj(forzenUser, "freeze");
-// [seal]  扩展性:  false 密封性:  true 冻结性:  false
+// [freeze]  扩展性:  false 密封性:  true 冻结性:  true
 // 属性不可修改
 // 属性不可新增
 // 属性不可删除

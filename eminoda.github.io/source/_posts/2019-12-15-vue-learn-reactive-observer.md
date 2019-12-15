@@ -1,17 +1,19 @@
 ---
-title: vue 源码学习-数据响应：观察者 Observer
+title: vue 源码学习-数据动态响应：观察者 Observer
 tags: vue
 categories:
   - 开发
   - 前端开发
 thumb_img: vue.png
+date: 2019-12-15 16:45:29
 ---
+
 
 # 前言
 
-我们已经大致了解了初始化工作中 vue 到底做了哪些事情，这篇开始，进入第二大块内容 —— **数据响应**，逐步探究 vue 是如何实现数据的动态响应？
+我们已经大致了解了初始化工作中 vue 到底做了哪些事情，这篇开始，进入第二大块内容 —— **数据响应**，逐步探究 **vue** 是如何实现数据的动态响应？
 
-再次回顾初始化状态 **initState** 方法：
+再次回顾状态初始化 **initState** 方法：
 
 ```js
 function initState(vm: Component) {
@@ -27,7 +29,7 @@ function initState(vm: Component) {
 }
 ```
 
-这里先忽略 props、methods、computed、watcher 的处理“工作”，先选 **options.data** 属性作为起点，因为 **data** 使我们开发中最常用的属性，借他了解整个动态响应的全貌：
+这里先忽略 props 、methods 、computed 、watcher 的“处理工作”，先选 **options.data** 属性作为起点，因为 **data** 使我们开发中最常用的属性，借他了解整个 **动态响应的全貌** ：
 
 ```js
 function initData(vm: Component) {
@@ -40,9 +42,11 @@ function initData(vm: Component) {
 }
 ```
 
-经过 **initData** 的初始化处理，发现最终调用了观察方法 **observe(data)** .
+经过 **initData** 的初始化处理，发现最终调用了观察方法 **observe(data)** ，这是数据动态响应的第一部分。
 
-# observe 观察
+# observe 观察数据
+
+## 代码主体
 
 先看下方法代码定义：
 
@@ -64,15 +68,17 @@ function observe(value: any, asRootData: ?boolean): Observer | void {
 }
 ```
 
+## 条件判断
+
 我们知道目前是如何调用此 **observe** 方法的：
 
 ```js
 observe(data, true /* asRootData */);
 ```
 
-所以参数列表中 **value** 就是 **options.data** ， **asRootData** 值为 **true**：
+所以目前参数列表中 **value** 就是 **options.data** ， **asRootData** 值为 **true**：
 
-首先，回去判断某些 **不做观察的条件**：
+首先，回去判断某些不做观察的条件：
 
 ```js
 if (!isObject(value) || value instanceof VNode) {
@@ -80,7 +86,7 @@ if (!isObject(value) || value instanceof VNode) {
 }
 ```
 
-**value** 非对象形式，并且不是 **VNode** 虚拟节点对象。
+**不做观察的条件** ： **value** 非对象形式，并且不是 **VNode** 虚拟节点对象。
 
 再是，判断 **value** 是否已经被观察过了：
 
@@ -125,21 +131,19 @@ function initInjections(vm: Component) {
 }
 ```
 
-最终 **inject** 上的第一级属性被定义了响应化，但子级属性因为 **toggleObserving(false)** 而直接 **return** ，这就是为何你更新 inject 相关值时，页面没有更新的原因（有些扯远了）。
+最终 **inject** 上的第一级属性被定义了响应化，但子级属性因为 **toggleObserving(false)** 而直接 **return** ，这就是为何：你更新 inject 相关值时，页面没有更新的原因（有些扯远了）。
 
 **isServerRendering** 判断是否是 SSR 服务端渲染，本文的运行环境是浏览器中，所以这里判断为 **true** 。
 
-后续只要 **value** 符合是 **引用类型对象**（对象字面量、数组），并且是属性可扩展，和非 vue 框架对象 （**\_isVue** 为 **false** ），则会进入观察 **observe** 方法。
+后续只要 **value** 符合是 **引用类型对象**（对象字面量、数组），并且是属性可扩展，和非 vue 框架对象 （**\_isVue** 为 **false** ），则会创建 **Observer** 观察者对象：
 
 ```js
 ob = new Observer(value);
 ```
 
-最终目的就是来创建观察者对象 **Observer** 。
-
 # Observer 观察者对象
 
-## 主结构
+## 代码主体
 
 这是 **Observer** 类的代码主体：
 
@@ -184,7 +188,7 @@ this.vmCount = 0;
 def(value, "__ob__", this);
 ```
 
-del 内部就是通过 定义数据类型属性，
+**def** 方法内部就是通过定义 **数据类型属性** ：
 
 ```js
 Object.defineProperty(obj, key, {
@@ -197,7 +201,7 @@ Object.defineProperty(obj, key, {
 
 注意这里的 **enumerable** 为 **false** ，会在遍历 value 是屏蔽掉当前属性 **\_\_ob\_\_** 。这个属性 **\_\_ob\_\_** 以后有什么用，我们在 **Dep** 对象中再看。
 
-先跳过 **Array.isArray(value)** 判断，直接调用 **this.walk** 方法：
+先跳过 **Array.isArray(value)** 的判断，直接调用 **this.walk** 方法：
 
 ```js
 this.walk(value);
@@ -229,7 +233,7 @@ if (Array.isArray(value)) {
 }
 ```
 
-首先我们知道 \_\_proto\_\_ 是个有争议的属性，因为他不属于 Web 规范，只是被浏览器厂商实现着，用来访问对象 [[Prototype]] 属性。
+首先我们知道 **\_\_proto\_\_** 是个有争议的属性，因为他不属于 Web 规范，只是被浏览器厂商实现着，用来访问对象 [[Prototype]] 属性。
 
 所以 **vue** 会有如下工具函数 **hasProto**
 
@@ -297,7 +301,7 @@ walk (obj: Object) {
 }
 ```
 
-## 主结构
+## 代码主体
 
 现在来看下 **defineReactive** 的代码：
 
@@ -327,7 +331,7 @@ function defineReactive(obj: Object, key: string, val: any, customSetter?: ?Func
 
 ## 创建 Dep 对象
 
-已进入该方法，就看到了新建了 **Dep** 对象，并定义为 **dep** ，这个是依赖对象，下篇再细谈。
+已进入该方法，就看到了新建了 **Dep** 对象，并定义为 **dep** ，这个是依赖对象，我们目前只需知道每个对象属性都会调用 **defineReactive** 方法，并且都会创建 Dep 实例。具体下篇再细谈。
 
 ```js
 const dep = new Dep();
@@ -477,4 +481,4 @@ dep.notify();
 
 这个动态响应的基本原理还是基于对象的访问属性 getter/setter 。
 
-其内部真正实现数据的响应机制，还是要看之后的 **Dep** 对象。
+其内部真正实现数据的响应机制，还是要看之后的 **Dep** 和 **Watcher** 对象。

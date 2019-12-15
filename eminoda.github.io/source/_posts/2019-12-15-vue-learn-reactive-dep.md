@@ -1,11 +1,13 @@
 ---
-title: vue 源码学习-数据响应：依赖 Dep
+title: vue 源码学习-数据动态响应：依赖 Dep
 tags: vue
 categories:
   - 开发
   - 前端开发
 thumb_img: vue.png
+date: 2019-12-15 16:45:35
 ---
+
 
 # 前言
 
@@ -59,13 +61,13 @@ class Dep {
 }
 ```
 
-此对象中的方法涉及 **队列** 的操作，既然有 **Observer** 观察者，其中肯定也会有订阅者 **subscriber** ，就像 **rxjs** 中的核心概念一样。而这个队列我称为 **订阅队列** ，即：里面存放着一堆 Watcher 监听对象。
+此对象中的方法涉及 **队列** 的操作，既然有 **Observer** 观察者，其中肯定也会有订阅者 **subscriber** ，就像 **rxjs** 中的核心概念一样。而这个队列我称为 **订阅队列** ，即：里面存放着一堆 **Watcher** 监听对象。
 
 事实上，你看到 **vue** 代码的 **flow** 类型说明也能很清楚的看出来。
 
 # Dep 实例怎么被调用
 
-首先是 Observer 对象中：
+首先是 **Observer** 对象中：
 
 ```js
 class Observer {
@@ -80,7 +82,7 @@ class Observer {
 
 将在 **observe** 方法中，将创建观察者对象 **Observer** ，并将这个实例称为 **ob** return 。那么所有拿到 **observe** 返回值的，既可以通过 **ob.dep** 调用依赖 Dep 对象
 
-几乎所有用到 **observe** 方法的地方都没有使用它的返回值，但 **defineReactive** 中使用到了：
+几乎所有用到 **observe** 方法的地方都没有使用它的返回值，但 **defineReactive** 中使用到了，注意 **childOb** 变量：
 
 ```js
 function defineReactive() {
@@ -105,7 +107,7 @@ function defineReactive() {
 }
 ```
 
-现在我们就代码定义而言，知道了这个 **childOb** 就是 **Observer** 实例，并且通过 **childOb.dep** 调用了 **Dep** 方法。
+现在我们就代码定义而言，知道了这个 **childOb** 就是 **Observer** 实例，并且通过 **childOb.dep** 调用了 **Dep** 方法，就这样简单实现了对象引用的依赖关联。
 
 # \_\_ob\_\_ 和 dep 的关系
 
@@ -279,7 +281,7 @@ set: function reactiveSetter(newVal) {
 }
 ```
 
-是否触发 vue 的数据更新机制，需要判断新老值是否有变化：
+是否触发 **vue** 的数据更新机制，需要判断新老值是否有变化：
 
 ```js
 if (newVal === value || (newVal !== newVal && value !== value)) {
@@ -295,7 +297,7 @@ if (newVal === value || (newVal !== newVal && value !== value)) {
 if (getter && !setter) return;
 ```
 
-如果定义了 setter 则通过 call 方式调用次：
+如果定义了 **setter** 则通过 **call** 方式调用次：
 
 ```js
 setter.call(obj, newVal);

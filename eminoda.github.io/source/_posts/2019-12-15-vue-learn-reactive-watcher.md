@@ -1,11 +1,13 @@
 ---
-title: vue 源码学习-数据响应：监听者 Watcher
+title: vue 源码学习-数据动态响应：监听者 Watcher
 tags: vue
 categories:
   - 开发
   - 前端开发
 thumb_img: vue.png
+date: 2019-12-15 16:45:41
 ---
+
 
 # 前言
 
@@ -69,7 +71,7 @@ function initComputed(vm: Component, computed: Object) {
 }
 ```
 
-## 主结构
+## 代码主体
 
 大致知道了 **Watcher** 对象的创建，我们来看其代码：
 
@@ -257,12 +259,12 @@ cleanupDeps () {
         dep.removeSub(this)
       }
     }
-	// 1 处理 id依赖集合
+    // 1 处理 id依赖集合
     let tmp = this.depIds
     this.depIds = this.newDepIds
     this.newDepIds = tmp
     this.newDepIds.clear()
-	// 2 处理 依赖队列
+    // 2 处理 依赖队列
     tmp = this.deps
     this.deps = this.newDeps
     this.newDeps = tmp
@@ -282,6 +284,8 @@ this.newDepIds = tmp;
 
 这样 **depIds** 得到最新的 **id 依赖集合** ， **newDepIds** 最后被清空。
 
+下一步对 **deps** 也是一样的处理，将最新的 **newDeps** 赋值给 **deps** ，然后清空 **newDeps** ：
+
 ```js
 tmp = this.deps;
 this.deps = this.newDeps;
@@ -289,12 +293,9 @@ this.newDeps = tmp;
 this.newDeps.length = 0;
 ```
 
-```js
-```
-
 # 依赖 Dep 和监听 Watcher 的关系
 
-我认为这是真正的数据动态响应机制。
+我认为这是 **真正的数据动态响应机制**。
 
 前面提到的的 **Observer** 只是对我们的对象数据进行观察； **definedReative** 只是提供了响应“动力”，或者是触发点。
 
@@ -330,7 +331,7 @@ addDep (dep: Dep) {
 
 我们来细看中间是什么逻辑：
 
-程序开始执行时，**this.newDeps = []** 和 **this.newDeps，this.depIds** 为空集合，然后调用 **dep** 实例，往 **dep.subs** 订阅队列添加 **Watcher** 对象。
+程序开始执行时，**this.newDeps = []** 和 **this.newDeps，this.depIds** 为空集合，然后调用 **dep** 实例的 **addSub** 方法 ，往 **dep.subs** 订阅队列添加 **Watcher** 对象。
 
 ```js
 // Dep
@@ -343,7 +344,7 @@ addSub (sub: Watcher) {
 
 当我们更新数据时，就触发了 **definedReative** 中的 **setter** 方法，调用了 **dep.notify()** 。
 
-notify 内部调用了 **Watcher** 对象 **update** 方法：
+**notify** 内部调用了 **Watcher** 对象 **update** 方法：
 
 ```js
 dep.notify()
@@ -394,8 +395,8 @@ run () {
 
 能看到内部又去执行了 **预期值 get** 方法。并且最后把新老 **value** 交给 **cb** 方法，这也就是我们在调用 **watch api** 时，有数据更新前后的值的原因。
 
-```js
-```
+# 总结
 
-```js
-```
+基于这三篇我们对 **Observer** 、 **Dep** 、 **Watcher** 这三个核心对象和数据动态响应机制起到的作用就有个大致的概念基础了。
+
+其中为什么 **vue** 要那么设计、以及在 **initState** 方法中其他选项属性的定义解析我们后面继续学习。

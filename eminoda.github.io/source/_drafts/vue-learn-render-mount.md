@@ -257,11 +257,9 @@ options.staticRenderFns = staticRenderFns;
 
 # 渲染编译函数 compileToFunctions
 
-## 代码主体
-
 为什么前面说 **compileToFunctions** 方法复杂，你可以看下它的实现：
 
-1. **Vue.prototype.\$mount** 方法中的调用触发：
+1. **Vue.prototype.\$mount** 方法中的调用触发 **compileToFunctions** 方法：
 
    ```js
    // src\platforms\web\entry-runtime-with-compiler.js
@@ -269,7 +267,7 @@ options.staticRenderFns = staticRenderFns;
    const { render, staticRenderFns } = compileToFunctions(template, options, this);
    ```
 
-2. 很薄的一层，高阶函数封装：调用 **createCompiler** 得到 **compileToFunctions** 属性
+2. **compileToFunctions** 实际是 **createCompiler** 方法的引用：
 
    ```js
    // src\platforms\web\compiler\index.js
@@ -278,93 +276,71 @@ options.staticRenderFns = staticRenderFns;
    export { compile, compileToFunctions };
    ```
 
-```js
-// src\compiler\index.js
+3. **createCompiler** 方法实质是调用编译器创建工厂方法 **createCompilerCreator**
 
-export const createCompiler = createCompilerCreator(function baseCompile(template: string, options: CompilerOptions): CompiledResult {
-  const ast = parse(template.trim(), options);
-  if (options.optimize !== false) {
-    optimize(ast, options);
-  }
-  const code = generate(ast, options);
-  return {
-    ast,
-    render: code.render,
-    staticRenderFns: code.staticRenderFns
-  };
-});
-```
+   ```js
+   // src\compiler\index.js
 
-```js
-export function createCompilerCreator(baseCompile: Function): Function {
-  return function createCompiler(baseOptions: CompilerOptions) {
-    function compile(template: string, options?: CompilerOptions): CompiledResult {
-      // ...
-      const compiled = baseCompile(template.trim(), finalOptions);
-      // ...
-      return compiled;
-    }
-    return {
-      compile,
-      compileToFunctions: createCompileToFunctionFn(compile)
-    };
-  };
-}
-```
+   export const createCompiler = createCompilerCreator(function baseCompile(template: string, options: CompilerOptions): CompiledResult {
+     // ...
+     return {};
+   });
+   ```
 
-```js
-// src\compiler\to-function.js
+4. **createCompilerCreator** 方法其实是个 **Thunk** 函数，能看到传入 **baseCompile** 编译基础方法，内部实现 AST 抽象语法树（这个下篇在探讨）
 
-function createFunction (code, errors) {
-  try {
-    return new Function(code)
-  } catch (err) {
-    errors.push({ err, code })
-    return noop
-  }
-}
+   ```js
+   // src\compiler\index.js
 
-export function createCompileToFunctionFn (compile: Function): Function {
-  const cache = Object.create(null)
+   function baseCompile(template: string, options: CompilerOptions): CompiledResult {
+     const ast = parse(template.trim(), options);
+     if (options.optimize !== false) {
+       optimize(ast, options);
+     }
+     const code = generate(ast, options);
+     return {
+       ast,
+       render: code.render,
+       staticRenderFns: code.staticRenderFns
+     };
+   }
+   ```
 
-  return function compileToFunctions (
-    template: string,
-    options?: CompilerOptions,
-    vm?: Component
-  ): CompiledFunctionResult {
-    options = extend({}, options)
-    // check cache
-    const key = options.delimiters
-      ? String(options.delimiters) + template
-      : template
+5. 另外 **createCompilerCreator** 方法也是个高阶函数，返回一个 **createCompiler** 方法，并且注意到内部 **return** 的对象中还有个高阶函数 **createCompileToFunctionFn**
 
-    // compile
-    const compiled = compile(template, options)
+   ```js
+   // src\compiler\create-compiler.js
 
-    // turn code into functions
-    const res = {}
-    const fnGenErrors = []
-    res.render = createFunction(compiled.render, fnGenErrors)
-    res.staticRenderFns = compiled.staticRenderFns.map(code => {
-      return createFunction(code, fnGenErrors)
-    })}
+   export function createCompilerCreator(baseCompile: Function): Function {
+     return function createCompiler(baseOptions: CompilerOptions) {
+       function compile(template: string, options?: CompilerOptions): CompiledResult {
+         // ...
+         const compiled = baseCompile(template.trim(), finalOptions);
+         // ...
+         return compiled;
+       }
+       return {
+         compile,
+         compileToFunctions: createCompileToFunctionFn(compile)
+       };
+     };
+   }
+   ```
 
-    return (cache[key] = res)
-  }
-}
-```
+   注意：最终 **createCompilerCreator** 方法返回的对象 **{ compile,compileToFunctions}** 就是 **步骤 2** 使用的引用。
+
+   **createCompileToFunctionFn** 方法将返回：调用 **Thunk** 方式传入的 **baseCompile Function** 经过一系列得到 **{ ast,render,staticRenderFns }**
+
+# 总结
+
+顺着 **vue** 代码顺序看了 **compileToFunctions** 方法，简直晕头转向，说实话这是我第一次看到那么复杂的调用逻辑。当然其中的设计思想随着我们的开发阅历会理解的越来越清晰。
+
+归根结底反正最后拿到了 **render** 渲染函数，也是在生命周期中 **updateComponent** 所需要使用的：
 
 ```js
+updateComponent = () => {
+  vm._update(vm._render(), hydrating);
+};
 ```
 
-```js
-```
-
-```js
-```
-
-```js
-```
-
-```js
-```
+当然 **\$mount** 只是整个渲染的外部壳子，下面我们从 **baseCompile** 开始看其中的编译器工厂方法是如何工作的。

@@ -55,7 +55,7 @@ Vue.prototype.$mount = function() {
 
 首先我们从 **entry-runtime-with-compiler.js** 很明确知道，在进入改文件前已经有了 **Vue.prototype.\$mount** 的声明定义，并且赋值给 **mount** 变量。
 
-按照 **rollup** 的打包方式，我们也知道此文件是个入口 **entry** 文件，经过它打包后你讲拥有 **完整版** 的 **vue** （运行时+编译器）。
+按照 **rollup** 的打包方式，我们也知道此文件是个入口 **entry** 文件，经过它打包后你将拥有 **完整版** 的 **vue** （运行时+编译器）。
 
 如果你对 **vue** 不同的构建版本有什么区别，可以看下我之前写的这篇文章： [vue 基础-不同构建版本说明](https://www.toutiao.com/i6755334564530356749/)
 

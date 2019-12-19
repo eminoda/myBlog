@@ -594,7 +594,7 @@ function generate(ast: ASTElement | void, options: CompilerOptions): CodegenResu
 }
 ```
 
-### 生成元素 genElement
+## 生成元素 genElement
 
 ```js
 function genElement(el: ASTElement, state: CodegenState): string {
@@ -669,7 +669,7 @@ else {
 }
 ```
 
-### code 结果
+## 得到 code 结果
 
 最后我们的 **code** 就会长成这样：
 
@@ -686,46 +686,15 @@ return {
 };
 ```
 
-## 结合 \$mount 串联下整个过程
+# 再次回顾整个链路
 
-**Vue.prototype.\$mount** 中调用了编译方法 **compileToFunctions** ，拿到 **{ render, staticRenderFns }** 对象：
-
-```js
-const mount = Vue.prototype.$mount;
-Vue.prototype.$mount = function(el?: string | Element, hydrating?: boolean): Component {
-  // ...
-  const { render, staticRenderFns } = compileToFunctions(template, {});
-  // ...
-  return mount.call(this, el, hydrating);
-};
-```
-
-**compileToFunctions** 由提供 **createCompilerCreator** ，实际就是个高阶函数，将返回 **{compile,compileToFunctions}** ：
+上面一部分讲的是 **baseCompile** 方法中的 **AST** 解析：
 
 ```js
-function createCompilerCreator(baseCompile: Function): Function {
-  return function createCompiler(baseOptions: CompilerOptions) {
-    function compile(template: string, options?: CompilerOptions): CompiledResult {
-      //...
-      const compiled = baseCompile(template.trim(), finalOptions);
-      return compiled;
-    }
-  };
-  return {
-    compile,
-    compileToFunctions: createCompileToFunctionFn(compile)
-  };
-}
-```
-
-在 **compile** 方法，就是返回 **baseCompile** 基础编译器的结果：
-
-```js
+// src\compiler\index.js
 function baseCompile(template: string, options: CompilerOptions): CompiledResult {
   const ast = parse(template.trim(), options);
-  if (options.optimize !== false) {
-    optimize(ast, options);
-  }
+  // ...
   const code = generate(ast, options);
   return {
     ast,
@@ -735,27 +704,77 @@ function baseCompile(template: string, options: CompilerOptions): CompiledResult
 }
 ```
 
-**compileToFunctions** 属性，执行了 **createCompileToFunctionFn** 方法，参数 **compile** 就是 **baseCompile** 的结果：
+通过 **parse** 、 **generate** 处理，我们将解析 **AST Element** 对象，得到这样的结果 **{ast,render,staticRenderFns}** 。
+
+**编译创建器** **createCompiler** 会在 js 声明后执行：
 
 ```js
-function createCompileToFunctionFn(compile: Function): Function {
-  return function compileToFunctions(template: string, options?: CompilerOptions, vm?: Component): CompiledFunctionResult {
-    // ...
-    const compiled = compile(template, options);
-    const res = {};
-    const fnGenErrors = [];
-    res.render = createFunction(compiled.render, fnGenErrors);
-    res.staticRenderFns = compiled.staticRenderFns.map(code => {
-      return createFunction(code, fnGenErrors);
-    });
-    // ...
-    return res;
+const { compile, compileToFunctions } = createCompiler(baseOptions);
+```
+
+**createCompiler** 则是 **编译器创建工厂** **createCompilerCreator** 的引用
+
+```js
+const createCompiler = createCompilerCreator(function baseCompile(template: string, options: CompilerOptions): CompiledResult {
+  // ...
+  return {
+    ast,
+    render: code.render,
+    staticRenderFns: code.staticRenderFns
+  };
+});
+```
+
+当调用 **createCompilerCreator** 方法后，就会进入 **createCompiler** 方法：
+
+```js
+function createCompilerCreator(baseCompile: Function): Function {
+  return function createCompiler(baseOptions: CompilerOptions) {
+    function compile(template: string, options?: CompilerOptions): CompiledResult {
+      //...
+      const compiled = baseCompile(template.trim(), finalOptions);
+      //...
+      return compiled;
+    }
+    return {
+      compile,
+      compileToFunctions: createCompileToFunctionFn(compile)
+    };
   };
 }
 ```
 
-最后就拿到了 **{ render, staticRenderFns }** 对象。
+注意的是 **createCompiler** 中，会定义一个 **compile** 内部 **编译方法** ，在他里面将根据前面的 **baseCompile** 结果得到 **编译结果对象** **compiled** 作为 **compile** 方法执行后的返回值。
 
-## 总结
+注意执行 **createCompileToFunctionFn** 方法后，除了会得到 **compile** 方法引用外，会有 **compileToFunctions** 属性，并且它会接受前面定义的 **compile** 方法，并在执行 **createCompileToFunctionFn** 方法：
 
-相比各位已经头晕了，如此复杂的引用嵌套，或许随着编程能力的提升会渐渐理解吧。
+```js
+function createCompileToFunctionFn(compile: Function): Function {
+  const cache = Object.create(null);
+
+  return function compileToFunctions(template: string, options?: CompilerOptions, vm?: Component): CompiledFunctionResult {
+    // ...
+    const compiled = compile(template, options);
+    // ...
+    res.render = createFunction(compiled.render, fnGenErrors);
+    res.staticRenderFns = compiled.staticRenderFns.map(code => {
+      return createFunction(code, fnGenErrors);
+    });
+    return (cache[key] = res);
+  };
+}
+```
+
+通过 **createFunction** 来创建一个 **Function** 对象，为 **render** 和 **staticRenderFns** 属性提供运行基础。
+
+同时这两个属性就是最开始调用 **compileToFunctions** 的返回结果：
+
+```js
+const { render, staticRenderFns } = compileToFunctions(template, {}, this);
+options.render = render;
+options.staticRenderFns = staticRenderFns;
+```
+
+# 总结
+
+想必各位已经头晕了，如此复杂的引用嵌套，或许随着编程能力的提升会渐渐理解吧。

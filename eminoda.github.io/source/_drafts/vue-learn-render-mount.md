@@ -267,7 +267,7 @@ options.staticRenderFns = staticRenderFns;
    const { render, staticRenderFns } = compileToFunctions(template, options, this);
    ```
 
-2. **compileToFunctions** 实际是 **createCompiler** 方法的引用：
+2. **compileToFunctions** 实际是 **createCompiler** 方法执行结果的一部分的引用：
 
    ```js
    // src\platforms\web\compiler\index.js

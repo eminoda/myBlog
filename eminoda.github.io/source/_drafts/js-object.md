@@ -25,9 +25,7 @@ thumb_img: javascript.jpg
 
 像最简单方式创建的 **对象字面量** ，或者一个普通的 **function** 函数。
 
-## 原型属性 prototype
-
-我们先看下普通的 **function** 对象在浏览器中的实际输出：
+如下，使我们创建对象的一个简单方式：
 
 ```js
 function User(name) {
@@ -41,6 +39,8 @@ User.prototype.say = function() {};
 
 User 对象的输出就是我们所定义的那样，只是 **function** 被缩写成 **f** 而已。
 
+## 原型属性 prototype
+
 另外，每个对象定义出来后（声明完构造函数后），就会自带一个**原型属性 prototype** ，并且指向 **原型对象 Prototype**：
 
 ```js
@@ -49,13 +49,13 @@ User.prototype;
 
 {% asset_img new-2.png %}
 
+我们在 **User.prototype** 定义的属性和方法最终都会挂到 **原型对象** 上。
+
 ## 原型对象
 
-注意原型对象和前面的 prototype 不同。
+**原型对象** 中含有一个 **constructor** 构造函数引用，例如：User.prototype 的 **constructor** 指向 User 构造函数对象。
 
-原型对象中含有一个 **constructor** 构造函数引用，例如：User.prototype 的 **constructor** 指向 User 构造函数对象。
-
-同时，每个（原型）对象（当然在这用 User.prototype 举例）还有个只读属性 **\_\_proto\_\_** ，指向该构造函数的原型对象 **Object** ：
+同时，内部还有个只读属性 **\_\_proto\_\_** ，指向该构造函数的原型对象 **Object** ：
 
 {% asset_img new-3.png %}
 
@@ -160,4 +160,49 @@ try {
   if (e.toString().match(/unsafe-eval|CSP/)) {
   }
 }
+```
+
+# instanceof 的实现
+
+## 基本用法
+
+先看看定义：
+
+> **instanceof** 运算符用于检测构造函数的 **prototype** 属性是否出现在某个实例对象的原型链
+
+```js
+function User() {}
+
+function Animal() {}
+
+let animal = new Animal();
+let user = new User();
+
+console.log(animal instanceof User); // false
+console.log(animal instanceof Animal); // true
+console.log(animal instanceof Object); // true
+```
+
+## 实现
+
+我们已经在 “怎么自定义一个 new 操作符” 中知道了对象相关的基本原理。
+
+那么我们只要将 **实例对象的内部原型引用 \_\_proto\_\_** 和 **构造函数的 prototype 原型属性引用** 判断是否一致就行了；
+
+当判断不一致时，我们从 \_\_proto\_\_ 中，往上继续获取其的原型引用进行判断。
+
+```js
+function myInstanceof(target, origin) {
+  let proto = target.__proto__;
+  let prototype = origin.prototype;
+  while (true) {
+    if (proto === null) return false;
+    if (proto === prototype) return true;
+    proto = proto.__proto__;
+  }
+}
+
+console.log(myInstanceof(animal, User)); // false
+console.log(myInstanceof(animal, Animal)); // true
+console.log(myInstanceof(animal, Object)); // true
 ```

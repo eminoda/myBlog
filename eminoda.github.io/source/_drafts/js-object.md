@@ -39,9 +39,9 @@ User.prototype.say = function() {};
 
 User 对象的输出就是我们所定义的那样，只是 **function** 被缩写成 **f** 而已。
 
-## 原型属性 prototype
+## prototype  属性
 
-另外，每个对象定义出来后（声明完构造函数后），就会自带一个**原型属性 prototype** ，并且指向 **原型对象 Prototype**：
+另外，每个对象定义出来后（声明完构造函数后），就会自带一个**prototype  属性** ，并且指向 **原型对象 Prototype**：
 
 ```js
 User.prototype;
@@ -53,7 +53,7 @@ User.prototype;
 
 ## 原型对象
 
-**原型对象** 中含有一个 **constructor** 构造函数引用，例如：User.prototype 的 **constructor** 指向 User 构造函数对象。
+**原型对象** 中默认含有一个 **constructor** 构造函数引用，并且  **constructor**  指向构造函数对象（即： User ）。
 
 同时，内部还有个只读属性 **\_\_proto\_\_** ，指向该构造函数的原型对象 **Object** ：
 
@@ -67,7 +67,7 @@ User.prototype;
 let user = new User("eminoda");
 ```
 
-根据构造函数实例化创建的对象 user 将含有一个 **\_\_proto\_\_** 属性，该属性指向 **对象原型** 。
+根据构造函数实例化创建的对象 user 将含有一个 **\_\_proto\_\_** 属性，该属性也指向 **对象原型** 。
 所以该 user 实例对象除了可以获取到 User 对象的属性外，也能获取到 **prototype** 上的属性，比如 say 方法。
 
 {% asset_img new-4.png %}
@@ -75,6 +75,10 @@ let user = new User("eminoda");
 ## 实现
 
 那 **怎么自定义一个 new 操作符** ？
+
+我画了一个简图用来归纳上面的一些细节，同时也是下面代码实现的基础：
+
+{% asset_img desc1.png %}
 
 ```js
 function MyNew(Ctor) {
@@ -205,4 +209,147 @@ function myInstanceof(target, origin) {
 console.log(myInstanceof(animal, User)); // false
 console.log(myInstanceof(animal, Animal)); // true
 console.log(myInstanceof(animal, Object)); // true
+```
+
+# 纠正 2 种错误的 this 理解
+
+摘自《你不知道的 javascript 》，如下会贴出两种对 this 引用错误的理解，知道这些对于理解 js 中的对象引用会非常有好处。
+
+## 指向自身
+
+包括我在内，相信很多人接触 this 关键词时，会把它通过字面意思理解成：当前对象的引用，就像 this 这个英文单词的意思一样。但肯定是错误的。
+
+```js
+function foo() {
+  this.count++; // this.count 是 foo 函数（对象）的属性
+}
+foo.count = 0; // 初始化
+for (let i = 0; i < 5; i++) {
+  foo();
+}
+console.log(foo.count); //0
+```
+
+如果你知道最后的 console 输出是 0 ，恭喜你！你没有这样错误的思维误区。
+
+或许你平时都是这样写的，某种意义上根本没有遇到这样的误区：
+
+```js
+function foo() {
+  data.count++;
+}
+let data = {
+  count: 0
+};
+for (let i = 0; i < 5; i++) {
+  foo();
+}
+console.log(data.count); // 5
+```
+
+我只希望在读的各位真正的能理解其中的原因，而不是某些写法规避了对 js 语言上本质的思考。
+
+## 指向当前作用域
+
+同样看个例子：
+
+```js
+function foo() {
+  let a = 2;
+  this.bar();
+}
+function bar() {
+  console.log(this.a); //undefined
+}
+foo();
+```
+
+如果你简单认为 this.a 是谁来执行就是谁的作用域那也错了， a 的值并不是 2 。
+
+## 怎么判断 this 引用
+
+下面归纳下 this 中的 4 种绑定规则：
+
+### 默认绑定
+
+我们知道浏览器中的全局对象概念，如果像如下代码，最终就会取到全局对象：
+
+```js
+var a = "gobal";
+function foo() {
+  console.log(this.a); // gobal
+}
+foo();
+```
+
+这是作为一种备用绑定方式，也是我们平时经常 get 到的经验教训。
+
+### 隐式绑定
+
+```js
+function foo() {
+  console.log(this.a); // obj inner prop
+}
+let obj = {
+  a: "obj inner prop",
+  foo: foo
+};
+obj.foo();
+```
+
+注意，此例子不同于上面的“指向自身”那个示范。
+
+当调用 **obj.foo()** 时，会找到 **obj** 对象上的 **foo** 属性，其值引用了 **function foo** 的方法，该函数确定了 **执行上下文** 关系。
+
+所以 **this** 引用是指向 **obj** 对象的（而非全局对象）。
+
+因为是隐藏的这么一个关系，我们平时一些不注意的操作就会“破坏”这样的绑定：
+
+```js
+// ...
+let wrongRef = obj.foo;
+var a = "gobal";
+wrongRef(); // gobal
+```
+
+用 **wrongRef** 变量来保存 **obj.foo** 的引用，当调用 **wrongRef** 时，运行了 **function foo** 方法，其 this 指向了全局对象范围。
+
+是不是又踩到坑了？丢失 this 引用关系是非常常见的。
+
+### 显示绑定
+
+在我们看 js 继承时肯定见过这样的实现：
+
+```js
+function foo() {
+  console.log(this.a);
+}
+let obj = {
+  a: "obj inner prop"
+};
+
+foo(); // undefined
+foo.call(obj); // obj inner prop
+```
+
+一样作用的还有 **apply** ，这两个是 js 为我们提供转化执行上下文的工具方法，让在调用 **foo** 时，却把引用迁移到了 **obj** 上。
+
+由于这样“强势”的绑定机制，在 ES5 中提供了 bind 方法，也让这种引用的绑定更好的理解。
+
+```js
+foo.bind(obj);
+```
+
+### new 绑定
+
+我们之前已经通过 **实现一个 new 操作符** 理解过了 **new** 的内部原理。
+
+虽然 **new** 不是其他面向对象语言中新创建一个 **Class** 类，但我们可以通过这样“对象创建”的方式来“控制” **this** 引用。
+
+```js
+function foo(a) {
+  this.a = a;
+}
+var bar = new foo("obj prop");
+console.log(bar.a);
 ```

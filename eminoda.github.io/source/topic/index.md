@@ -15,5 +15,12 @@ date: 2019-12-02 13:03:36
 - [vue 源码学习-数据动态响应：观察者 Observer](/2019/12/15/vue-learn-reactive-observer/)
 - [vue 源码学习-数据动态响应：依赖 Dep](/2019/12/15/vue-learn-reactive-dep/)
 - [vue 源码学习-数据动态响应：监听者 Watcher](/2019/12/15/vue-learn-reactive-watcher/)
-- []()
-- []()
+
+> 好吧，上面因为被“裁员”，“半途而废”了。最近因为复习 Vue 又继续回炉了，放在**语雀**上了
+
+- [Vue 源码解析-初始化](https://www.yuque.com/docs/share/f63f01db-1008-49f2-8fb2-725564ad87dd?#)
+- [Vue 源码解析-数据动态响应：初识 Observer](https://www.yuque.com/docs/share/21d1c687-e635-4088-9ef1-6f81293d8a45?#)
+- [Vue 源码解析-数据动态响应：观察者模式](https://www.yuque.com/docs/share/1a4fe9d2-6cfa-4279-97bf-c2f709dbc664?#)
+- [Vue 源码解析-模板渲染：两个 $mount 方法](https://www.yuque.com/docs/share/a0c30674-23ec-4513-977d-570e4412767f?#)
+- [Vue 源码解析-模板渲染：基础编译器 baseCompile 之 AST 解析](https://www.yuque.com/docs/share/fa3c5329-9f0c-4999-a1c1-f806016aa847?#)
+- [Vue 源码解析-模板渲染：patch 内的 vnode diff 策略](https://www.yuque.com/docs/share/29186408-9a47-4875-a3bb-dd88dbc69e43?#)

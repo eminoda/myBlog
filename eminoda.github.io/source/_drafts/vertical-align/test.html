@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>测试 vertical-align</title>
+  </head>
+  <body>
+    <style>
+      div.wrap {
+        padding: 0 50px;
+        height: 150px;
+        margin: 20px 50px;
+        border: 1px solid #c2c2c2;
+      }
+      span {
+        border: 1px solid #c2c2c2;
+      }
+      li {
+        border: 1px solid #c2c2c2;
+        width: 100px;
+        height: 100px;
+        margin-right: 20px;
+        display: inline-block;
+      }
+      .item {
+        background-color: darkgoldenrod;
+        color: #fff;
+      }
+
+      .font20 {
+        font-size: 20px;
+      }
+      .font30 {
+        font-size: 30px;
+      }
+      .font40 {
+        font-size: 40px;
+      }
+
+      [middle] {
+        vertical-align: middle;
+      }
+      .bl::after {
+        position: relative;
+        width: 200px;
+        height: 1px;
+        border-bottom: 1px solid red;
+      }
+      .square {
+        width: 50px;
+        height: 50px;
+        display: inline-block;
+        background-color: darkgoldenrod;
+      }
+    </style>
+    <div class="wrap">
+      <span middle class="bl">baseline</span>
+      <span middle class="item font20">20</span>
+      <span middle class="item font30">30</span>
+      <span middle class="item font40">40</span>
+    </div>
+    <div class="wrap">
+      <div style="border: 1px solid green;"><img src="./img.png" alt="" width="100px" height="100px" /> <span>我是 inline 元素</span></div>
+    </div>
+    <div class="wrap">
+      <div style="border: 1px solid green;"><img middle src="./img.png" alt="" width="100px" height="100px" /> <span middle>我是 inline 元素</span></div>
+    </div>
+
+    <div class="wrap">
+      <li>我里面有文字</li>
+      <li></li>
+    </div>
+  </body>
+</html>

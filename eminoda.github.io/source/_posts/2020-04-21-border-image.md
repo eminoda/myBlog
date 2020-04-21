@@ -5,7 +5,9 @@ categories:
   - 开发
   - 前端开发
 thumb_img: css.png
+date: 2020-04-21 20:53:19
 ---
+
 
 # 边框设置背景图
 
@@ -162,3 +164,13 @@ border-image-source，border-image-slice 之类的属性是可以用 border-imag
 格式如下：
 
 > <'border-image-source'> || <'border-image-slice'> [ / <'border-image-width'> | / <'border-image-width'>? / <'border-image-outset'> ]? || <'border-image-repeat'>
+
+```css
+border-image-source: url('./border-source2.png');
+border-image-slice: 30 30 fill;
+border-image-repeat: stretch;
+```
+
+```css
+border-image: url('./border-source2.png') 30 30 fill stretch;
+```

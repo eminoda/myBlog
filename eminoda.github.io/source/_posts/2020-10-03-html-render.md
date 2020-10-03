@@ -1,7 +1,17 @@
 ---
 title: 浏览器的渲染
+date: 2020-10-03 07:52:17
 tags:
 ---
+
+
+# 前言
+
+前端代码离不开浏览器环境，理解 js、css 代码如何在浏览器中工作是非常重要的。
+
+如何优化渲染过程中的回流，重绘？script 脚本在页面中是怎么个加载顺序？了解这些对前端性能优化起着非常大的作用。
+
+借着这篇文章，让自己对这块知识的理解更深一步。
 
 # 渲染
 
@@ -73,7 +83,7 @@ tags:
 
 - 鼠标移至按钮上，触发了默认的 hover 效果（出现绿框）
 - 改变元素 color 属性（出现绿框）
-- 修改元素 top 属性，不断改变元素位置影响布局（出现绿框，篮框）
+- 修改元素 top 属性，不断改变元素位置影响布局（出现绿框，蓝框）
 
 ### 提升渲染性能
 
@@ -93,8 +103,6 @@ tags:
   将改变范围降到最低程度，避免影响到父级元素
 
 - 合并，减少 DOM 操作；通过虚拟 DOM 来代替
-
-# 浏览器的多线程
 
 # 脚本的加载
 
@@ -131,7 +139,7 @@ tags:
 
 与 link 不同，**script 的加载会阻断页面 HTML 的解析**，浏览器解析完 script 后，会等待 js 文件加载完后，页面才开始后续的解析，body 内容才出现。
 
-## head 和 body
+## head 和 body 中的 script 标签
 
 学前端时相信都听过这样的名言：
 
@@ -193,7 +201,7 @@ tags:
 <script src="/js/addOne.js?t=1000"></script>
 ```
 
-两个 script 标签并线加载，1 秒后 addOne.js 首先加载完毕，等待 4s 秒后，addTen.js 加载完后，页面直接渲染（因为 script 已经全部完成）。
+两个 script 标签并行加载，1 秒后 addOne.js 首先加载完毕，等待 4s 秒后，addTen.js 加载完后，页面直接渲染（因为 script 已经全部完成）。
 
 {% asset_img script-load3.png %}
 
@@ -224,15 +232,19 @@ tags:
 
 ```
 addTen.js
-addTen.js?t=5000:3 foo 10
-addOne.js?t=1000:1 addOne.js
-addOne.js?t=1000:3 foo 11
+foo 10
+addOne.js
+foo 11
 [ready] document
 ```
 
 **DOMContentLoaded** 事件的定义是异步回调方式，当 DOM 加载完成后触发，即使写在最前面，也会等待后面的 script 加载完成后才触发。
 
-## 动态脚本
+这里顺便提个 **window.onload** ：
+
+**window.onload** 和 **DOMContentLoaded** 不同，前者会等待页面中所有的资源加载完毕后再调用执行（比如：img 标签），后者在 DOM 加载完毕后即触发。
+
+## “真正的异步脚本”——动态脚本
 
 能看到无论 script 放在那个位置，浏览器都会等待他们直至 body 内的文件全部加载完。
 
@@ -275,15 +287,15 @@ addOne.js?t=1000:3 foo 11
 
 ```
 addTen.js
-addTen.js?t=5000:3 foo 10
-addOne.js?t=1000:1 addOne.js
-addOne.js?t=1000:3 foo 11
+afoo 10
+addOne.js
+foo 11
 [ready] document
 已加载  5  秒
 已加载  6  秒
 已加载  7  秒
 已加载  8  秒
-dynamicScript.js?t=8000:1 dynamicScript.js is running
+dynamicScript.js is running
 dynamicScript.js loaded
 已加载  9  秒
 已加载  10  秒
@@ -291,7 +303,7 @@ dynamicScript.js loaded
 
 {% asset_img script-load4.png %}
 
-定义了需要加载 8 秒的 dynamicScript.js 文件，所有的 script 加载方式依旧异步，但 dynamicScript.js 在 **DOMContentLoaded** 触发后，最后才执行，浏览器并没有等待它的加载完成。
+定义了需要加载 8 秒的 dynamicScript.js 文件，所有的 script 加载方式依旧异步，但 dynamicScript.js 在 **DOMContentLoaded** 触发后，最后才执行，浏览器并没有等待它的加载完成后才渲染页面。
 
 我们也可以将它放在 head 中。这种通过脚本来动态修改 DOM 结构的加载方式是 **无阻塞式** 的，不受其他脚本加载的影响。
 
@@ -347,28 +359,47 @@ dynamicScript.js loaded
 ```
 已加载  1  秒
 已加载  2  秒
-scriptAsync.js?t=3000:1 scriptAsync.js
+scriptAsync.js
 已加载  3  秒
 已加载  4  秒
-addTen.js?t=5000:1 addTen.js
-addTen.js?t=5000:3 foo 10
-addOne.js?t=1000:1 addOne.js
-addOne.js?t=1000:3 foo 11
-scriptDefer.js?t=1000:1 scriptDefer.js
+addTen.js
+foo 10
+addOne.js
+foo 11
+scriptDefer.js
 [ready] document
 已加载  5  秒
 已加载  6  秒
 已加载  7  秒
 已加载  8  秒
-dynamicScript.js?t=8000:1 dynamicScript.js is running
+dynamicScript.js is running
 dynamicScript.js loaded
 已加载  9  秒
 已加载  10  秒
 ```
+
+# 浏览器的进程和线程
+
+进程和线程不是一个概念。一个进程内可能包含多个线程。
+
+通常一个浏览器（chrome） tab 页面的开启会创建一个进程，我们能在任务管理器中看到。同时每个页面从 HTML 的解析到最终页面的呈现，以及后台的工作会通过多个线程协同进行配合。
+
+这些线程有：
+- Main Thread （主线程）
+- Worker Thread
+- Compositor Thread（排版线程）
+- Raster Thread（光栅线程）
+
+首先像上面提到的浏览器渲染过程（布局，绘制）都是在 **Main Thread** 中完成。
+
+当浏览器的渲染进程收到 HTML 后，**Main Thread** 会开始解析 HTML，并生成 DOM 节点，中间解析到 script 标签后将停止解析，直至它加载并运行完成（因为它可能会改动 DOM 节点，这大概就是为何 link 标签不会阻断 HTML 解析的原因）。
+
+不断计算 CSSOM 和 DOM，将他们生成渲染树，**Main Thread** 会通知 **Compositor Thread** 线程进行合成加工，把结果交给 **Raster Thread** ，**Raster Thread** 处理后会交给 GPU 进行显示。
 
 # 感谢&参考
 
 - [渲染树构建、布局及绘制](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-tree-construction?hl=zh-cn)
 - [性能优化 - 回流与重绘的调试与优化](https://anran758.github.io/blog/2018/01/15/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-%E5%9B%9E%E6%B5%81%E4%B8%8E%E9%87%8D%E6%B1%87/)
 - [浏览器的工作原理：新式网络浏览器幕后揭秘](https://www.html5rocks.com/zh/tutorials/internals/howbrowserswork/#Layout)
-- [](https://juejin.im/post/6844903569087266823)
+- [浏览器的回流与重绘 (Reflow & Repaint)](https://juejin.im/post/6844903569087266823)
+- [图解浏览器的基本工作原理](https://zhuanlan.zhihu.com/p/47407398)

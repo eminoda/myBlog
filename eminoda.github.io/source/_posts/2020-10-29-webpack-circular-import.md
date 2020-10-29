@@ -4,7 +4,9 @@ tags: webpack
 categories:
   - 开发
   - 前端开发
+date: 2020-10-29 23:42:40
 ---
+
 
 # 前言
 
@@ -60,7 +62,7 @@ export default 1;
 
 接下来就看 **webpack** 是如何处理文件的 **import** 导入，以及循环引用为何会引发这样的问题。
 
-# webpack 如何处理文件导入和引用
+# webpack 是如何解析文件的？
 
 首先，我们的整个 Demo 会被 **webpack** 解析成如下代码结构：
 
@@ -80,7 +82,7 @@ export default 1;
 
 这是个立即执行函数，当浏览器加载该 js 后将被触发执行。
 
-随后将根据入口 **entry** 文件 **main.js** ，执行 **\_\_webpack_require\_\_** 方法：
+将入口 **entry** 文件 **main.js** 作为入参，执行 **\_\_webpack_require\_\_** 方法：
 
 ```js
 function __webpack_require__(moduleId) {
@@ -135,9 +137,7 @@ function __webpack_require__(moduleId) {
 
     注意，这里对 **a.js** 的调用并没有结束（返回值还没有拿到），由于 **a.js** 中又导入了 **b.js**，所以又会同上述步骤再执行 **b.js** 对应的函数。
 
-3.  **b.js** 中由于引用了 **a.js**，导致循环引用，问题就来了
-
-    前面 webpack 执行过程大概是这样：
+3.  前面 **webpack** 执行过程大概是这样：
 
     ```shell
     webpack_require(main.js)
@@ -154,17 +154,21 @@ function __webpack_require__(moduleId) {
 
     ```
 
-    但到 **modules[b.js].call** 时就不同了，因为先前 **webpack_require(a.js)** 被执行过了，在 **modules[b.js].call** 环节执行 **webpack_require(a.js)** 后，**installedModules[moduleId]** 判断为 **true** 了：
+    但到 **modules[b.js].call** 时就不同了，**b.js** 文件中导入了 **a.js** 文件，导致 **a.js** 作为参数又会进入到 **\_\_webpack_require\_\_** 方法。
+
+    因为先前 **webpack_require(a.js)** 被执行过了，所以在 **modules[b.js].call** 环节执行 **webpack_require(a.js)** 中，**installedModules[moduleId]** 判断为 **true** 了：
 
     {% asset_img w4.png %}
 
-    而最开始第一次导入 **a.js** 时，其返回值还没有拿到，所以此时为 **true** 后，返回值就为 **undefined** ，这就是为何 Demo 出问题的原因。
+    而最开始第一次导入 **a.js** 时，其返回值还没有拿到，所以此时为 **true** 后，返回值就为 **undefined** ，这就是问题的出现原因。
 
 # 怎么避免
 
-不可避免项目中会遇到这样重复循环引用的情况，那怎么避免，或者怎么从设计上绕过去？
+现在前端项目也很复杂，多少有几率会遇到这样重复循环引用的情况，那怎么发现排查，或者怎么从设计上避免过去？
 
-推荐一个 npm 模块：**circular-dependency-plugin**，我们可以在 webpack 配置文件中添加对应的 plugins，在构建时避免循环引用的问题。
+## circular-dependency-plugin
+
+推荐一个 npm 模块：**circular-dependency-plugin**，我们可以在 webpack 配置文件中添加对应的 plugins 设置，在构建时抛出这样的错误引用链。
 
 ```js
 const CircularDependencyPlugin = require('circular-dependency-plugin');
@@ -196,3 +200,27 @@ ERROR in Circular dependency detected:
 src\b.js -> src\a.js -> src\b.js
 ```
 
+## 切断引用链
+
+首先就上面 **b.js -> a.js -> b.js** 无非就是中间 **a.js** 是个问题模块，如果 **a.js** 中不 **import** **b.js** 那么就不会出现这问题。
+
+我们可以修改 **a.js** 中的引用文件，重新创建一个 **c.js** 专门提供某一个功能：
+
+```js
+// import b from './b';
+// export default b;
+
+import c from './c';
+c = c + 1; // 假设有一定的转换规则
+export default c;
+```
+
+a 不找 b，那么 b 也不会引用 a 了，这样中间的环节就被切断了。
+
+如果 **a.js**，**b.js** 中间有一些重复功能，我们可以提取公共功能然后作为第三方文件导入（但需要注意不要再自己创造循环嵌套），这样一方面可以解耦代码，另一方面可以规避循环引用。
+
+# 最后
+
+webpack 作为工具，我一直不放精力去研读里面的条条道道，当然也搞不清 loader，plugins 之类的原理。你说搞清一个工具，或者某个库，甚至框架重不重要？但就上面这个问题，已经让我不得不去观察 webpack 运行中的一些机制。
+
+还有很多路要走，别把解决问题当做终点，这样会让债越堆越多，别在某天上线时候让你来 debugger 调试。

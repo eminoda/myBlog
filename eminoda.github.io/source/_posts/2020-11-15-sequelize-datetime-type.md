@@ -7,7 +7,6 @@ categories:
 date: 2020-11-15 17:23:38
 ---
 
-
 # 前言
 
 对于前端虽说有 Node.js 加持，能胜任多平台的产品开发，但因为不是主攻后端，一些数据库知识点偏弱，加上使用 sequelize 等库开箱即用的 api，使得某些细节处理不当很容易导致一些问题。
@@ -197,13 +196,11 @@ const isoDate = '2020-11-09T13:25:32.000Z';
 moment(isoDate).format('YYYY-MM-DD HH:mm:hh'); //2020-11-09 21:25:09
 ```
 
-能看到查询到的这两条数据有这三个特点：
+能看到通过 sequelize 查询到的这两条数据有这三个特点：
 
 1. **sequelize** 帮我们把 **tDatetime** 和 **tTimestamp** 统一为 iso 时间格式（UTC）
 2. 对 **DateTime** 类型的字段会将实际落库值直接转为 UTC 时间
-3. 对 **Timestamp** 类型的字段会考虑时区的不同，再转为 UTC 时间
-
-说明，未对 **sequelize** 设置时区时，**sequelize** 会对 DateTime 类型的字段
+3. 对 **Timestamp** 类型的字段会考虑时区的不同
 
 而当我们 **sequelize** 设置时区（+8:00）后，看下取值的结果：
 
@@ -224,7 +221,158 @@ moment(isoDate).format('YYYY-MM-DD HH:mm:hh'); //2020-11-09 21:25:09
 ];
 ```
 
-能看到结果符合预期，因为有了时区设置，对 Datetime 类型的字段做了对应的转换（而非直接取出）
+TimeStamp 结果不变，而对 Datetime 类型的字段做了对应的转换（而非直接取出）
+
+# 为何会有这样的不同呢？
+
+## 插入
+
+我们设置时间类型的字段都会通过 **sequelize** 进行转义，并进入 **\_applyTimezone** 方法。如果我们没有设置过时区，默认时区为 +00:00（options.timezone 判断非空）：
+
+```js
+class DATE extends ABSTRACT {
+  _applyTimezone(date, options) {
+    if (options.timezone) {
+      if (momentTz.tz.zone(options.timezone)) {
+        return momentTz(date).tz(options.timezone);
+      }
+      // moment(date).utcOffset('+00:00')
+      return (date = moment(date).utcOffset(options.timezone));
+    }
+    return momentTz(date);
+  }
+}
+```
+
+而 **utcOffset** 起什么作用呢？首先看下默认情况下 **utcOffset** （不设置参数时），utc 时区的偏移量：
+
+```js
+moment().utcOffset(); // 480(480/60=8小时) +08:00
+```
+
+**当未设置时区时（+00:00）:**
+
+如果设置 **2020-11-09 21:25:32** 值时，通过 **utcOffset(+00:00)** 方法偏移后，对于 DateTime 将落库 **2020-11-09 13:25:32**；
+
+由于数据库 mysql 设置的时区为本地时间，实际落库为 **2020-11-09 13:25:32** 多加 8 小时，最终为：**2020-11-09 21:25:32**
+
+**当设置时区时（+08:00）：**
+
+通过 **utcOffset(+08:00)** 方法偏移后，值还为 **2020-11-09 21:25:32**，DateTime 将会比之前多 8 小时；
+
+由于和 mysql 时区一致，对于 **TimeStamp** 的落库值为：**2020-11-09 21:25:32**
+
+## 查询
+
+通过 **seqeulize** 从 **mysql** 查询时，会对取到结果进行解析，对于 **DateTime** 类型的字段会执行 **parse** 方法：
+
+```js
+// Datetime
+// sequelize\lib\dialects\mysql\data-types.js
+class DATE extends BaseTypes.DATE {
+  // 2020-11-09 13:25:32
+  static parse(value, options) {
+    value = value.string();
+    // ...
+    if (moment.tz.zone(options.timezone)) {
+      value = moment.tz(value, options.timezone).toDate();
+    } else {
+      // new Date("2020-11-09 13:25:32 +08:00")
+      value = new Date(`${value} ${options.timezone}`);
+    }
+    return value;
+  }
+}
+```
+
+如果我们设置了 **options.timezone** ，则会在最后添加时区值。
+
+对于 **Timestamp** 类型，会选择 **mysql2** 模块内置的方法进行解析：
+
+```js
+// mysql2\lib\parsers\text_parser.js
+function readCodeFor(type, charset, encodingExpr, config, options) {
+  // ...
+  switch (type) {
+    //...
+    case Types.DATE:
+      // ...
+      return `packet.parseDate('${timezone}')`;
+    case Types.DATETIME:
+    case Types.TIMESTAMP:
+      if (helpers.typeMatch(type, dateStrings, Types)) {
+        return 'packet.readLengthCodedString("ascii")';
+      }
+      return `packet.parseDateTime('${timezone}')`;
+    case Types.TIME:
+      return 'packet.readLengthCodedString("ascii")';
+  }
+}
+```
+
+```js
+// mysql2\lib\packets\packet.js
+class Packet {
+  // ...
+  // +08:00
+  parseDateTime(timezone) {
+    // 2020-11-09 21:25:32
+    const str = this.readLengthCodedString('binary');
+    if (str === null) {
+      return null;
+    }
+    if (!timezone || timezone === 'local') {
+      return new Date(str);
+    }
+    // new Date("2020-11-09 21:25:32+08:00")
+    return new Date(`${str}${timezone}`);
+  }
+}
+```
+
+对于上述两种类型选择对应解析方法都功能都是相同的，那为何会有上面查询出结果“不同”的现象？原因还是 **DateTime，TimeStamp 和时区的关系**。
+
+我们以这条记录，在不同时区设置的查询结果进行分析：
+
+```
++-----------------------------------------------+------------+---------------------+---------------------+
+| source_time                                   | t_date     | t_datetime          | t_timestamp         |
++-----------------------------------------------+------------+---------------------+---------------------+
+| Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00) | 2020-11-09 | 2020-11-09 13:25:32 | 2020-11-09 21:25:32 |
++-----------------------------------------------+------------+---------------------+---------------------+
+```
+
+**当没有设置过时区（+00:00）时：**
+
+如果 **DateTime** 库值为 **2020-11-09 13:25:32**，最终通过 parse 方法，将返回 new Date('2020-11-09 13:25:32+00:00')，转为 iso 格式，即为：**2020-11-09T13:25:32.000Z**；
+
+如果 **TimeStamp** 库值为 **2020-11-09 21:25:32**，由于时区不一致，首先 mysql 会根据时区转为 UTC 时间（少 8 小时）为：**2020-11-09 13:25:32**，再进行解析，最终和上面的 **DateTime** 类型的结果一样。
+
+**sequelize** 插叙查询结果如下：
+
+```js
+{
+  sourceTime: 'Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00)',
+  tDate: '2020-11-09',
+  tDatetime: '2020-11-09T13:25:32.000Z', // ？？？
+  tTimestamp: '2020-11-09T13:25:32.000Z',
+}
+```
+
+**而当设置时区后（+08:00）后：**
+
+**DateTime** 类型，对应返回 new Date('2020-11-09 13:25:32+08:00')，转为 iso 格式，即为：**2020-11-09T05:25:32.000Z**；
+
+而由于 **sequelize** 和 **mysql** 时区一致，TimeStamp 取出的值直接为：**2020-11-09 21:25:32**，在通过 iso 转换，则为：**2020-11-09T13:25:32.000Z**。
+
+```js
+{
+  sourceTime: 'Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00)',
+  tDate: '2020-11-09',
+  tDatetime: '2020-11-09T05:25:32.000Z',
+  tTimestamp: '2020-11-09T13:25:32.000Z',
+},
+```
 
 # 总结
 
@@ -233,3 +381,7 @@ moment(isoDate).format('YYYY-MM-DD HH:mm:hh'); //2020-11-09 21:25:09
 - 对 DateTime 类型的字段要小心处理
 - sequelize 的时区设置要和数据库保持一致
 - 服务端相关时间做好服务端解析后，再输出给客户端，减少客户端对时间的操作
+
+## 参考
+
+https://dev.mysql.com/doc/refman/8.0/en/datetime.html

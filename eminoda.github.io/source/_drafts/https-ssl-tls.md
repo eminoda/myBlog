@@ -39,6 +39,79 @@ data + private key => hash
 
 # 搭建一个 Https 服务
 
+## 使用 openSSL 生成证书
+
+创建 CA 根证书
+
+```shell
+# 准备目录结构
+mkdir rootCA
+cd rootCA
+mkdir certs crl newcerts private
+touch index.txt
+echo 1000 > serial
+# 下载 openssl.cnf
+# 创建秘钥
+winpty openssl genrsa -aes256 -out private/ca.key.pem 4096
+# 创建证书
+winpty openssl req -config openssl.cnf \
+        -key private/ca.key.pem \
+        -new -x509 -days 365 -sha256 -extensions v3_ca \
+        -out certs/ca.cert.pem
+# 验证证书
+openssl x509 -noout -text -in certs/ca.cert.pem
+```
+
+https://stackoverflow.com/questions/3758167/openssl-command-hangs
+
+创建机构
+
+```shell
+mkdir intermediate
+cd intermediate
+mkdir certs crl csr newcerts private
+touch index.txt
+echo 1000 > serial
+echo 1000 > crlnumber
+cd ..
+# 创建秘钥
+winpty openssl genrsa -aes256 -out intermediate/private/intermediate.key.pem 4096
+# 生成证书签发请求
+winpty openssl req -config intermediate/openssl.cnf -new -sha256 \
+        -key intermediate/private/intermediate.key.pem \
+        -out intermediate/csr/intermediate.csr.pem
+# 颁发证书
+winpty openssl ca -config openssl.cnf \
+    -extensions v3_intermediate_ca \
+    -days 180 -notext -md sha256 \
+    -in intermediate/csr/intermediate.csr.pem \
+    -out intermediate/certs/intermediate.cert.pem
+# 验证证书
+openssl x509 -noout -text \
+      -in intermediate/certs/intermediate.cert.pem
+openssl verify -CAfile certs/ca.cert.pem ../intermediate/certs/intermediate.cert.pem
+
+# 证书链
+cat ./intermediate/certs/intermediate.cert.pem ./certs/ca.cert.pem > ./intermediate/certs/ca-chain.cert.pem
+
+```
+
+服务端证书
+
+```
+winpty openssl genrsa -aes256 -out intermediate/private/www.democa.com.key.pem 2048
+winpty openssl req -config intermediate/openssl.cnf \
+ -key intermediate/private/www.democa.com.key.pem \
+ -new -sha256 -out intermediate/csr/www.democa.com.csr.pem
+
+winpty openssl ca -config ./intermediate/openssl.cnf \
+ -extensions server_cert \
+ -days 10 -notext -md sha256 \
+ -in intermediate/csr/www.democa.com.csr.pem \
+ -out intermediate/certs/www.democa.com.cert.pem
+
+```
+
 ## 开发时如何解析 Https 内容
 
 # 最后
@@ -47,3 +120,7 @@ data + private key => hash
 
 [细说 CA 和证书](https://www.barretlee.com/blog/2016/04/24/detail-about-ca-and-certs/)
 [彻底搞懂 HTTPS 的加密机制](https://zhuanlan.zhihu.com/p/43789231)
+
+```
+
+```

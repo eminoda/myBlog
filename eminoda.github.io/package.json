@@ -9,6 +9,7 @@
     "start": "hexo server --draft"
   },
   "dependencies": {
+    "gitalk": "^1.7.2",
     "hexo": "^3.8.0",
     "hexo-deployer-git": "^0.3.1",
     "hexo-generator-archive": "^0.1.4",

@@ -3,6 +3,9 @@
 
 <div id="gitalk-container"></div>
 
+{% set md5_js_uri = url_for('/lib/md5/md5.min.js') %}
+<script src="{{ md5_js_uri }}"></script>
+
 <script>
 	// https://node-swig.github.io/swig-templates/docs/tags/
 	// https://github.com/gitalk/gitalk/issues/102
@@ -17,6 +20,7 @@
 
 
 <script type="text/javascript">
+	console.log('{{url_for(page.path)}}',md5('{{url_for(page.path)}}'))
 	var gitalk = new Gitalk({
 	  clientID: '{{theme.git_talk.clientID}}',//'f5e934819613a06d3a38',
 	  clientSecret: '{{theme.git_talk.clientSecret}}',//'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
@@ -24,9 +28,9 @@
 	  owner: 'eminoda',
 	  admin: ['eminoda'],
 	  perPage: 20,
-	  id: '{{url_for(page.path).split('/').reverse()[1].slice(0,50)}}',
+	  id: md5('{{url_for(page.path)}}'),
 	  title: '{{page.title}}',
-	  labels: tags,
+	  // labels: tags,
 	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊'
 	})
 	gitalk.render('gitalk-container')

@@ -354,6 +354,11 @@
         {% include 'wechat-subscriber.swig' %}
       </div>
     {% endif %}
+    {% if theme.git_talk.enabled and not is_index %}
+      <div>
+        {% include 'git-talk.swig' %}
+      </div>
+    {% endif %}
 
     {% if (theme.alipay or theme.wechatpay or theme.bitcoin) and not is_index %}
       <div>

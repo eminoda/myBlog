@@ -28,7 +28,7 @@ const lazyTimer = (fn) => {
     }, 2);
   });
 };
-const createIssues = async ({ title, id, filePath }) => {
+const createIssues = async ({ title, id, filePath, hrefTitle }) => {
   const errMsg = [];
   try {
     const { data: issues } = await axios.get(ISSUES_API, {
@@ -45,7 +45,7 @@ const createIssues = async ({ title, id, filePath }) => {
           {
             body:
               "🚀 " +
-              "location.href" +
+              'https://eminoda.github.io' + hrefTitle +
               "\n\n欢迎通过 issues 留言 ，互相交流学习😊",
             labels: ["Gitalk", id],
             title,
@@ -81,16 +81,15 @@ fs.readdirSync(POST_DIR).forEach((item) => {
     const yamlStr = str.split("---")[1];
     if (yamlStr) {
       const title = yaml.load(yamlStr).title;
-      const id = md5(
+      const hrefTitle = "/" +
+        item.slice(0, 10).replace(/-/g, "/") +
         "/" +
-          item.slice(0, 10).replace(/-/g, "/") +
-          "/" +
-          item.slice(11).split(".md")[0] +
-          "/"
-      );
+        item.slice(11).split(".md")[0] +
+        "/"
+      const id = md5(hrefTitle);
       pFn.push((next) => {
         lazyTimer(async () => {
-          await createIssues({ title, id, filePath });
+          await createIssues({ title, id, filePath, hrefTitle });
           next();
         });
       });
@@ -99,11 +98,11 @@ fs.readdirSync(POST_DIR).forEach((item) => {
   }
 });
 
-function compose(pFns) {
+function compose (pFns) {
   return function (next) {
     let index = -1;
     return dispatch(0);
-    function dispatch(i) {
+    function dispatch (i) {
       index = i;
       let fn = pFns[i];
       // 最后次

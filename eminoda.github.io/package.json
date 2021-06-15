@@ -9,6 +9,7 @@
     "start": "hexo server --draft"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "blueimp-md5": "^2.18.0",
     "gitalk": "^1.7.2",
     "hexo": "^3.8.0",
@@ -23,6 +24,7 @@
     "hexo-renderer-marked": "^0.3.0",
     "hexo-renderer-stylus": "^0.3.1",
     "hexo-server": "^0.2.0",
-    "qs": "^6.10.1"
+    "qs": "^6.10.1",
+    "yaml-js": "^0.2.3"
   }
 }

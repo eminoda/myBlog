@@ -1,3 +1,12 @@
+<script>
+	var tags = []
+</script>
+{% if page.tags.length %}
+	{% for tag in page.tags %}
+	<script>tags.push('{{tag.name}}')</script>
+	{% endfor %}
+{% endif %}
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
 <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 
@@ -7,32 +16,18 @@
 <script src="{{ md5_js_uri }}"></script>
 <script src="{{ url_for('/lib/jquery/index.js?v=2.1.3') }}"></script>
 
-<script>
-	// https://node-swig.github.io/swig-templates/docs/tags/
-	// https://github.com/gitalk/gitalk/issues/102
-	// https://hexo.io/zh-cn/docs/variables.html#%E9%A1%B5%E9%9D%A2%E5%8F%98%E9%87%8F
-	var tags = []
-</script>
-{% if page.tags.length %}
-	{% for tag in page.tags %}
-	<script>tags.push('{{tag.name}}')</script>
-	{% endfor %}
-{% endif %}
-
-
 <script type="text/javascript">
 	var id = md5('{{url_for(page.path)}}')
 	var gitalk = new Gitalk({
-	  clientID: '{{theme.git_talk.clientID}}',//'f5e934819613a06d3a38',
-	  clientSecret: '{{theme.git_talk.clientSecret}}',//'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  clientID: '{{theme.git_talk.clientID}}',
+	  clientSecret: '{{theme.git_talk.clientSecret}}',
 	  repo: 'eminoda.github.io',
 	  owner: 'eminoda',
 	  admin: ['eminoda'],
 	  perPage: 20,
-	  id: id,
+	  id: id,//长度有限制
 	  title: '{{page.title}}',
-	  // labels: tags,
-	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊'
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
 	})
 	gitalk.render('gitalk-container')
 </script>

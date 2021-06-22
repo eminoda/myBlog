@@ -23,15 +23,15 @@ tags:
 
 ## 加载主题样式
 
-页面加载后，会发起 **/css/theme-colors-xxx.css** 的请求：
+当页面加载后，能看到 **/css/theme-colors-xxx.css** 的请求：
 
 {% asset_img theme-fetch.png %}
 
-然后新增 **style** 标签并放置响应内容：
+然后页面新增了 **style** 标签并放置了响应内容 **css** 代码：
 
 {% asset_img theme-style-tag.png %}
 
-能看到响应内容就是主题色有关的 **css** 代码，这些代码将覆盖原有样式代码，从而将达到主题色的切换。
+这些代码将覆盖原有样式代码，从而将达到主题色的切换。
 
 ## 代码怎么添加进去的？
 
@@ -62,7 +62,8 @@ const themePluginOption = {
   changeSelector(selector) {},
 };
 
-const createThemeColorReplacerPlugin = () => new ThemeColorReplacer(themePluginOption);
+const createThemeColorReplacerPlugin = () =>
+  new ThemeColorReplacer(themePluginOption);
 
 module.exports = createThemeColorReplacerPlugin;
 ```
@@ -153,9 +154,9 @@ function Extractor(options) {
 
 {% asset_img cssSrc-ret.png %}
 
-## 动态主题切换逻辑
+## 切换动态主题
 
-### 主题配置 theme.config
+我们会预先定义好主题配置 **theme.config**，类似如下结构：
 
 ```js
 export default {
@@ -178,11 +179,9 @@ export default {
 };
 ```
 
-最后，挂在至全局变量 **window.umi_plugin_ant_themeVar**
+然后将其挂在至全局变量 **window.umi_plugin_ant_themeVar** 下。
 
-### SettingDrawer 组件
-
-获取主题配置，提取主题色 @primary-color 并添加到每个 list 中：
+在 **SettingDrawer** 组件中，会获取主题配置，提取主题色 **@primary-color** 并添加到每个 **list** 中：
 
 ```js
 var getThemeList = function getThemeList(i18nRender) {
@@ -191,27 +190,15 @@ var getThemeList = function getThemeList(i18nRender) {
   list.forEach(function (item) {
     var color = (item.modifyVars || {})["@primary-color"];
 
-    if (item.theme === "dark" && color) {
-      darkColorList.push(
-        _objectSpread(
-          {
-            color: color,
-          },
-          item
-        )
-      );
-    }
-
-    if (!item.theme || item.theme === "light") {
-      lightColorList.push(
-        _objectSpread(
-          {
-            color: color,
-          },
-          item
-        )
-      );
-    }
+    //...
+    lightColorList.push(
+      _objectSpread(
+        {
+          color: color,
+        },
+        item
+      )
+    );
   });
   return {
     colorList: {
@@ -223,9 +210,7 @@ var getThemeList = function getThemeList(i18nRender) {
 };
 ```
 
-### 更改主题
-
-当在 SettingDrawer 组件中主题配置被修改后，则会更新主题：
+当在 **SettingDrawer** 组件中主题配置被修改后，则会触发更新主题方法 **updateTheme** ：
 
 ```js
 function handleChangeSetting(key, value, hideMessageLoading) {
@@ -236,7 +221,7 @@ function handleChangeSetting(key, value, hideMessageLoading) {
 }
 ```
 
-**updateTheme** 会调用 **themeColor.changeColor** 方法，将新的主题色转化为多个主题系色 **newColors** ，再交给 **webpack-theme-color-replacer/client** 处理：
+**updateTheme** 会调用 **themeColor.changeColor** 方法，通过 **getAntdSerials** 将新的主题色转化为多个主题系色 **newColors** ，再交给 **webpack-theme-color-replacer/client** 处理：
 
 ```js
 export var themeColor = {
@@ -269,12 +254,14 @@ module.exports = {
 };
 ```
 
-在 **setCssText** 中，会调用 **getCssString** 方法，如果当前 **html** 没有 **css\_** 元素，则会通过 **xhr** 获取对应主题色对应的样式文件内容，然后通过 **setCssTo** 替换新老颜色：
+在 **setCssText** 中，会调用 **getCssString** 方法，如果当前页面没有 **css\_** 元素，则会通过 **xhr** 获取对应主题色对应的样式文件内容，然后通过 **setCssTo** 替换新老颜色：
 
 ```js
 function setCssText(last, url, resolve, reject) {
   var id = "css_" + +new Date();
-  elStyle = document.querySelector(options.appendToEl || "body").appendChild(document.createElement("style"));
+  elStyle = document
+    .querySelector(options.appendToEl || "body")
+    .appendChild(document.createElement("style"));
 
   elStyle.setAttribute("id", id);
 
@@ -289,3 +276,10 @@ function setCssText(last, url, resolve, reject) {
   );
 }
 ```
+
+这里就和上面前后呼应了。
+
+## ？
+
+- 到底 plugins 先，还是 client 先
+- 是否 plugins 和 client 重复

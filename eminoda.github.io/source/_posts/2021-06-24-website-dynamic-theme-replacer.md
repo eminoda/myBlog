@@ -1,67 +1,65 @@
 ---
-title: 网站主题色动态切换
+title: 如何定制化网站主题色
+date: 2021-06-24 20:08:08
 tags:
 ---
 
-# 网站最大的辨识度是什么？
-
-打开淘宝，京东两个购物网站，除了品牌 logo 外，粗看之下网站首页基本很相像，我们是根据什么辨别这两个网站的不同呢？
-
-我个人觉得是 **颜色**，颜色能在视觉上让我们快速辨别这是什么网站。比如：美团的黄色，汽车之家的蓝色，B 站的粉色...
-
-如果把京东的主题色改为橘红色，是不是觉得就是个淘宝了。当然这只是个玩笑，那么问题来了，在前端开发中怎么能够快速切换网站的主题颜色？
-
 # 如何切换主题色
 
-如今，前端开发一个网站都有很很成熟的 UI 组件框架，比如 **Ant Design** ，**Element UI** 等。
+首先抛个问题，我们根据什么来辨别同类型的网站？
 
-作为组件库提供多数只提供了一种主题色的设计（就像上面 2 个组件框架为蓝色系），如果使用方需要专门定义一种其他颜色的风格，甚至能在线定制化，那就不是在开发阶段 **写死** 那么简单了。
+我觉得是网站的“主题色”，试想下把淘宝的橘红色换成京东的红色，是不是就和后者一样了。
 
-那有没有现成的解决方案？肯定有。下面就看下 **ant-design-vue-pro** （一款基于 **Vue** 和 **Ant Design Pro** 的中后台前端框架）是怎么做的？
+> 可以说：主题色作为网站辨识度最高的设计元素之一。
 
-# ant-design-vue-pro 如何做的？
+实际工作场景中，一个 web 项目可能改个主题色及页面内容，就可以给不同业务方使用。对于如今的前端开发来说，即使有着成熟的 UI 组件框架，比如 **Ant Design** ，**Element UI** 等，
+但为了变出不同主题色系的网站风格，我们往往会创建新的主题样式来覆盖原有的 UI ，工作量仍然巨大，稍有疏忽就会有遗漏。
 
-## 动态更改主题
+> 那有没有省时省力的方式来定制化 UI 组件色系呢？
+
+肯定有。下面就举例 **[Ant Design Pro](https://github.com/vueComponent/ant-design-vue-pro)** （一款基于 **Vue** 和 **Ant Design** 的中后台前端框架），看下它是基于什么实现的？
+
+# Ant Design Pro 到底有什么魔法？
+
+我们通过 **npm run serve** 启动项目，进入主页后，在页面右侧的设置按钮来切换主题色，能看到页面颜色也跟着发生了改变：
 
 {% asset_img antd-theme-replacer.gif %}
 
-从上图中，我们能看到，当在 **SettingDrawer** 主题配置组件更改主题配置时，页面颜色发生了更改。
+试着找些明面上能看到的东西：
 
-打开调试工具，能看到当初次更配配置时，浏览器发送了一个 **/css/theme-colors-xxx.css** 的请求，响应内容为 **css** 代码：
+打开调试工具，重新刷新页面，看到浏览器发送了一个 **/css/theme-colors-xxx.css** 的请求，响应内容为一大段样式代码：
 
 {% asset_img theme-fetch.png %}
 
-审查页面，发现和主题颜色相关的元素利用了 **css** 中 **样式覆盖** 的特性让新颜色起了效果：
+审查页面有关主题颜色的元素，发现利用了 **样式覆盖** 的特性让新颜色起了效果：
 
 {% asset_img theme-cover.png %}
 
-这些新的样式被定义在 **id** 为 **css_xxxx** 的 **style** 标签内：
+这些新的样式代码被定义在一个 **style** 标签内：
 
 {% asset_img theme-style-tag.png %}
 
-如此，将覆盖所有原有 UI 组件有关颜色样式，从而将达到主题色切换的目的。但上面只是现象，要想知道所以然，就要提几个疑问：
+如此，将覆盖原先 UI 组件的颜色样式，从而将达到主题色切换的目的。不知所以然的你，肯定就会有如下问题：
 
-- 请求 **/css/theme-colors-xxx.css** 哪里定义并发起的？
-- **css** 样式代码生成的是什么？
-- **css** 样式代码怎么做到“热”更新的？
+- **css** 样式代码根据什么规则生成的？
+- 请求 **/css/theme-colors-xxx.css** 哪里发起的？
+- 主题色的切换，页面怎么快速做样式更新的？
 
-## 主题 **css** 代码怎么解析的？
+这些都围绕着 **webpack-theme-color-replacer** 展开，下面就进入代码来一探究竟。
 
-翻阅 **ant-design-vue-pro** 中 **webpack** 配置，发现有个和主题颜色配置相关的 **plugins** 逻辑：
+# 主题样式代码生成规则？
+
+翻阅 **Ant Design Pro** 中 **webpack** 配置，发现有个和主题颜色配置相关的 **plugins** 逻辑：
 
 ```js
 // vue.config.js
 
 const createThemeColorReplacerPlugin = require("./config/plugin.config");
 //...
-if (process.env.VUE_APP_PREVIEW === "true") {
-  console.log("VUE_APP_PREVIEW", true);
-  // add `ThemeColorReplacer` plugin to webpack plugins
-  vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin());
-}
+vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin());
 ```
 
-**createThemeColorReplacerPlugin** 内部返回了基于 **webpack-theme-color-replacer** 模块的主题更新对象：
+**createThemeColorReplacerPlugin** 返回的就是 **webpack-theme-color-replacer** 插件对象：
 
 ```js
 const ThemeColorReplacer = require("webpack-theme-color-replacer");
@@ -79,13 +77,18 @@ const createThemeColorReplacerPlugin = () =>
 module.exports = createThemeColorReplacerPlugin;
 ```
 
-注意到：**themePluginOption.fileName** 和页面请求样式文件的地址一样；另外 **matchColors** 默认通过 **getAntdSerials** 把 **#1890ff** 转化为一组蓝色系的主题色：
+注意到：**themePluginOption** 中的 **fileName** 和主题样式请求地址一样（和问题二有关）；另外 **matchColors** 默认通过 **getAntdSerials** 把 **#1890ff** 转化为一组蓝色系的主题色：
 
 ```
-["#1890ff", "#2f9bff", "#46a6ff", "#5db1ff", "#74bcff", "#8cc8ff", "#a3d3ff", "#badeff", "#d1e9ff", "#e6f7ff", "#bae7ff", "#91d5ff", "#69c0ff", "#40a9ff", "#1890ff", "#096dd9", "#0050b3", "#003a8c", "#002766", "24,144,255"]
+[
+  "#1890ff", "#2f9bff", "#46a6ff", "#5db1ff", "#74bcff", "#8cc8ff", "#a3d3ff", "#badeff", "#d1e9ff",
+  "#e6f7ff", "#bae7ff", "#91d5ff", "#69c0ff", "#40a9ff",
+  "#1890ff", "#096dd9", "#0050b3", "#003a8c", "#002766",
+  "24,144,255"
+]
 ```
 
-当此插件运行后，则调用 **ThemeColorReplacer.apply** 方法，并触发 **Handler.handler** 方法：
+webpack plugins 运行时，则调用 **ThemeColorReplacer.apply** 方法，并触发 **Handler.handler** 方法：
 
 ```js
 class ThemeColorReplacer {
@@ -99,7 +102,7 @@ class ThemeColorReplacer {
 }
 ```
 
-**Handler** 中，会先初始化一个文件提取器 **AssetsExtractor** ，通过内部 **extractAssets** 方法来提取 **output** （有关主题色的 **css** 代码），最后调用 **addToEntryJs** 方法，将提取结果加到每个入口文件里：
+**Handler** 中，会先初始化一个文件提取器 **AssetsExtractor** ，通过内部 **extractAssets** 方法来提取主题样式代码到 **output**，最后调用 **addToEntryJs** 方法，将提取结果加到每个入口文件里：
 
 ```js
 class Handler {
@@ -141,11 +144,17 @@ function AssetsExtractor(options) {
 
   this.extractAsset = function (fn, asset) {
     //...
-    return this.extractor.extractColors(src);
+    var cssSrcs = [];
+    // 2. 解析 js module 中符合 cssReg 的 css 代码
+    var CssCodeReg = Css_Loader_Reg_UGLY;
+    src.replace(CssCodeReg, (match, $1) => {
+      cssSrcs = cssSrcs.concat(this.extractor.extractColors($1));
+    });
+    return cssSrcs;
   };
 }
 function Extractor(options) {
-  // 2. 通过指针逐个遍历符合条件的内容，重新组装层复合 css 语法的代码，并提取到 ret 数组中
+  // 3. 通过指针逐个遍历符合条件的内容，重新组装层复合 css 语法的代码，并提取到 ret 数组中
   this.extractColors = function (src) {
     src = src.replace(Reg_Lf_Rem, "");
     var ret = [];
@@ -161,21 +170,21 @@ function Extractor(options) {
 }
 ```
 
-遍历 **compilation.assets** 下每个资源内容，通过正则将符合 **css** 代码的内容抓取出来。解析出来的每个 **asset** 文件中， **css** 的代码就为图中【绿色】中的内容：
+遍历 **compilation.assets** 下每个资源内容，通过正则 **CssCodeReg** 将符合 **css** 代码的内容抓取出来。这些代码就是图中【绿色】中的内容：
 
 {% asset_img cssSrc-replace.png %}
 
-然后和主题色进行正则匹配，得到一个有关主题色的 **css** 数组：
+再通过 **extractColors** 方法逐行解析，得到一个有关主题色的 **css** 数组：
 
 {% asset_img cssSrc-ret.png %}
 
-最后通过 **join** 组装成新的 **css** 主题样式代码，并将结果输出到 **theme-colors-xxx.css** 中。
+最后将结果输出到 **theme-colors-xxx.css** 中。
 
 这里就回答其中一个问题：
 
-> **css** 样式代码生成的是什么？
+> **css** 样式代码根据什么规则生成的？
 
-需要注意，添加代码到入口文件时，相关 **请求地址** 以及 **matchColors** 将被赋值到 **window.\_\_theme_COLOR_cfg** 作为入口文件的一部分代码，供客户端使用：
+不能遗漏的是：添加样式代码到入口文件时，相关 **themePluginOption** 配置将被赋值到 **window.\_\_theme_COLOR_cfg** 作为入口文件的一部分代码，供客户端使用：
 
 ```js
 getEntryJs(outputName, assetSource, cssCode) {
@@ -186,13 +195,15 @@ getEntryJs(outputName, assetSource, cssCode) {
 }
 ```
 
-## 切换主题是发生了什么？
+# 主题样式请求怎么发起？
 
-**SettingDrawer** 组件提供了主题相关配置的修改选项：
+我们以页面的主题设置为入口，看下 **SettingDrawer** 组件内部的功能。
+
+首先该组件提供了这些配置选项：
 
 {% asset_img settingDrawer.png UI展示 %}
 
-对于其中的主题色，该组件会在初始化时会解析 **config\themePluginConfig.js** 配置，并将其挂载至 **window.umi_plugin_ant_themeVar** 下，最后可视化到页面上：
+在该项目中，会发现有 **config\themePluginConfig.js** 配置：
 
 ```js
 // config\themePluginConfig.js
@@ -216,10 +227,16 @@ export default {
 };
 ```
 
+如果你熟悉 **Ant Design Pro**，那么在 **[动态主题](https://pro.ant.design/docs/dynamic-theme-cn)** 中也能看到一样的配置，其通过 **umi-plugin-antd-theme** 进行设置。
+
+这些配置在程序启动时，就挂载至 **window.umi_plugin_ant_themeVar** 下：
+
 ```js
 // main.js
 window.umi_plugin_ant_themeVar = themePluginConfig.theme;
 ```
+
+作为页面主题的调色板元数据：
 
 ```js
 var getThemeList = function getThemeList(i18nRender) {
@@ -248,9 +265,7 @@ var getThemeList = function getThemeList(i18nRender) {
 };
 ```
 
-如果你熟悉 **Ant Design Pro**，那么在 **[动态主题](https://pro.ant.design/docs/dynamic-theme-cn)** 中也能看到类似的设置，不过基于 **umi-plugin-antd-theme**。
-
-当主题配置被修改后，则会触发更新主题方法 **updateTheme()** ：
+当主题颜色修改时，则会触发更新主题方法 **updateTheme()** ：
 
 ```js
 function handleChangeSetting(key, value, hideMessageLoading) {
@@ -261,7 +276,7 @@ function handleChangeSetting(key, value, hideMessageLoading) {
 }
 ```
 
-**updateTheme** 会调用 **themeColor.changeColor** 方法，通过 **getAntdSerials** 将新的主题色转化为多个主题系色 **newColors** ，再交给 **webpack-theme-color-replacer/client** 处理：
+**updateTheme** 会调用 **themeColor.changeColor** 方法，生成新的主题色系 **newColors** ，再交给 **webpack-theme-color-replacer/client** 处理：
 
 ```js
 export var themeColor = {
@@ -305,7 +320,7 @@ module.exports = {
 };
 ```
 
-在 **setCssText** 中，会去寻找 **id** 为 **css_xxx** 的 **style** 标签，并调用 **getCssString()** 方法获取样式内容：
+在 **setCssText** 方法中，会去寻找 **id** 为 **css_xxx** 的 **style** 标签，并调用 **getCssString()** 方法：
 
 ```js
 function setCssText(last, url, resolve, reject) {
@@ -328,9 +343,9 @@ function setCssText(last, url, resolve, reject) {
 }
 ```
 
-**getCssString()** 内通过 **xhr** 来前面 **webpack** 生成的样式文件，其中 **url** 就是地址 **/css/theme-colors-xxx.css** 。从而回答了第一个问题：
+**getCssString()** 内通过 **xhr** 来发动主题样式文件的请求。从而回答了第二个问题：
 
-> 请求 **/css/theme-colors-xxx.css** 哪里定义并发起的？
+> 请求 **/css/theme-colors-xxx.css** 哪里发起的？
 
 ```js
 module.exports = {
@@ -353,7 +368,7 @@ module.exports = {
 
 调用完 **getCssString** 后，将得到 **cssText** 代码。然后通过 **setCssTo** 替换新老颜色，这就回答了最后个问题：
 
-> **css** 样式代码怎么做到更新的？
+> 主题色的切换，页面怎么快速做样式更新的？
 
 ```js
 function setCssTo(cssText) {
@@ -374,4 +389,14 @@ function replaceCssText(cssText, oldColors, newColors) {
 }
 ```
 
-这样有个好处，请求的主题样式文件将只有一份，后续修改只会替换文件内和颜色有关的内容，从而达到主题切换。
+这样有个好处，有关主题颜色的样式文件只在首次加载，后续通过替换 **style** 标签内容，从而达到主题切换。
+
+# 总结
+
+**webpack-theme-color-replacer** 是个很小众的库，github 才 200 个 Star。但它的确解决了产品上某些问题。
+
+有时候我们每天忙碌于业务代码的“搬砖”中，枯燥乏味。作为一个软件程序员，除了完成需求外，还需要更多的思考业务，来促使代码有更多的扩展性。
+
+如果你说业务固定不变，或者离我太远，也可以发现开发中的“重复性劳动”，将 ctrl C/V 最大程度地程序化。什么页面可视化搭建，低代码平台可不光光是 KPI 产物，我觉得它们能促使开发人员有更多时间思考，去挖掘更高的价值。
+
+最后，还是需要不断纵向学习，本篇只简单说了该插件的工作过程。但它内部有关生成调色板的逻辑，怎么解析 css 代码，怎么和 webpack 融合都没有呈现出来，更多需要你去深究，别想用到时方恨少。

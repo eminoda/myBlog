@@ -1,8 +1,0 @@
----
-title: jquery-deep-animate
-tags:
-  - jquery
-categories:
-  - 开发
-  - 前端开发
----

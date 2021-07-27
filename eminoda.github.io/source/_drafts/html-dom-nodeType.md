@@ -1,5 +1,5 @@
 ---
-title: Html 中 Document 的 nodeType 类型
+title: Document 中的 nodeType 类型
 tags:
   - js
   - html
@@ -19,12 +19,12 @@ if (!inVPre && text !== " " && (res = parseText(text, delimiters))) {
     type: 2,
     expression: res.expression,
     tokens: res.tokens,
-    text
+    text,
   };
 } else if (text !== " " || !children.length || children[children.length - 1].text !== " ") {
   child = {
     type: 3,
-    text
+    text,
   };
 }
 ```

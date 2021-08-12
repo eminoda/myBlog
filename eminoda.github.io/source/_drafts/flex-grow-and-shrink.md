@@ -154,18 +154,13 @@ flex: inherit
 
 # flex-shrink
 
-## 元素设置 flex-shrink 后，在不同 width 下的变化
+> 指定了 flex 元素的收缩规则。flex 元素仅在默认宽度之和大于容器的时候才会发生收缩，其收缩的大小是依据 flex-shrink 的值。默认值为 1。
 
-```css
-.flex-content {
-  display: flex;
-  justify-content: space-around;
-  width: 500px;
-}
-.flex-content .flex-item {
-  flex-shrink: 1;
-}
-```
+## 在不同 width 下的变化
+
+**父级宽度（600px）= 子元素宽度之和（600px）：**
+
+两者宽度相同，不做收缩处理。
 
 ```css
 .flex-content {
@@ -178,13 +173,30 @@ flex: inherit
 }
 ```
 
-## 不同 flex-shrink 值，缩小的比例
+{% asset_image flex-shrink-width-2.png %}
+
+**父级宽度（500px）< 子元素宽度之和（600px）：**
 
 ```css
-.flex-content .flex-item[num="2"] {
+.flex-content {
+  display: flex;
+  justify-content: space-around;
+  width: 500px;
+}
+.flex-content .flex-item {
   flex-shrink: 1;
 }
 ```
+
+缺少空间为 100px，每个元素收缩率为：1/(1\*3)，即收缩长度为：200-100\*1/(1\*3) = 166.67
+
+{% asset_image flex-shrink-width-1.png %}
+
+## 只有其中一元素设置了 flex-shrink
+
+**flex-shrink 为整数时：**
+
+第 1 个和第 2 个元素保持原 200px，缺少空间为：500-200\*2 = 100，中间元素将收缩到 200-100\*(2/4)=150
 
 ```css
 .flex-content .flex-item[num="2"] {
@@ -192,12 +204,16 @@ flex: inherit
 }
 ```
 
+{% asset_image flex-shrink-value-1.png %}
+
+**flex-shrink 为小数时：**
+
+中间元素将收缩到 200-100\*0.5/(2+.5)=180
+
 ```css
 .flex-content .flex-item {
   flex-shrink: 0.5;
 }
 ```
 
-```css
-
-```
+{% asset_image flex-shrink-value-2.png %}

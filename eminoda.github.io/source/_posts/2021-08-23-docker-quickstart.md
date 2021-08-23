@@ -5,7 +5,9 @@ categories:
   - 开发
   - 运维部署
 thumb_img: docker.png
+date: 2021-08-23 21:51:50
 ---
+
 
 # 前言
 
@@ -136,7 +138,7 @@ docker 就提供了 hub 平台，我们可以把镜像扔到上面，下面就�
 
 1.  首先你要在 dockerhub 注册一个账号，并登录上去
 
-    {% asset_img docker-6.png %}
+    {% asset_img docker-7.png %}
 
     ```shell
     docker login -u eminoda

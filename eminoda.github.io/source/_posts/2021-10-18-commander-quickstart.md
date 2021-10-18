@@ -4,11 +4,14 @@ tags: commander
 categories:
   - 开发
   - 前端开发
-thumb_img:
-  - npm.jpg
+post_img:
+  bg_color: '#ff4d4f'
+  title: Commander
+  title_color: '#fff'
+  sub_title: 打造属于自己的一款命令行 cli 脚手架工具
+  sub_color: '#fff'
 date: 2021-10-18 13:49:20
 ---
-
 
 # 前言
 

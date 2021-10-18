@@ -6,13 +6,17 @@ categories:
   - 前端开发
 thumb_img:
   - npm.jpg
+date: 2021-10-18 13:49:20
 ---
+
 
 # 前言
 
+如果你想了解命令行脚手架，这篇讲带你入个门了解 **commander** 和 **inquirer** 库的使用。然后通过一个 Demo 示例来示范如何创作一个脚手架。
+
 # commander
 
-首先需要知道 commander 这个 npm 库，它帮我们封装了命令行解析的能力。
+首先需要知道 **commander** 这个 **npm** 库，它帮我们封装了 **解析命令行** 的能力。我们之后要做的脚手架都是基于 **commander** 的。
 
 ## 先了解几个简单的使用方式
 
@@ -39,7 +43,7 @@ Options:
 
 这个 **program.parse** 方法必须调用，不然命令行工具就不能“正常的工作了”。
 
-能看到 **Usage** 向我们展示如何去使用这个命令，我们也可以更改它：
+输出信息中，能看到 **Usage** 条目，默认它向我们展示如何去使用这个命令，当然我们也可以更改它：
 
 ```js
 program.usage('<command> [options]');
@@ -51,7 +55,7 @@ Usage: fl <command> [options]
 
 ### 如何约定命令 Command？
 
-定义一个 **create** 命令，用于创建应用（类似 vue create）
+命名一个 **create** 命令，约定用于创建应用（类似 vue create）
 
 ```js
 program
@@ -62,7 +66,7 @@ program
   });
 ```
 
-通过 **help** 命令，可以看到 **create** 的使用方式：
+通过 **help** 命令，能看到 **Commands** 条目中增加的新命令信息：
 
 ```shell
 D:\project\frontend-learn-cli>node ./bin/fl-cli --help
@@ -114,14 +118,14 @@ D:\project\frontend-learn-cli>node ./bin/fl-cli create --force /use/local
 { force: '/use/local' }
 ```
 
-需要注意，如果用户输入了非预期的参数将报错：
+需要注意，如果用户输入了 **非预期** 的参数将报错：
 
 ```shell
 D:\project\frontend-learn-cli>node ./bin/fl-cli create -abc
 error: unknown option '-abc'
 ```
 
-我们可以添加 **allowUnknownOption()** 方法，防止非预期参数影响命令的执行：
+我们可以添加 **allowUnknownOption()** 方法，防止 **非预期** 参数影响命令的执行：
 
 ```js
 program
@@ -141,7 +145,7 @@ D:\project\frontend-learn-cli>node ./bin/fl-cli create -abc
 
 ## 进阶技巧
 
-如上，我们就能进行开发简单的命令行工具了。下面提供几种进阶方式，让我们能有跟 **人性化** 的命令行工具。
+如上，我们就能进行开发简单的命令行工具了。但离 **人性化** 的命令行工具还有点举例，下面提供几种技巧：
 
 ### 控制台输出语句的颜色
 
@@ -174,7 +178,7 @@ program.commands.forEach((c) => c.on('--help', () => outputHelp(cliName)));
 
 ### “命令/参数”错误的封装
 
-由于命令错误，参数错误或者值漏填会导致命令行的出错，对于这类非预期的错错误需要及时提示使用者，而不是只展示：**error: option '-f,--force <path>' argument missing** 这样的错。
+由于命令错误，参数错误或者值漏填会导致命令行的出错，对于这类非预期的错误需要及时提示使用者，而不是只展示：**error: option '-f,--force <path>' argument missing** 这样的信息。
 
 参考 [Vue 的错误处理](https://github.com/vuejs/vue-cli/blob/dev/packages/%40vue/cli/bin/vue.js#L219) 我们可以覆写 **commander** 的方法，结合 **chalk** 加强输出错误信息：
 
@@ -198,15 +202,15 @@ enhanceErrorMessages('missingArgument', (argName) => {
 
 {% asset_img enhance-error.png 加强错误显示 %}
 
-# 交互式命令行 inquirer
+### 交互式命令行 inquirer
 
-我们可以通过 **command** ，**option** 定义所有命令行需要的功能，但在与使用者交互会相当不友好（会面对大量的命令说明）。
+通过 **command** ，**option** 可以定义所有命令行需要的功能，但在与使用者交互会相当不友好（会面对大量的命令说明）。
 
-相信大家用过 **vue-cli**，在创建项目时，我们可以跟随命令行的提示来选择对应需要的功能。
+相信用过 **vue-cli** 都知道：在创建项目时，我们可以跟随命令行的提示来选择对应需要的功能。
 
 这种交互式的命令行可以通过 **inquirer** 来完成。
 
-下面是采用了输入，列表选择，多选方式的效果图：
+下面是采用了这种方式的效果图：
 
 {% asset_img inquirer.gif 效果图 %}
 
@@ -264,12 +268,115 @@ program
   });
 ```
 
+当交互结束后，这个 **answers** 将是我们自定义的结果值：
+
+```js
+{
+  template: 'express',
+  appName: 'app',
+  express: { middlewares: [ 'json' ] }
+}
+{
+  template: 'express',
+  appName: 'app',
+  express: { middlewares: [ 'json' ] }
+}
+```
+
 # Demo
 
 再了解上面有关命令行的工具操作后，下面可以实际“造”一个脚手架工具了。
 
-这里将简单完成一个前端代码模板的脚手架，用于快速生成相关代码目录，而不用去技术栈网站去拷贝大量代码。
+下面将提供一个创建 **express** 代码模板的脚手架。用于快速生成相关代码目录，而不用去技术栈网站去拷贝大量代码。（具体代码逻辑，在 **npm** 搜索 **frontend-learn-cli** 即可）
 
-## express 代码模板
+简单实现思路：
 
-## global 命令行
+## 通过 **commander** ，实现对创建 **create** 指令的命令行解析
+
+```js
+program
+  .command('create')
+  .description('创建应用')
+  .action((options, command) => {
+    //inquirer...
+  });
+```
+
+## 添加 **inquirer** 定义好相关可选问题
+
+```js
+inquirer.prompt(questions).then(async (answers) => {
+  // 模板逻辑...
+  // 模板类型（express, vue...）
+  // 项目名称
+  // 中间件选择
+  // ...
+});
+```
+
+## 定义模板固定代码
+
+根据自己对 **express** 的习惯，定义相关代码结构：
+
+```shell
+ template
+   |- express
+     |- bin
+         | www.ejs
+     |- routes
+         | health.js.ejs
+     | app.js.ejs
+     | package.json.ejs
+```
+
+注意：上面的文件都已 **ejs** 作为后缀。具体原因是：模板变量会根据 **answers** 变量，动态注入自定义值。
+
+**ejs** 文件模板会张这个样子：
+
+```shell
+# app.js.ejs
+<% if (express.middlewares.includes('json')) { -%>
+app.use(express.json())
+<% } -%>
+<% if (express.middlewares.includes('urlencoded')) { -%>
+app.use(express.urlencoded())
+<% } -%>
+```
+
+为什么选择 **ejs**？
+
+是抄 **express-generate** 这个库的，当然也可以根据自己喜好选择模板引擎。这种模板方式让我做这种脚手架变得很方便，只要把历史项目 demo 复制进来，改一通后缀即可。
+
+## 通过 fs 读模板到指定路径
+
+将模板内的文件通过 **fs-extra** 写到指令执行的当前路径下（文件具体操作这里就不详述了）
+
+```js
+inquirer.prompt(questions).then(async (answers) => {
+  try {
+    // 创建目录
+    _mkdirProjectDir(answers.appName, options.f);
+    _writeFiles([
+      { dirtory: 'bin', fileName: 'www', answers },
+      { dirtory: 'routes', fileName: 'health.js', answers },
+      { dirtory: 'util', fileName: 'index.js', answers },
+      { fileName: 'app.js', answers },
+      { fileName: 'package.json', answers },
+    ]);
+  } catch (err) {
+    console.log(chalk.red(err.message));
+  }
+});
+```
+
+## 发布脚手架
+
+在 **package.json** 文件中，约定 **bin** 属性，并指向我们实现 commander 的文件：
+
+```json
+"bin": {
+  "fel": "bin/fel-cli.js"
+},
+```
+
+然后通过 **npm publish** 发布我们的脚手架包，最后使用者通过 **npm i xxx -g** 下载就能用了。

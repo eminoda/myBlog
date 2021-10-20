@@ -333,60 +333,17 @@
             }
           </style>
           <script>
-            var PIXEL_RATIO = (function () {
-              var c = document.createElement("canvas"),
-                ctx = c.getContext("2d"),
-                dpr = window.devicePixelRatio || 1,
-                bsr = ctx['webkitBackingStorePixelRatio'] ||
-                  ctx['mozBackingStorePixelRatio'] ||
-                  ctx['msBackingStorePixelRatio'] ||
-                  ctx['oBackingStorePixelRatio'] ||
-                  ctx['backingStorePixelRatio'] || 1;
-
-              return dpr / bsr;
-            })();
-            var ratio = PIXEL_RATIO;
-            var width = 500;
-            var height = 250;
-            // https://ant.design/docs/spec/colors-cn
-            var $canvas = document.getElementById('{{post.title}}');
-            $canvas.width = width*ratio
-            $canvas.heigth = height*ratio
-            $canvas.style.width = width + 'px';
-            $canvas.style.height = height + 'px';
-            var ctx = $canvas.getContext('2d')
-            var title = '{{post.post_img.title || post.title}}';
-            var subTitle = '{{post.post_img.sub_title}}';
-            // 背景色
-            ctx.fillStyle = '{{post.post_img.bg_color||"#333"}}';
-            ctx.fillRect(0, 0, 500*ratio, 250*ratio);
-            // 字体
-            ctx.textAlign = 'center'
-            ctx.font = '40px Tahoma, Microsoft Yahei';
-            ctx.fillStyle = '{{post.post_img.title_color||"#fff"}}';
-            if(subTitle){
-              ctx.fillText(title, 250*ratio, 95*ratio);
-              ctx.font = '24px Tahoma, Microsoft Yahei';
-              ctx.fillStyle = '{{post.post_img.sub_color||"#fff"}}';
-              ctx.fillText(subTitle, 250*ratio, 135*ratio);
-            }else{
-              ctx.fillText(title, 250*ratio, 100*ratio);
+            var post = {
+              title: "{{post.title}}",
+              post_img: {
+                title:"{{post.post_img.title}}",
+                sub_title:"{{post.post_img.sub_title}}",
+                title_color:"{{post.post_img.title_color}}",
+                sub_color:"{{post.post_img.sub_color}}",
+                bg_color:"{{post.post_img.bg_color}}",
+              }
             }
-            ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-            
-
-            $canvas.onclick = function(){
-              // 点击下载
-              var dlLink = document.createElement('a');
-              dlLink.download = title;
-              dlLink.href = $canvas.toDataURL("image/png");;
-              dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
-
-              document.body.appendChild(dlLink);
-              dlLink.click();
-              document.body.removeChild(dlLink);
-            }
-
+            drawCanvas(post)
           </script>
         {% elif post.no_sketch %}
         {% elif theme.auto_excerpt.enable %}

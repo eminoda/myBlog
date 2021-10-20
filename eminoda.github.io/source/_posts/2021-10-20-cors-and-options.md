@@ -1,5 +1,5 @@
 ---
-title: 你知道为何跨域中会发送 options 请求？
+title: CROS 和 OPTIOINS
 tags: cors
 categories:
   - 开发
@@ -12,7 +12,6 @@ post_img:
   sub_color: '#fff'
 date: 2021-10-20 14:22:29
 ---
-
 
 # 前言
 

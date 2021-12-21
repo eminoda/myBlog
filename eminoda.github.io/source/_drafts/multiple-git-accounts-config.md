@@ -41,4 +41,4 @@ Please make sure you have the correct access rights
 and the repository exists.
 ```
 
-{% assets_image known_hosts.png %}
+{% asset_img known_hosts.png %}

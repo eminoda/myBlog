@@ -179,13 +179,14 @@
       ctx.fillRect(0, 0, 500*ratio, 250*ratio);
       // 字体
       ctx.textAlign = 'center'
-      ctx.font = '40px Tahoma, Microsoft Yahei';
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
       ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
       if(subTitle){
         ctx.fillText(title, 250*ratio, 95*ratio);
-        ctx.font = '24px Tahoma, Microsoft Yahei';
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
         ctx.fillStyle = post.post_img.sub_color||"#fff";
-        ctx.fillText(subTitle, 250*ratio, 135*ratio);
+        ctx.fillText(subTitle, 250*ratio, 135*ratio+20);
       }else{
         ctx.fillText(title, 250*ratio, 100*ratio);
       }

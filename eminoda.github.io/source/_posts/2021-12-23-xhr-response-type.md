@@ -5,13 +5,14 @@ categories:
   - 开发
   - 前端开发
 post_img:
-  bg_color: \#fec830
+  bg_color: '#fec830'
   title: XHR.responseType
-  title_color: \#fff
+  title_color: '#fff'
   sub_title: 如何通过 XHR 方式来请求图片资源
-  sub_color: \#fff
+  sub_color: '#fff'
 date: 2021-12-23 01:01:58
 ---
+
 
 
 

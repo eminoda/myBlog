@@ -162,13 +162,13 @@
     return dpr / bsr;
   })();
   var ratio = PIXEL_RATIO;
-  var width = 500;
-  var height = 250;
+  var width = 700;
+  var height = 360;
   function drawCanvas(post){
       // https://ant.design/docs/spec/colors-cn
       var $canvas = document.getElementById(post.title);
       $canvas.width = width*ratio
-      $canvas.heigth = height*ratio
+      $canvas.height = height*ratio
       $canvas.style.width = width + 'px';
       $canvas.style.height = height + 'px';
       var ctx = $canvas.getContext('2d')
@@ -176,19 +176,19 @@
       var subTitle = post.post_img.sub_title;
       // 背景色
       ctx.fillStyle = post.post_img.bg_color||"#333";
-      ctx.fillRect(0, 0, 500*ratio, 250*ratio);
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
       // 字体
       ctx.textAlign = 'center'
       ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
       ctx.fillStyle = post.post_img.title_color||"#fff";
         $canvas.style.letterSpacing = '1px'
       if(subTitle){
-        ctx.fillText(title, 250*ratio, 95*ratio);
+        ctx.fillText(title, width/2*ratio, 140*ratio);
         ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
         ctx.fillStyle = post.post_img.sub_color||"#fff";
-        ctx.fillText(subTitle, 250*ratio, 135*ratio+20);
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
       }else{
-        ctx.fillText(title, 250*ratio, 100*ratio);
+        ctx.fillText(title, width/2*ratio, 140*ratio);
       }
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 

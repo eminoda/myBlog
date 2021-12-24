@@ -3,21 +3,34 @@ title: arraybuffer-and-blob
 tags:
 ---
 
-# 不点到为止，来点干货
+# 前言
 
-## ArrayBuffer 和 Blob
+我们知道在 XHR 的 responseType 中有 arraybuffer 和 blob 两种方式来获取二进制内容，并在其中做相关图片处理或者资源下载等功能。
+
+但他们有什么区别呢？这篇将所收他们之间的不同，以及一些细节知识点。
+
+# arraybuffer vs blob
 
 https://github.com/noahunallar/arraybuffer-vs-blob
+https://juejin.cn/post/6971072490562928648
 
-## arraybuffer to blob
+## api 的互相转换
 
-https://www.zhuyuntao.cn/js%E4%B8%ADarraybuffer%E4%B8%8Eblob%E7%9A%84%E5%8C%BA%E5%88%AB
+### arraybuffer to blob
+
+### blob to arraybuffer
+
+## 不同点
+
+### 兼容性
+
+### 大小
+
+# 插件
 
 ## FileSaver.js
 
 ## StreamSaver.js
-
-https://juejin.cn/post/6971072490562928648
 
 https://juejin.cn/post/6844904029244358670
 

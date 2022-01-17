@@ -323,7 +323,7 @@
           {% set thumb_img_url = '/images/thumb_img/' %}
           <img src="{{ thumb_img_url+post.thumb_img }}">
         {% elif post.post_img %}
-          <canvas id="{{post.title}}" width="500" height="250"></canvas>
+          <canvas id="{{post.title}}"></canvas>
           <style>
             canvas{
               display: block;

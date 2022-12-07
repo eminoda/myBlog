@@ -7,8 +7,8 @@
 	{% endfor %}
 {% endif %}
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
-<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
 
 <div id="gitalk-container"></div>
 

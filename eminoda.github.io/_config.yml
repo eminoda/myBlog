@@ -14,7 +14,7 @@ timezone:
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: http://yoursite.com
-root: /
+root: /legacy
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 
@@ -80,7 +80,7 @@ theme: next
 deploy:
     type: git
     repo: git@github.com:eminoda/eminoda.github.io.git
-    branch: master
+    branch: legacy
     message:
 
 jwt:

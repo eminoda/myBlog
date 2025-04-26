@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="如何切换主题色首先抛个问题，我们根据什么来辨别同类型的网站？ 我觉得是网站的“主题色”，试想下把淘宝的橘红色换成京东的红色，是不是就和后者一样了。  可以说：主题色作为网站辨识度最高的设计元素之一。  实际工作场景中，一个 web 项目可能改个主题色及页面内容，就可以给不同业务方使用。对于如今的前端开发来说，即使有着成熟的 UI 组件框架，比如 Ant Design ，Element UI 等，但">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何定制化网站主题色">
+<meta property="og:url" content="http://yoursite.com/2021/06/24/website-dynamic-theme-replacer/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="如何切换主题色首先抛个问题，我们根据什么来辨别同类型的网站？ 我觉得是网站的“主题色”，试想下把淘宝的橘红色换成京东的红色，是不是就和后者一样了。  可以说：主题色作为网站辨识度最高的设计元素之一。  实际工作场景中，一个 web 项目可能改个主题色及页面内容，就可以给不同业务方使用。对于如今的前端开发来说，即使有着成熟的 UI 组件框架，比如 Ant Design ，Element UI 等，但">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/06/24/website-dynamic-theme-replacer/antd-theme-replacer.gif">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/06/24/website-dynamic-theme-replacer/theme-fetch.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/06/24/website-dynamic-theme-replacer/theme-cover.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/06/24/website-dynamic-theme-replacer/theme-style-tag.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/06/24/website-dynamic-theme-replacer/cssSrc-replace.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/06/24/website-dynamic-theme-replacer/cssSrc-ret.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/06/24/website-dynamic-theme-replacer/settingDrawer.png">
+<meta property="article:published_time" content="2021-06-24T12:08:08.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.840Z">
+<meta property="article:author" content="Eminoda">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/legacy/2021/06/24/website-dynamic-theme-replacer/antd-theme-replacer.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/06/24/website-dynamic-theme-replacer/"/>
+
+
+
+
+
+  <title>如何定制化网站主题色 | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2021/06/24/website-dynamic-theme-replacer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何定制化网站主题色</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-24T20:08:08+08:00">
+                2021-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="如何切换主题色"><a href="#如何切换主题色" class="headerlink" title="如何切换主题色"></a>如何切换主题色</h1><p>首先抛个问题，我们根据什么来辨别同类型的网站？</p>
+<p>我觉得是网站的“主题色”，试想下把淘宝的橘红色换成京东的红色，是不是就和后者一样了。</p>
+<blockquote>
+<p>可以说：主题色作为网站辨识度最高的设计元素之一。</p>
+</blockquote>
+<p>实际工作场景中，一个 web 项目可能改个主题色及页面内容，就可以给不同业务方使用。对于如今的前端开发来说，即使有着成熟的 UI 组件框架，比如 <strong>Ant Design</strong> ，<strong>Element UI</strong> 等，<br>但为了变出不同主题色系的网站风格，我们往往会创建新的主题样式来覆盖原有的 UI ，工作量仍然巨大，稍有疏忽就会有遗漏。</p>
+<blockquote>
+<p>那有没有省时省力的方式来定制化 UI 组件色系呢？</p>
+</blockquote>
+<p>肯定有。下面就举例 <strong><a href="https://github.com/vueComponent/ant-design-vue-pro" target="_blank" rel="noopener">Ant Design Pro</a></strong> （一款基于 <strong>Vue</strong> 和 <strong>Ant Design</strong> 的中后台前端框架），看下它是基于什么实现的？</p>
+<h1 id="Ant-Design-Pro-到底有什么魔法？"><a href="#Ant-Design-Pro-到底有什么魔法？" class="headerlink" title="Ant Design Pro 到底有什么魔法？"></a>Ant Design Pro 到底有什么魔法？</h1><p>我们通过 <strong>npm run serve</strong> 启动项目，进入主页后，在页面右侧的设置按钮来切换主题色，能看到页面颜色也跟着发生了改变：</p>
+<img src="/legacy/2021/06/24/website-dynamic-theme-replacer/antd-theme-replacer.gif" class="">
+<p>试着找些明面上能看到的东西：</p>
+<p>打开调试工具，重新刷新页面，看到浏览器发送了一个 <strong>/css/theme-colors-xxx.css</strong> 的请求，响应内容为一大段样式代码：</p>
+<img src="/legacy/2021/06/24/website-dynamic-theme-replacer/theme-fetch.png" class="">
+<p>审查页面有关主题颜色的元素，发现利用了 <strong>样式覆盖</strong> 的特性让新颜色起了效果：</p>
+<img src="/legacy/2021/06/24/website-dynamic-theme-replacer/theme-cover.png" class="">
+<p>这些新的样式代码被定义在一个 <strong>style</strong> 标签内：</p>
+<img src="/legacy/2021/06/24/website-dynamic-theme-replacer/theme-style-tag.png" class="">
+<p>如此，将覆盖原先 UI 组件的颜色样式，从而将达到主题色切换的目的。不知所以然的你，肯定就会有如下问题：</p>
+<ul>
+<li><strong>css</strong> 样式代码根据什么规则生成的？</li>
+<li>请求 <strong>/css/theme-colors-xxx.css</strong> 哪里发起的？</li>
+<li>主题色的切换，页面怎么快速做样式更新的？</li>
+</ul>
+<p>这些都围绕着 <strong>webpack-theme-color-replacer</strong> 展开，下面就进入代码来一探究竟。</p>
+<h1 id="主题样式代码生成规则？"><a href="#主题样式代码生成规则？" class="headerlink" title="主题样式代码生成规则？"></a>主题样式代码生成规则？</h1><p>翻阅 <strong>Ant Design Pro</strong> 中 <strong>webpack</strong> 配置，发现有个和主题颜色配置相关的 <strong>plugins</strong> 逻辑：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vue.config.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> createThemeColorReplacerPlugin = <span class="built_in">require</span>(<span class="string">"./config/plugin.config"</span>);</span><br><span class="line"><span class="comment">//...</span></span><br><span class="line">vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin());</span><br></pre></td></tr></table></figure>
+<p><strong>createThemeColorReplacerPlugin</strong> 返回的就是 <strong>webpack-theme-color-replacer</strong> 插件对象：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ThemeColorReplacer = <span class="built_in">require</span>(<span class="string">"webpack-theme-color-replacer"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">const</span> themePluginOption = &#123;</span><br><span class="line">  fileName: <span class="string">"css/theme-colors-[contenthash:8].css"</span>,</span><br><span class="line">  matchColors: getAntdSerials(<span class="string">"#1890ff"</span>), <span class="comment">// 主色系列</span></span><br><span class="line">  changeSelector(selector) &#123;&#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> createThemeColorReplacerPlugin = <span class="function"><span class="params">()</span> =&gt;</span></span><br><span class="line">  <span class="keyword">new</span> ThemeColorReplacer(themePluginOption);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = createThemeColorReplacerPlugin;</span><br></pre></td></tr></table></figure>
+<p>注意到：<strong>themePluginOption</strong> 中的 <strong>fileName</strong> 和主题样式请求地址一样（和问题二有关）；另外 <strong>matchColors</strong> 默认通过 <strong>getAntdSerials</strong> 把 <strong>#1890ff</strong> 转化为一组蓝色系的主题色：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &quot;#1890ff&quot;, &quot;#2f9bff&quot;, &quot;#46a6ff&quot;, &quot;#5db1ff&quot;, &quot;#74bcff&quot;, &quot;#8cc8ff&quot;, &quot;#a3d3ff&quot;, &quot;#badeff&quot;, &quot;#d1e9ff&quot;,</span><br><span class="line">  &quot;#e6f7ff&quot;, &quot;#bae7ff&quot;, &quot;#91d5ff&quot;, &quot;#69c0ff&quot;, &quot;#40a9ff&quot;,</span><br><span class="line">  &quot;#1890ff&quot;, &quot;#096dd9&quot;, &quot;#0050b3&quot;, &quot;#003a8c&quot;, &quot;#002766&quot;,</span><br><span class="line">  &quot;24,144,255&quot;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>webpack plugins 运行时，则调用 <strong>ThemeColorReplacer.apply</strong> 方法，并触发 <strong>Handler.handler</strong> 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThemeColorReplacer</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="keyword">this</span>.handler = <span class="keyword">new</span> Handler(options);</span><br><span class="line">  &#125;</span><br><span class="line">  apply(compiler) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.handler.handle(compilation);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Handler</strong> 中，会先初始化一个文件提取器 <strong>AssetsExtractor</strong> ，通过内部 <strong>extractAssets</strong> 方法来提取主题样式代码到 <strong>output</strong>，最后调用 <strong>addToEntryJs</strong> 方法，将提取结果加到每个入口文件里：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.assetsExtractor = <span class="keyword">new</span> AssetsExtractor(<span class="keyword">this</span>.options);</span><br><span class="line">  &#125;</span><br><span class="line">  handle(compilation) &#123;</span><br><span class="line">    <span class="keyword">var</span> output = <span class="keyword">this</span>.assetsExtractor.extractAssets(compilation.assets);</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.addToEntryJs(outputName, compilation, output);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>AssetsExtractor</strong> 内部逻辑过于复杂，代码流程如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">AssetsExtractor</span>(<span class="params">options</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.extractor = <span class="keyword">new</span> Extractor(options);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.extractAssets = <span class="function"><span class="keyword">function</span> (<span class="params">assets</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 1. 遍历 assets 文件对象</span></span><br><span class="line">    <span class="keyword">var</span> srcArray = <span class="keyword">this</span>.extractToArray(assets);</span><br><span class="line">    <span class="keyword">var</span> output = dropDuplicate(srcArray).join(<span class="string">"\n"</span>);</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">return</span> output;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.extractToArray = <span class="function"><span class="keyword">function</span> (<span class="params">assets</span>) </span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">var</span> cssSrcs = [];</span><br><span class="line">    <span class="built_in">Object</span>.keys(assets).map(<span class="function">(<span class="params">fn</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> asset = assets[fn];</span><br><span class="line">      cssSrcs = cssSrcs.concat(that.extractAsset(fn, asset));</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> cssSrcs;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.extractAsset = <span class="function"><span class="keyword">function</span> (<span class="params">fn, asset</span>) </span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">var</span> cssSrcs = [];</span><br><span class="line">    <span class="comment">// 2. 解析 js module 中符合 cssReg 的 css 代码</span></span><br><span class="line">    <span class="keyword">var</span> CssCodeReg = Css_Loader_Reg_UGLY;</span><br><span class="line">    src.replace(CssCodeReg, (match, $<span class="number">1</span>) =&gt; &#123;</span><br><span class="line">      cssSrcs = cssSrcs.concat(<span class="keyword">this</span>.extractor.extractColors($<span class="number">1</span>));</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> cssSrcs;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Extractor</span>(<span class="params">options</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 3. 通过指针逐个遍历符合条件的内容，重新组装层复合 css 语法的代码，并提取到 ret 数组中</span></span><br><span class="line">  <span class="keyword">this</span>.extractColors = <span class="function"><span class="keyword">function</span> (<span class="params">src</span>) </span>&#123;</span><br><span class="line">    src = src.replace(Reg_Lf_Rem, <span class="string">""</span>);</span><br><span class="line">    <span class="keyword">var</span> ret = [];</span><br><span class="line">    <span class="keyword">var</span> nameStart,</span><br><span class="line">      nameEnd,</span><br><span class="line">      cssEnd = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">      ret.push(selector + <span class="string">"&#123;"</span> + rules.join(<span class="string">";"</span>) + <span class="string">"&#125;"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>遍历 <strong>compilation.assets</strong> 下每个资源内容，通过正则 <strong>CssCodeReg</strong> 将符合 <strong>css</strong> 代码的内容抓取出来。这些代码就是图中【绿色】中的内容：</p>
+<img src="/legacy/2021/06/24/website-dynamic-theme-replacer/cssSrc-replace.png" class="">
+<p>再通过 <strong>extractColors</strong> 方法逐行解析，得到一个有关主题色的 <strong>css</strong> 数组：</p>
+<img src="/legacy/2021/06/24/website-dynamic-theme-replacer/cssSrc-ret.png" class="">
+<p>最后将结果输出到 <strong>theme-colors-xxx.css</strong> 中。</p>
+<p>这里就回答其中一个问题：</p>
+<blockquote>
+<p><strong>css</strong> 样式代码根据什么规则生成的？</p>
+</blockquote>
+<p>不能遗漏的是：添加样式代码到入口文件时，相关 <strong>themePluginOption</strong> 配置将被赋值到 <strong>window.__theme_COLOR_cfg</strong> 作为入口文件的一部分代码，供客户端使用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">getEntryJs(outputName, assetSource, cssCode) &#123;</span><br><span class="line">  <span class="keyword">var</span> config = &#123;<span class="attr">url</span>: outputName, <span class="attr">colors</span>: <span class="keyword">this</span>.options.matchColors&#125;</span><br><span class="line">  <span class="keyword">var</span> configJs = <span class="string">'\n(typeof window==\'undefined\'?global:window).__theme_COLOR_cfg='</span> + <span class="built_in">JSON</span>.stringify(config) + <span class="string">';\n'</span></span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> ConcatSource(assetSource, configJs)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="主题样式请求怎么发起？"><a href="#主题样式请求怎么发起？" class="headerlink" title="主题样式请求怎么发起？"></a>主题样式请求怎么发起？</h1><p>我们以页面的主题设置为入口，看下 <strong>SettingDrawer</strong> 组件内部的功能。</p>
+<p>首先该组件提供了这些配置选项：</p>
+<img src="/legacy/2021/06/24/website-dynamic-theme-replacer/settingDrawer.png" class="" title="UI展示">
+<p>在该项目中，会发现有 <strong>config\themePluginConfig.js</strong> 配置：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// config\themePluginConfig.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  theme: [</span><br><span class="line">    &#123;</span><br><span class="line">      key: <span class="string">"#F5222D"</span>,</span><br><span class="line">      fileName: <span class="string">"#F5222D.css"</span>,</span><br><span class="line">      modifyVars: &#123;</span><br><span class="line">        <span class="string">"@primary-color"</span>: <span class="string">"#F5222D"</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      key: <span class="string">"#FA541C"</span>,</span><br><span class="line">      fileName: <span class="string">"#FA541C.css"</span>,</span><br><span class="line">      modifyVars: &#123;</span><br><span class="line">        <span class="string">"@primary-color"</span>: <span class="string">"#FA541C"</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>如果你熟悉 <strong>Ant Design Pro</strong>，那么在 <strong><a href="https://pro.ant.design/docs/dynamic-theme-cn" target="_blank" rel="noopener">动态主题</a></strong> 中也能看到一样的配置，其通过 <strong>umi-plugin-antd-theme</strong> 进行设置。</p>
+<p>这些配置在程序启动时，就挂载至 <strong>window.umi_plugin_ant_themeVar</strong> 下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.js</span></span><br><span class="line"><span class="built_in">window</span>.umi_plugin_ant_themeVar = themePluginConfig.theme;</span><br></pre></td></tr></table></figure>
+<p>作为页面主题的调色板元数据：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> getThemeList = <span class="function"><span class="keyword">function</span> <span class="title">getThemeList</span>(<span class="params">i18nRender</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> list = <span class="built_in">window</span>.umi_plugin_ant_themeVar || [];</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  list.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">item</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> color = (item.modifyVars || &#123;&#125;)[<span class="string">"@primary-color"</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    lightColorList.push(</span><br><span class="line">      _objectSpread(</span><br><span class="line">        &#123;</span><br><span class="line">          color: color,</span><br><span class="line">        &#125;,</span><br><span class="line">        item</span><br><span class="line">      )</span><br><span class="line">    );</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    colorList: &#123;</span><br><span class="line">      dark: darkColorList,</span><br><span class="line">      light: lightColorList,</span><br><span class="line">    &#125;,</span><br><span class="line">    themeList: themeList,</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>当主题颜色修改时，则会触发更新主题方法 <strong>updateTheme()</strong> ：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleChangeSetting</span>(<span class="params">key, value, hideMessageLoading</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (key === <span class="string">"primaryColor"</span>) &#123;</span><br><span class="line">    <span class="comment">// 更新主色调</span></span><br><span class="line">    updateTheme(value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>updateTheme</strong> 会调用 <strong>themeColor.changeColor</strong> 方法，生成新的主题色系 <strong>newColors</strong> ，再交给 <strong>webpack-theme-color-replacer/client</strong> 处理：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">var</span> themeColor = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  changeColor: <span class="function"><span class="keyword">function</span> <span class="title">changeColor</span>(<span class="params">newColor</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> options = &#123;</span><br><span class="line">      newColors: <span class="keyword">this</span>.getAntdSerials(newColor),</span><br><span class="line">      <span class="comment">// new colors array, one-to-one corresponde with `matchColors`</span></span><br><span class="line">      changeUrl: <span class="function"><span class="keyword">function</span> <span class="title">changeUrl</span>(<span class="params">cssUrl</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"/"</span>.concat(cssUrl); <span class="comment">// while router is not `hash` mode, it needs absolute path</span></span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span> client.changer.changeColor(options, <span class="built_in">Promise</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>webpack-theme-color-replacer/client</strong> 中定义了如何更改主题色的逻辑，注意这里会用到前面 <strong>plugins</strong> 中定义的 <strong>__theme_COLOR_cfg</strong> 变量，如此确认了主题色系 <strong>oldColors</strong> 和样式请求地址 <strong>cssUrl</strong>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// node_modules\webpack-theme-color-replacer\client\themeColorChanger.js</span></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  changeColor: <span class="function"><span class="keyword">function</span> (<span class="params">options, promiseForIE</span>) </span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">      <span class="keyword">if</span> (!theme_COLOR_config) &#123;</span><br><span class="line">        theme_COLOR_config = win().__theme_COLOR_cfg;</span><br><span class="line">        <span class="keyword">var</span> later = retry();</span><br><span class="line">        <span class="comment">//重试直到theme_COLOR_config加载</span></span><br><span class="line">        <span class="keyword">if</span> (later) <span class="keyword">return</span> later;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">var</span> oldColors = options.oldColors || theme_COLOR_config.colors || [];</span><br><span class="line">      <span class="keyword">var</span> newColors = options.newColors || [];</span><br><span class="line"></span><br><span class="line">      <span class="keyword">var</span> cssUrl = theme_COLOR_config.url || options.cssUrl;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">      setCssText(last, cssUrl, resolve, reject);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在 <strong>setCssText</strong> 方法中，会去寻找 <strong>id</strong> 为 <strong>css_xxx</strong> 的 <strong>style</strong> 标签，并调用 <strong>getCssString()</strong> 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">setCssText</span>(<span class="params">last, url, resolve, reject</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> id = <span class="string">"css_"</span> + +<span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">  elStyle = <span class="built_in">document</span></span><br><span class="line">    .querySelector(options.appendToEl || <span class="string">"body"</span>)</span><br><span class="line">    .appendChild(<span class="built_in">document</span>.createElement(<span class="string">"style"</span>));</span><br><span class="line"></span><br><span class="line">  elStyle.setAttribute(<span class="string">"id"</span>, id);</span><br><span class="line"></span><br><span class="line">  _this.getCssString(</span><br><span class="line">    url,</span><br><span class="line">    <span class="function"><span class="keyword">function</span> (<span class="params">cssText</span>) </span>&#123;</span><br><span class="line">      setCssTo(cssText);</span><br><span class="line">      _urlColors[url] = &#123; <span class="attr">id</span>: id, <span class="attr">colors</span>: newColors &#125;;</span><br><span class="line">      resolve();</span><br><span class="line">    &#125;,</span><br><span class="line">    reject</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>getCssString()</strong> 内通过 <strong>xhr</strong> 来发动主题样式文件的请求。从而回答了第二个问题：</p>
+<blockquote>
+<p>请求 <strong>/css/theme-colors-xxx.css</strong> 哪里发起的？</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  getCssString: <span class="function"><span class="keyword">function</span> (<span class="params">url, resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> css = win().__theme_COLOR_css;</span><br><span class="line">    <span class="keyword">if</span> (css) &#123;</span><br><span class="line">      <span class="comment">// css已内嵌在js中</span></span><br><span class="line">      win().__theme_COLOR_css = <span class="string">""</span>;</span><br><span class="line">      resolve(css);</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    xhr.open(<span class="string">"GET"</span>, url);</span><br><span class="line">    xhr.send();</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>调用完 <strong>getCssString</strong> 后，将得到 <strong>cssText</strong> 代码。然后通过 <strong>setCssTo</strong> 替换新老颜色，这就回答了最后个问题：</p>
+<blockquote>
+<p>主题色的切换，页面怎么快速做样式更新的？</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">setCssTo</span>(<span class="params">cssText</span>) </span>&#123;</span><br><span class="line">  cssText = _this.replaceCssText(cssText, oldColors, newColors);</span><br><span class="line">  elStyle.innerText = cssText;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">replaceCssText</span>(<span class="params">cssText, oldColors, newColors</span>) </span>&#123;</span><br><span class="line">  oldColors.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">color, t</span>) </span>&#123;</span><br><span class="line">    <span class="comment">//#222、#222223、#22222350、222, 255,3 =&gt; #333、#333334、#33333450、211,133,53、hsl(27, 92.531%, 52.745%)</span></span><br><span class="line">    <span class="keyword">var</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(</span><br><span class="line">      color.replace(<span class="regexp">/\s/g</span>, <span class="string">""</span>).replace(<span class="regexp">/,/g</span>, <span class="string">",\\s*"</span>) +</span><br><span class="line">        <span class="string">"([\\da-f]&#123;2&#125;)?(\\b|\\)|,|\\s)"</span>,</span><br><span class="line">      <span class="string">"ig"</span></span><br><span class="line">    );</span><br><span class="line">    cssText = cssText.replace(reg, newColors[t] + <span class="string">"$1$2"</span>); <span class="comment">// 255, 255,3</span></span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> cssText;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样有个好处，有关主题颜色的样式文件只在首次加载，后续通过替换 <strong>style</strong> 标签内容，从而达到主题切换。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>webpack-theme-color-replacer</strong> 是个很小众的库，github 才 200 个 Star。但它的确解决了产品上某些问题。</p>
+<p>有时候我们每天忙碌于业务代码的“搬砖”中，枯燥乏味。作为一个软件程序员，除了完成需求外，还需要更多的思考业务，来促使代码有更多的扩展性。</p>
+<p>如果你说业务固定不变，或者离我太远，也可以发现开发中的“重复性劳动”，将 ctrl C/V 最大程度地程序化。什么页面可视化搭建，低代码平台可不光光是 KPI 产物，我觉得它们能促使开发人员有更多时间思考，去挖掘更高的价值。</p>
+<p>最后，还是需要不断纵向学习，本篇只简单说了该插件的工作过程。但它内部有关生成调色板的逻辑，怎么解析 css 代码，怎么和 webpack 融合都没有呈现出来，更多需要你去深究，别想用到时方恨少。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2021/06/24/website-dynamic-theme-replacer/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: '如何定制化网站主题色',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510206000').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2021/06/16/hexo-gitalk-comment-plugins-in-github-issue/" rel="next" title="如何在 hexo 博客中，集成 gitalk 评论插件">
+                <i class="fa fa-chevron-left"></i> 如何在 hexo 博客中，集成 gitalk 评论插件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2021/08/08/fe-interview-object-ref/" rel="prev" title="a.x = a = {n:2}，a.x 为什么是 undefined">
+                a.x = a = {n:2}，a.x 为什么是 undefined <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#如何切换主题色"><span class="nav-number">1.</span> <span class="nav-text">如何切换主题色</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ant-Design-Pro-到底有什么魔法？"><span class="nav-number">2.</span> <span class="nav-text">Ant Design Pro 到底有什么魔法？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主题样式代码生成规则？"><span class="nav-number">3.</span> <span class="nav-text">主题样式代码生成规则？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主题样式请求怎么发起？"><span class="nav-number">4.</span> <span class="nav-text">主题样式请求怎么发起？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

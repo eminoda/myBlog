@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="架构," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言时间过得飞快，从 2015.9 转行 前端开发 已经4年了。从小白菜到现在黄花菜，小公司谈不上架构设计，自己也只是个小开发，但在前端领域有自己的一些沉淀，这篇就罗列下 几个前端方面的心得体会，希望这些非代码的建议，能让看到的人有启发和帮助。 勇于尝试“新事物”我不太喜欢体验新事物，就是因为畏惧它带来的陌生感，不稳定性，不确定性，需要投入学习成本，产生不必要的 Bug。但做这行的总要 乐此不疲">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端“自我修养”">
+<meta property="og:url" content="http://yoursite.com/2019/11/01/my-frontend-best-practice-and-habit/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="前言时间过得飞快，从 2015.9 转行 前端开发 已经4年了。从小白菜到现在黄花菜，小公司谈不上架构设计，自己也只是个小开发，但在前端领域有自己的一些沉淀，这篇就罗列下 几个前端方面的心得体会，希望这些非代码的建议，能让看到的人有启发和帮助。 勇于尝试“新事物”我不太喜欢体验新事物，就是因为畏惧它带来的陌生感，不稳定性，不确定性，需要投入学习成本，产生不必要的 Bug。但做这行的总要 乐此不疲">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/11/01/my-frontend-best-practice-and-habit/plugins.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/11/01/my-frontend-best-practice-and-habit/keepLearn.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/11/01/my-frontend-best-practice-and-habit/better-en.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/11/01/my-frontend-best-practice-and-habit/clean-rename.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/11/01/my-frontend-best-practice-and-habit/pm2-json.png">
+<meta property="article:published_time" content="2019-11-01T03:28:54.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.649Z">
+<meta property="article:author" content="Eminoda">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/legacy/2019/11/01/my-frontend-best-practice-and-habit/plugins.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/01/my-frontend-best-practice-and-habit/"/>
+
+
+
+
+
+  <title>前端“自我修养” | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2019/11/01/my-frontend-best-practice-and-habit/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">前端“自我修养”</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-01T11:28:54+08:00">
+                2019-11-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">开发</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">前端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>时间过得飞快，从 2015.9 转行 <strong>前端开发</strong> 已经4年了。从小白菜到现在黄花菜，小公司谈不上架构设计，自己也只是个小开发，但在前端领域有自己的一些沉淀，这篇就罗列下 <strong>几个前端方面的心得体会</strong>，希望这些非代码的建议，能让看到的人有启发和帮助。</p>
+<h1 id="勇于尝试“新事物”"><a href="#勇于尝试“新事物”" class="headerlink" title="勇于尝试“新事物”"></a>勇于尝试“新事物”</h1><p>我不太喜欢体验新事物，就是因为畏惧它带来的陌生感，不稳定性，不确定性，需要投入学习成本，产生不必要的 Bug。但做这行的总要 <strong>乐此不疲</strong> 的学新技术，别人创新出来的东西，给你带来好处远远超过那些缺点。</p>
+<h2 id="选择主流的工具"><a href="#选择主流的工具" class="headerlink" title="选择主流的工具"></a>选择主流的工具</h2><p>“工欲善其事必先利其器”，在“搬砖”开始，选择一个炫酷吊炸天的工具非常重要，它将提升 <strong>非自身能力外</strong> 的工作效率和体验。</p>
+<p>回忆起以前用 <strong>eclipse</strong> 时，调个黑色主题，或者是使用 <strong>shift+alt+A</strong> 快捷键带来的科技感和便捷性现在都觉得蛮有意思的。</p>
+<p>扯回来，在前端还是推荐 sublime 和 <strong>vscode</strong>，前者我定位一个记事本，后者是正儿八经的 IDE。如果你还在用其他 IED 是时候考虑换了。</p>
+<p>这里简单看下选择 <strong>vscode</strong> 将带来的“收益”：</p>
+<ol>
+<li><p>轻量的 IDE</p>
+<p> 比较后端那些 IDE，我们前端的工具堪比记事本的打开速度。你不用一大早来公司拿泡杯茶的时间来等待 workspace 的加载，撸起袖子直接开干吧。</p>
+</li>
+<li><p>社区丰富的插件</p>
+<p> vscode 的扩展功能里，你总能找到和自己技术栈对应的插件，来提升效率。</p>
+ <img src="/legacy/2019/11/01/my-frontend-best-practice-and-habit/plugins.png" class="" title="插件">
+</li>
+<li><p>便捷的操作</p>
+<p> 一处学习，终身受益。前端所有 IDE 快捷键貌似都差不多，成为一种约定的规则，所以不用为这些学习成本担心。</p>
+</li>
+<li><p>方便的 Debug 调试。上手可以看下：<a href="https://eminoda.github.io/2018/01/26/vscode-debugger/" target="_blank" rel="noopener">如何使用 vscode debug 能力</a></p>
+</li>
+<li><p>它本身也是前端一部分，基于 electron</p>
+</li>
+</ol>
+<h2 id="接受新技术"><a href="#接受新技术" class="headerlink" title="接受新技术"></a>接受新技术</h2><p>记得前一两年，Angular 的布道师和 Vue 的作者有一场争夺前端框架谁好谁坏的片段。那时候井底之蛙的我用的是 angular.js，很排除其他技术选型，可结果现在到处都是“真香”的想法。</p>
+<p>无论是 Vue 那容易上手的体验，还是 Angular + TS 有些稍高的学习成本，用过之后都让自己的眼界开阔，当然还有 React 和其他优秀技术。</p>
+<img src="/legacy/2019/11/01/my-frontend-best-practice-and-habit/keepLearn.png" class="" title="吃瓜">
+<p>总之大家不要像上图一样吵得热火朝天，然后在下面一股脑的为“我学不动了”点赞，倒不如自己试一下，没准它将给你打开心的世界。别让前端真成为娱乐圈了。​</p>
+<h1 id="优先选择英文资源"><a href="#优先选择英文资源" class="headerlink" title="优先选择英文资源"></a>优先选择英文资源</h1><p>开发技术多数都源自外国，造成新技术的文档多英文，如果英文底子不好，就会自然觉得学习门槛变高。</p>
+<p>我本身英语也很渣渣，但手持在线翻译，加上只看代码片段基本能猜出文章主要意思，毕竟看的是技术类文档而不是卷子上阅读理解。在中国这个开发环境下更需要 <strong>静心学习</strong> 的心态，该学的总要学。</p>
+<p>我吃过的一个亏，比如 rollup 中文文档没有实时更新，导致一些配置没有体现出来，或者根本就是错的。（不过还是要感谢别人在中文资源付出的努力，毕竟无私的 <strong>开源精神</strong>）</p>
+<p>你能看到如下，两个中英文文档在说明上的差异：</p>
+<img src="/legacy/2019/11/01/my-frontend-best-practice-and-habit/better-en.png" class="" title="rollup 英文文档更多的参数说明">
+<h1 id="喜欢“整理”"><a href="#喜欢“整理”" class="headerlink" title="喜欢“整理”"></a>喜欢“整理”</h1><p>可以是项目配置、代码变量，或者建个专门的 workspace 放你的七七八八的项目，甚至收纳好你的电脑桌面。</p>
+<p>相信将 <strong>杂乱不堪</strong> 的东西，变得 <strong>有条有理</strong>，定位文件或者问题将更加 <strong>高效</strong>。</p>
+<p>最重要的是，提取出“规律”性的东西将成为 <strong>未来你改进的方向</strong>（比如重构，或者一些奇思妙想）</p>
+<h2 id="“物理”层面"><a href="#“物理”层面" class="headerlink" title="“物理”层面"></a>“物理”层面</h2><p>举个例子：</p>
+<p>我们有很多类似的项目，命名不统一，路径乱放，导致每次启动服务路径不一致，定位一个项目都要找一会儿。</p>
+<p>如果把它们按照某个约定重命名好，在服务器上好辨识很多：</p>
+<img src="/legacy/2019/11/01/my-frontend-best-practice-and-habit/clean-rename.png" class="" title="重新整理后就清爽许多">
+<p>然后因为测试服务器老是重启，每次进入对应的项目启动服务很繁琐。就通过外置一个 pm2 脚本批量 <strong>无脑</strong> 管理所有项目，也不会有所遗漏。</p>
+<img src="/legacy/2019/11/01/my-frontend-best-practice-and-habit/pm2-json.png" class="" title="pm2">
+<h2 id="把“多变”变成“稳定”可配置"><a href="#把“多变”变成“稳定”可配置" class="headerlink" title="把“多变”变成“稳定”可配置"></a>把“多变”变成“稳定”可配置</h2><p>由于我们前端团队对样式这块没有太多的重视，导致很多类似的页面，由于不同的人员开发，在 css 上命名风格不同，维护起来相当麻烦。</p>
+<p>比如，要求改一个页面 header 部分的底色，就存在多个页面底色相关的 className 命名不一致，要修改多处。</p>
+<p>通过预编译 sass 可以完成这样的要求：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 公共库</span></span><br><span class="line"><span class="variable">$blue-100</span>: <span class="number">#7782e7</span>; <span class="comment">// 浅蓝</span></span><br><span class="line"><span class="variable">$blue-200</span>: <span class="number">#39418b</span>; <span class="comment">// 蓝色</span></span><br><span class="line"><span class="variable">$blue-300</span>: <span class="number">#202340</span>; <span class="comment">// 深蓝</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@mixin</span> header(<span class="variable">$bg-color</span>) &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: <span class="variable">$bg-color</span>;</span><br><span class="line">    <span class="attribute">position</span>: fixed;</span><br><span class="line">    <span class="attribute">z-index</span>: <span class="number">99</span>;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100%</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 业务代码</span></span><br><span class="line"><span class="selector-class">.header-wrapper</span> &#123;</span><br><span class="line">    <span class="keyword">@include</span> header(<span class="variable">$blue-100</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这些虽然在不同项目内容不同，但页面骨架布局却是类似的，我们可以沉淀成一份公共的样式库，这样以后有类似改动就可以大幅劳动力。</p>
+<p>总之对于平时“头大”的修改，要尽可能优化，让开发的时间付出不要浪费在这些鸡毛蒜皮的事上。</p>
+<p>更为重要的是，例如项目的 api 接口地址、端口、页面上的客服电话、某些特殊信息文案都需要配置化，也避免修改造成的线上事故。</p>
+<h1 id="寻找“最优”-npm-模块，避免掉坑"><a href="#寻找“最优”-npm-模块，避免掉坑" class="headerlink" title="寻找“最优” npm 模块，避免掉坑"></a>寻找“最优” npm 模块，避免掉坑</h1><p>之前用过一个 <strong>gulp-jade-usemin</strong> 模块，模块本身没有什么问题，但为了贴近自己的业务需求，会更改其中部分的代码，我们没有 npm 私服，导致每次拉取项目都要对这个模块手动进行修改。</p>
+<p>另外这个模块有时候还会出现些 <a href="https://github.com/niftylettuce/gulp-jade-usemin/issues/27" target="_blank" rel="noopener">warning: possible EventEmitter memory leak detected. 11</a>，对于有强迫症的我来说不能忍受，当然最后定位是对 node 的不熟悉所致。</p>
+<p>建议还是在 npm 社区寻找一些高质量的模块投入使用，实在不行也可以尝试造些轮子。</p>
+<p>真的出现问题，社区里会有可参考的解决方案，并经常进行迭代更新，有一些新的 feature 来把玩。</p>
+<p>当然也不排除“天灾人祸”，像我们移动端项目，用了饿了吗的 <strong>mint-ui</strong> ，谁知道后面被阿里收购，移动端项目就不怎么维护了。</p>
+<h1 id="“工具”代替不了框架"><a href="#“工具”代替不了框架" class="headerlink" title="“工具”代替不了框架"></a>“工具”代替不了框架</h1><p>相信你很熟悉 express、koa 这样面向 node 的 mvc 框架，他们上手很简单，轻松构建出一个 web 应用服务。</p>
+<p>但是你要记住，他们只是一个 web 框架，而不是一个经过时间沉淀打造的企业级框架，某种程度他们只是个工具而已，相比于 java 的 spring 之类优秀的框架，我们前端这些真的太“轻量“了。</p>
+<p>如果你和我一样在用他们，是不是感觉到随着项目的迭代，参与人员的变化，代码质量就得不到保证，风险、劳动力逐渐上升。</p>
+<p>这里就要提到 egg ，如果你看过 egg ，就知道它是基于 koa <strong>为企业级框架和应用而生</strong> 的框架。</p>
+<p>一切都是奉行『约定优于配置』，你会明确不同“层”做哪些对应的事情，通过它的规范让团队成员减少学习，沟通，劳动成本。任何一个新人完全可以在短时间内写出符合框架规范的代码。同时也有属于它的生态体系，你能找到不错的中间件、插件。</p>
+<p>当然举例 egg ，只是希望各位能沉淀各自公司的代码，打造出更适合自己的框架，而非撸起袖子拿着 koa 直接“干架”。</p>
+<h1 id="多向“别人”学习"><a href="#多向“别人”学习" class="headerlink" title="多向“别人”学习"></a>多向“别人”学习</h1><ol>
+<li><p>npm module</p>
+<p> 记得哪个大佬说，想要 JS 有所进步 ，每天看几个优秀 module。</p>
+<p> 的确，技术成长过程中总会伴随着 <strong>瓶颈</strong>，不能向同事学习新东西，自己眼界和能力又限制住自己的发展。</p>
+<p> 这阶段去看下 <strong>高度好评</strong> 的小模块，或者主流的框架源码，你马上就能被别人的编程思想，设计模式所“震撼”，仿佛投身于 BAT 一线大佬们的工作环境。</p>
+<p> 比如：看了 koa 源码，你就能知道 <strong>洋葱模型</strong> 实现原理，其实核心用了 koa-compose</p>
+<p> 当类似模块看多了，就见多识广了，<strong>万物关联</strong> 今天的准备是基建，相信量变总会质变，你会得到成长。</p>
+</li>
+<li><p>readme</p>
+<p> 源码由于个人能力，不是那么快了解作者设计思路，理解其中原理。但优秀的框架，技术离不开质量高的文档，可以在其中快速掌握使用方法，理解作者意图。</p>
+<p> 相比有什么不懂，直接面向搜索引擎编程，前者更知其源头。</p>
+</li>
+<li><p>抓住任何学习的机会</p>
+<p> 工作时间久了，变成了老油条，会沉积于“死海”之中。改变不了环境，就要从自身出发，发掘身边所有可开发的资源。</p>
+<p> 也许你的公司和我一样，每天的工作就那几样，重复繁琐的循环。这时候你就该分析这些事情：</p>
+<ul>
+<li><p>代码重构</p>
+<p>  用自己学到的设计模式，逐步优化原先那些糟粕的代码</p>
+</li>
+<li><p>更新技术栈</p>
+<p>  别人都大炮了，别自己还小米步枪，准备好新技术在合适的契机投入使用。比如：我们网站改版，就用 koa 替换了原先的 express，构建工具换成 webpack（虽然目前这些都不算什么）</p>
+</li>
+<li><p>“无中生有”</p>
+<p>  不能因为是小公司，而忽视大厂或者主流方案的可行性。比如：自动化测试，持续集成等，很感谢我们的领导在这方面对我的引导。</p>
+</li>
+<li><p>自动化</p>
+<p>  现在的前端依靠 node 有覆盖全平台的能力，我们可以写服务端，桌面应用，移动 app，当然也可以搞 <strong>自动化测试</strong>。为节约人力时间，最大程度保证项目的稳定性而探索。</p>
+</li>
+<li><p>everything</p>
+<p>  保持思考，勇于探索尝试</p>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="有东西输出"><a href="#有东西输出" class="headerlink" title="有东西输出"></a>有东西输出</h1><p>我的 blog 从上两年断断续续一直在坚持的，另外公众号也专门输出些技术类文章。虽然不像阮一峰之类的博主那么专业，有深度，但起码对自己在技术积累上有很大帮助。</p>
+<p>甚至某个知识点隔了很长时间遗忘了，我还会打开自己的 Blog 寻找答案，而不是百度。</p>
+<p>另外在工作闲暇之际，也会根据业务的需要，自己的兴趣着手一些 simple demo，技术这东西通过大量的 <strong>实践</strong> 才能形成认知。</p>
+<p>你可以关注我的微信公众号【前端雨爸】。</p>
+<h1 id="专业化"><a href="#专业化" class="headerlink" title="专业化"></a>专业化</h1><p><strong>专业化</strong> 这个词出自 《代码整洁之道–程序员的职业素养》 开篇。虽然毋庸置疑我们程序开发的本身是非常专业化的，但近年来我觉得自身离专业化还是有点距离，来举几个例子：</p>
+<ul>
+<li><p>是否掌握对应的技术栈内容</p>
+<p>我工作中主要用 vue ，使用上没有大碍。但是真要谁问我原理实现，我很丢人的说不太深入。现在新技术层出不穷，对着 api 文档，估计半天就能弄出个像样的“成果”，无非就是坑踩熟不熟练。真要更高的层次走，必须静下心好好学习下底层源码。<br>​<br>这也是我为何前期会记录一些 vue 源码学习心得。</p>
+<blockquote>
+<p>​只有大浪褪去,才知道谁在裸泳。​</p>
+</blockquote>
+</li>
+<li><p>预估能力</p>
+<p>​工作中经常会遇到复杂的需求、新的技术，面对这些挑战你是否能有预估的能力？​你可以申请调研的时间，但最终需要有个明确的结论，可能能力不够完不成。但总不能说：“我去试下，可以的话就怎么样”，这样就显得非常不专业。</p>
+</li>
+<li><p>细节</p>
+<p>前段日志在接触 ELK，搭建完环境也跑出了需要的 dashboard，但是对于里面细节的参数却无法解释。的确这不是我的领域，但既然我学习了并投入使用了，就务必对其有个详细的了解，不然会显得很 low，一切都是空中楼阁，不堪一击。</p>
+</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>上面列举了八条，都是经过这几年得出的非代码实现的一些建议，感谢从头到尾你的阅读，如果觉得有帮助可以推荐给更多的同学。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+	
+	<script>tags.push('架构')</script>
+	
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2019/11/01/my-frontend-best-practice-and-habit/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: '前端“自我修养”',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510207652').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/legacy/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2019/10/29/vue-mintui-pagination-scroll/" rel="next" title="mintui loadmore 滚动加载和浏览器的兼容问题">
+                <i class="fa fa-chevron-left"></i> mintui loadmore 滚动加载和浏览器的兼容问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2019/11/04/vue-base-installation/" rel="prev" title="vue 基础-起步&安装">
+                vue 基础-起步&安装 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#勇于尝试“新事物”"><span class="nav-number">2.</span> <span class="nav-text">勇于尝试“新事物”</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#选择主流的工具"><span class="nav-number">2.1.</span> <span class="nav-text">选择主流的工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接受新技术"><span class="nav-number">2.2.</span> <span class="nav-text">接受新技术</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优先选择英文资源"><span class="nav-number">3.</span> <span class="nav-text">优先选择英文资源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#喜欢“整理”"><span class="nav-number">4.</span> <span class="nav-text">喜欢“整理”</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#“物理”层面"><span class="nav-number">4.1.</span> <span class="nav-text">“物理”层面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#把“多变”变成“稳定”可配置"><span class="nav-number">4.2.</span> <span class="nav-text">把“多变”变成“稳定”可配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#寻找“最优”-npm-模块，避免掉坑"><span class="nav-number">5.</span> <span class="nav-text">寻找“最优” npm 模块，避免掉坑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#“工具”代替不了框架"><span class="nav-number">6.</span> <span class="nav-text">“工具”代替不了框架</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多向“别人”学习"><span class="nav-number">7.</span> <span class="nav-text">多向“别人”学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#有东西输出"><span class="nav-number">8.</span> <span class="nav-text">有东西输出</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#专业化"><span class="nav-number">9.</span> <span class="nav-text">专业化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">10.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

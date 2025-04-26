@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="nginx," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="内容摘自nginx 官方文档，自己配合实例更细致的熟悉 nginx  命令启动，停止，重启 配置一旦 nginx 运行起来，通过如下方式 invoking nginx 的控制变更： 1234nginx -s stop &#x2F;&#x2F; 停服nginx -s quit &#x2F;&#x2F; 优雅的停服nginx -s reload &#x2F;&#x2F; 重启配置文件nginx -s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx 基础学习进阶">
+<meta property="og:url" content="http://yoursite.com/2018/08/10/nginx-basic-learn/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="内容摘自nginx 官方文档，自己配合实例更细致的熟悉 nginx  命令启动，停止，重启 配置一旦 nginx 运行起来，通过如下方式 invoking nginx 的控制变更： 1234nginx -s stop &#x2F;&#x2F; 停服nginx -s quit &#x2F;&#x2F; 优雅的停服nginx -s reload &#x2F;&#x2F; 重启配置文件nginx -s">
+<meta property="article:published_time" content="2018-08-10T09:36:36.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.555Z">
+<meta property="article:author" content="Eminoda">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/10/nginx-basic-learn/"/>
+
+
+
+
+
+  <title>nginx 基础学习进阶 | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2018/08/10/nginx-basic-learn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">nginx 基础学习进阶</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-10T17:36:36+08:00">
+                2018-08-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">开发</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">前端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>内容摘自<a href="http://nginx.org/en/docs/beginners_guide.html" target="_blank" rel="noopener">nginx 官方文档</a>，自己配合实例更细致的熟悉 nginx</p>
+</blockquote>
+<h1 id="命令启动，停止，重启-配置"><a href="#命令启动，停止，重启-配置" class="headerlink" title="命令启动，停止，重启 配置"></a>命令启动，停止，重启 配置</h1><p>一旦 nginx 运行起来，通过如下方式 invoking nginx 的控制变更：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nginx -s stop &#x2F;&#x2F; 停服</span><br><span class="line">nginx -s quit &#x2F;&#x2F; 优雅的停服</span><br><span class="line">nginx -s reload &#x2F;&#x2F; 重启配置文件</span><br><span class="line">nginx -s reopen &#x2F;&#x2F; 重新打开log文件</span><br></pre></td></tr></table></figure>
+<h2 id="quit-和-stop-有何区别？"><a href="#quit-和-stop-有何区别？" class="headerlink" title="quit 和 stop 有何区别？"></a>quit 和 stop 有何区别？</h2><p>quit 会等最近一个 request 响应结束后退出进程（graceful shutdown）。<br>比如一个服务会 hold 起数秒，即使执行了 quit 命令，还是会等结果处理完毕后关闭 nginx。<br>stop 则马上停止。</p>
+<h2 id="配置文件错误，reload-是否会影响线上？"><a href="#配置文件错误，reload-是否会影响线上？" class="headerlink" title="配置文件错误，reload 是否会影响线上？"></a>配置文件错误，reload 是否会影响线上？</h2><p>不会，如果 configure 错误，nginx 将 roll back 回老的配置文件，直到配置正确才会真正 reload 起效。</p>
+<h2 id="除了-stop-等，怎么停止-nginx-服务？"><a href="#除了-stop-等，怎么停止-nginx-服务？" class="headerlink" title="除了 stop 等，怎么停止 nginx 服务？"></a>除了 stop 等，怎么停止 nginx 服务？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ps -ax | grep nginx</span><br><span class="line">26318 ?        Ss     0:00 nginx: master process nginx</span><br><span class="line">26351 ?        S      0:00 nginx: worker process</span><br><span class="line">26357 pts&#x2F;3    R+     0:00 grep --color&#x3D;auto nginx</span><br><span class="line"># 需要停止master进程</span><br><span class="line">kill -s QUIT 26318</span><br></pre></td></tr></table></figure>
+<h2 id="了解更多-nginx-控制命令"><a href="#了解更多-nginx-控制命令" class="headerlink" title="了解更多 nginx 控制命令"></a><a href="http://nginx.org/en/docs/control.html" target="_blank" rel="noopener">了解更多 nginx 控制命令</a></h2><h1 id="nginx-配置文件的结构"><a href="#nginx-配置文件的结构" class="headerlink" title="nginx 配置文件的结构"></a>nginx 配置文件的结构</h1><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">events &#123;</span><br><span class="line">    worker_connections <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">    server &#123;</span><br><span class="line">        location / &#123;</span><br><span class="line">            proxy_pass http:<span class="comment">//127.0.0.1:8080;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="文件服务"><a href="#文件服务" class="headerlink" title="文件服务"></a>文件服务</h1><p>静态文件管理也是 Nginx 最大的特色之一（托管图片资源，静态 HTML 文件）</p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><p>比如如下是个存放静态资源的路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;root&#x2F;mydata&#x2F;test&#x2F;www  # 存放html</span><br><span class="line">&#x2F;root&#x2F;mydata&#x2F;test&#x2F;images # 存放资源</span><br></pre></td></tr></table></figure>
+<p><strong>访问静态页面</strong><br>location 指定以 <strong>/</strong> 为前缀（prefix），匹配请求地址的 URI，匹配到的 URI 将添加到 root 指令的地址后。<br>访问：<a href="http://test.eminoda.com:81/test.html" target="_blank" rel="noopener">http://test.eminoda.com:81/test.html</a><br>nginx 按照：/root/mydata/test/www/test.html 输出文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F; &#123;</span><br><span class="line">    root   &#x2F;root&#x2F;mydata&#x2F;test&#x2F;www;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>访问图片等资源</strong><br>匹配以 <strong>/images/</strong> 开始的资源请求地址，<strong>注意，location / 也是可以匹配到的，但会根据实际路径有优先关系</strong><br>访问：<a href="http://test.eminoda.com:81/images/yuyu.jpg" target="_blank" rel="noopener">http://test.eminoda.com:81/images/yuyu.jpg</a><br>nginx 按照：/root/mydata/test/images/yuyu.jpg 输出文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;images&#x2F; &#123;</span><br><span class="line">    root &#x2F;root&#x2F;mydata&#x2F;test;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="root-和-alias-的区别？"><a href="#root-和-alias-的区别？" class="headerlink" title="root 和 alias 的区别？"></a>root 和 alias 的区别？</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>root</td>
+<td>http, server, location, if in location</td>
+</tr>
+<tr>
+<td>alias</td>
+<td>location</td>
+</tr>
+</tbody>
+</table>
+<p>访问：<a href="http://test.eminoda.com:81/versionChange/yuyu.jpg" target="_blank" rel="noopener">http://test.eminoda.com:81/versionChange/yuyu.jpg</a><br>nginx 按照：/root/mydata/test/images/yuyu.jpg 输出文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 模拟一种常见，因为某些需求，更改了资源路径，但不能影响原有资源的输出访问</span><br><span class="line">location &#x2F;versionChange&#x2F; &#123;</span><br><span class="line">    alias &#x2F;root&#x2F;mydata&#x2F;test&#x2F;images&#x2F;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：斜杠问题</strong>，结合上例，比较有何不同</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;versionChange&#x2F; &#123;</span><br><span class="line">    alias &#x2F;root&#x2F;mydata&#x2F;test&#x2F;images; #error &#x2F;root&#x2F;mydata&#x2F;test&#x2F;imagesyuyu.jpg</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;versionChange &#123;</span><br><span class="line">    alias &#x2F;root&#x2F;mydata&#x2F;test&#x2F;images; #ok</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="怎么权衡-root-和-alias-的使用？"><a href="#怎么权衡-root-和-alias-的使用？" class="headerlink" title="怎么权衡 root 和 alias 的使用？"></a>怎么权衡 root 和 alias 的使用？</h2><p>如果 location 匹配路径和指令的 value 最后部分相同时，建议使用 root。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;images&#x2F; &#123;</span><br><span class="line">    alias &#x2F;data&#x2F;w3&#x2F;images&#x2F;;</span><br><span class="line">&#125;</span><br><span class="line"># better</span><br><span class="line">location &#x2F;images&#x2F; &#123;</span><br><span class="line">    root &#x2F;data&#x2F;w3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="alias-和-正则匹配问题？"><a href="#alias-和-正则匹配问题？" class="headerlink" title="alias 和 正则匹配问题？"></a>alias 和 正则匹配问题？</h2><p>如果 location 包含 regex expression，就会匹配正则捕获内容，在 alias 中替换<strong>（而非替换整个 location 路径）</strong>。<br>访问：<a href="http://test.eminoda.com:81/yuyu.jpg" target="_blank" rel="noopener">http://test.eminoda.com:81/yuyu.jpg</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ~ ^&#x2F;(.+\.(?:gif|jpg|png))$ &#123;</span><br><span class="line">    alias &#x2F;root&#x2F;mydata&#x2F;test&#x2F;images&#x2F;$1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>访问：<a href="http://test.eminoda.com:81/foo/yuyu.jpg" target="_blank" rel="noopener">http://test.eminoda.com:81/foo/yuyu.jpg</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ~ ^&#x2F;foo&#x2F;(.+\.(?:gif|jpg|png))$ &#123;</span><br><span class="line">    alias &#x2F;root&#x2F;mydata&#x2F;test&#x2F;images&#x2F;$1; #error &#x2F;root&#x2F;mydata&#x2F;test&#x2F;images&#x2F;foo&#x2F;yuyu.jpg</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="设置简单的代理-Proxy-服务"><a href="#设置简单的代理-Proxy-服务" class="headerlink" title="设置简单的代理 Proxy 服务"></a><a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass" target="_blank" rel="noopener">设置简单的代理 Proxy 服务</a></h1><p>使用 nginx 代理，可能是解决我们日常开发，服务调用的最大原因</p>
+<p>在了解 proxy 之前，先看下 location 路径匹配</p>
+<h2 id="location"><a href="#location" class="headerlink" title="location"></a>location</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>范围</th>
+<th>语法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>location</td>
+<td>server, location</td>
+<td>location [ = &#124; ~ &#124; ~* &#124; ^~ ] uri { … }</td>
+</tr>
+</tbody>
+</table>
+<p>location 依赖 request 的 URI。按优先级排序。<br>=: 绝对匹配，exact match<br>~*：正则（忽略大小写），case-insensitive matching<br>~：正则，case-sensitive matching<br>^~：不能和 uri 定义的配置重复，prefix match<br>uri：路径 URI 匹配，uri match</p>
+<p><strong>举个经典的范例</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">location &#x3D; &#x2F; &#123;</span><br><span class="line">    [ configuration A ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location &#x2F; &#123;</span><br><span class="line">    [ configuration B ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location &#x2F;documents&#x2F; &#123;</span><br><span class="line">    [ configuration C ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ^~ &#x2F;images&#x2F; &#123;</span><br><span class="line">    [ configuration D ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line">    [ configuration E ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>首先命中绝对匹配</li>
+<li>如果有符合 regex 规则，则进入正则匹配。</li>
+<li>剩下根据 uri 匹配</li>
+</ul>
+<p><strong>normalized URI 标准化 URI</strong></p>
+<ul>
+<li>decode 参数</li>
+<li>解析相对路径</li>
+<li>解析斜杠（merge_slashes）</li>
+</ul>
+<p><strong>merge_slashes</strong></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td>merge_slashes on &#124; off;</td>
+</tr>
+<tr>
+<td>Default</td>
+<td>merge_slashes on;</td>
+</tr>
+<tr>
+<td>Context</td>
+<td>http, server</td>
+</tr>
+</tbody>
+</table>
+<p>打开 merge_slashes 配置，将允许 //foo 之类多斜杠的路径匹配</p>
+<h2 id="proxy-pass"><a href="#proxy-pass" class="headerlink" title="proxy_pass"></a>proxy_pass</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>proxy_pass</td>
+<td>location, if in location, limit_except</td>
+</tr>
+</tbody>
+</table>
+<p><strong>proxy_pass 定义了 URI 的区别</strong></p>
+<p><a href="http://127.0.0.1:9000/users" target="_blank" rel="noopener">http://127.0.0.1:9000/users</a> 提供服务</p>
+<p><strong>specified without a URI</strong>（忽略 URI）<br>访问：<a href="http://test.eminoda.com:81/users" target="_blank" rel="noopener">http://test.eminoda.com:81/users</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;users &#123;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1:3001;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>request URI 在 location 匹配后，原样传送给 server</p>
+<p><strong>specified with a URI</strong> （指定 URI）<br>访问：<a href="http://test.eminoda.com:81/withinURI/users" target="_blank" rel="noopener">http://test.eminoda.com:81/withinURI/users</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;withinURI&#x2F; &#123;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1:9000&#x2F;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果 proxy_pass is specified with a URI，当 request URI 在 location 命中，URI 将替换被 location 匹配中的 request URI 的 part（注意 location 需要后面维护个/）</p>
+<blockquote>
+<p>If the proxy_pass directive is specified with a URI, then when a request is passed to the server, the part of a normalized request URI matching the location is replaced by a URI specified in the directive</p>
+</blockquote>
+<p><strong>注意：location 需要后面维护个/</strong><br>访问：<a href="http://test.eminoda.com:81/withinURIusers" target="_blank" rel="noopener">http://test.eminoda.com:81/withinURIusers</a> 注意这里故意没有写 <strong>/</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;withinURI &#123;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1:9000&#x2F;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>修改配置：注意 location 的/</strong><br>访问：<a href="http://test.eminoda.com:81/users" target="_blank" rel="noopener">http://test.eminoda.com:81/users</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;users&#x2F; &#123;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1:3001;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>浏览器 <a href="http://test.eminoda.com:81/users" target="_blank" rel="noopener">http://test.eminoda.com:81/users</a> 会自动变成 <a href="http://test.eminoda.com:81/users/。原以为浏览器会默认添加，但是错了。" target="_blank" rel="noopener">http://test.eminoda.com:81/users/。原以为浏览器会默认添加，但是错了。</a></p>
+<p>浏览器分别输入/users，当 location /users，浏览器不会默认添加/，而 location /users/ 则会自动添加。感觉像是 location 告诉浏览器你给我变的样子<br>查阅 location 文档：<br>如果 location 规则尾部包含斜杠（location /users/），在响应时会发送 301 永久重定向，地址后面自动加上斜杠（这就是为何浏览器会有斜杠的原因）</p>
+<blockquote>
+<p>If a location is defined by a prefix string that ends with the slash character, and requests are processed by one of proxy_pass, fastcgi_pass, uwsgi_pass, scgi_pass, memcached_pass, or grpc_pass, then the special processing is performed. In response to a request with URI equal to this string, but without the trailing slash, a permanent redirect with the code 301 will be returned to the requested URI with the slash appended.</p>
+</blockquote>
+<h3 id="proxy-pass-有些其他规则，request-URI-不确定被替换更改"><a href="#proxy-pass-有些其他规则，request-URI-不确定被替换更改" class="headerlink" title="proxy_pass 有些其他规则，request URI 不确定被替换更改"></a>proxy_pass 有些其他规则，request URI 不确定被替换更改</h3><p><strong>location 定义正则，同时 proxy_pass 不能定义 URI</strong><br><strong>location 定义中有 rewrite break，后跟 proxy_pass</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;name&#x2F; &#123;</span><br><span class="line">    rewrite    &#x2F;name&#x2F;([^&#x2F;]+) &#x2F;users?name&#x3D;$1 break;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>proxy_pass 使用变量</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;name&#x2F; &#123;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1$request_uri;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="rewrite"><a href="#rewrite" class="headerlink" title="rewrite"></a>rewrite</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rewrite</td>
+<td>server, location, if</td>
+</tr>
+</tbody>
+</table>
+<p>rewrite regex replacement [flag];<br>如果正则匹配到 request URI，URI 则会和 replacement 替换</p>
+<h3 id="last"><a href="#last" class="headerlink" title="last"></a>last</h3><blockquote>
+<p>stops processing the current set of ngx_http_rewrite_module directives and starts a search for a new location matching the changed URI;</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;rewrite&#x2F;test1 &#123;</span><br><span class="line">    rewrite ^&#x2F;rewrite &#x2F;last last; #跳出本location，到新的location查找&#x2F;last</span><br><span class="line">    return 404; #并不会输出</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F;last &#123;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1:3001;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>访问 <strong><a href="http://test.eminoda.com:81/rewrite/test1" target="_blank" rel="noopener">http://test.eminoda.com:81/rewrite/test1</a></strong>，location，rewrite 命中，发起/last 请求，在 location 中继续寻找</p>
+<p><strong>修改配置：location 做如下修改</strong><br>访问 <strong><a href="http://test.eminoda.com:81/rewrite/test1" target="_blank" rel="noopener">http://test.eminoda.com:81/rewrite/test1</a></strong>，location 不会命中，rewrite 则不会匹配到<br>访问 <strong><a href="http://test.eminoda.com:81/rewrite/test1/" target="_blank" rel="noopener">http://test.eminoda.com:81/rewrite/test1/</a></strong>，可以命中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;rewrite&#x2F;test1&#x2F; &#123;</span><br><span class="line">    rewrite ^&#x2F;rewrite &#x2F;last last;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和本例无关，只是平时书写 location，要增强路径/的判断。请求地址包含/，则在 location 的规则上写上/，不然就不要添加</p>
+<h3 id="break"><a href="#break" class="headerlink" title="break"></a>break</h3><blockquote>
+<p>stops processing the current set of ngx_http_rewrite_module directives as with the break directive</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;rewrite&#x2F;test2 &#123;</span><br><span class="line">    rewrite ^&#x2F;rewrite&#x2F;test2&#x2F;foo &#x2F;break break;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1:3001;</span><br><span class="line">&#125;</span><br><span class="line"># 不会执行</span><br><span class="line">location &#x2F;break &#123;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1:3001;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>访问 <strong><a href="http://test.eminoda.com:81/rewrite/test2" target="_blank" rel="noopener">http://test.eminoda.com:81/rewrite/test2</a></strong>，location 命中，rewrite 未匹配，之后请求 proxy_pass<br>访问 <strong><a href="http://test.eminoda.com:81/rewrite/test2/foo" target="_blank" rel="noopener">http://test.eminoda.com:81/rewrite/test2/foo</a></strong>，location 中 rewrite 命中，发起/break，由于之后是 proxy_pass，则实际访问 <strong><a href="http://127.0.0.1:3001/break" target="_blank" rel="noopener">http://127.0.0.1:3001/break</a></strong><br><strong>和 last 不同，rewrite 匹配后，不会重新寻找 location</strong></p>
+<p>修改配置：结合上例，主要体现 <strong>ngx_http_rewrite_module 这个点</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F;rewrite&#x2F;test2 &#123;</span><br><span class="line">    rewrite ^&#x2F;rewrite&#x2F;test2&#x2F;foo &#x2F;break break;</span><br><span class="line">    return 500;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>访问 <strong><a href="http://test.eminoda.com:81/rewrite/test2" target="_blank" rel="noopener">http://test.eminoda.com:81/rewrite/test2</a></strong>，location 匹配，rewrite 未匹配，直接访问 return 返回 500<br>访问 <strong><a href="http://test.eminoda.com:81/rewrite/test2/foo" target="_blank" rel="noopener">http://test.eminoda.com:81/rewrite/test2/foo</a></strong>，location 中 rewrite 命中，发起/break，注意<strong>break 会停止 ngx_http_rewrite_module 模块的指令</strong>，则不会像上例一样，或者 last 寻找新的 location。会在本地寻找 ooxx/break 资源，无则返回 404；</p>
+<h3 id="redirect"><a href="#redirect" class="headerlink" title="redirect"></a>redirect</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rewrite ^&#x2F;redirect1 &#x2F; redirect ;</span><br><span class="line">rewrite ^&#x2F;redirect2 http:&#x2F;&#x2F;test.eminoda.com:81 redirect ;</span><br></pre></td></tr></table></figure>
+<p>返回 302 code，如果不以协议“http://”, “https://”, or “\$scheme”开头的匹配，则替换</p>
+<h3 id="permanent"><a href="#permanent" class="headerlink" title="permanent"></a>permanent</h3><blockquote>
+<p>returns a permanent redirect with the 301 code.</p>
+</blockquote>
+<h3 id="ngx-http-rewrite-module"><a href="#ngx-http-rewrite-module" class="headerlink" title="ngx_http_rewrite_module"></a>ngx_http_rewrite_module</h3><ul>
+<li>break</li>
+<li>if</li>
+<li>return</li>
+<li>rewrite</li>
+<li>rewrite_log</li>
+<li>set</li>
+<li>uninitialized_variable_warn</li>
+</ul>
+<p><a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html" target="_blank" rel="noopener">了解更多</a></p>
+<h1 id="ngx-http-rewrite-module-1"><a href="#ngx-http-rewrite-module-1" class="headerlink" title="ngx_http_rewrite_module"></a>ngx_http_rewrite_module</h1><p>有如下指令：</p>
+<ul>
+<li>break</li>
+<li>if</li>
+<li>return</li>
+<li>rewrite</li>
+<li>set</li>
+<li><a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html" target="_blank" rel="noopener">…</a></li>
+</ul>
+<p>再次强调</p>
+<ul>
+<li>location 根据 request URI 来匹配</li>
+<li>以上这些 directives 在 location 中将顺序执行</li>
+<li>如果请求被 rewrite 多次，次数至多 10 次</li>
+</ul>
+<h2 id="break-1"><a href="#break-1" class="headerlink" title="break"></a>break</h2><p>停止 <strong>ngx_http_rewrite_module</strong> 语句</p>
+<p>如果在 location 中，则会继续执行之后语句。上面 rewrite 的 break 已经说明过。</p>
+<h2 id="if-条件判断"><a href="#if-条件判断" class="headerlink" title="if 条件判断"></a><a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#if" target="_blank" rel="noopener">if 条件判断</a></h2><p>比较变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if ($test &#x3D; 1)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">if ($test !&#x3D;1 )&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>正则匹配</p>
+<ul>
+<li>~ 匹配大小写；~* 忽略大小写</li>
+<li>!~，!~*：否定判断</li>
+<li>如果正则包含 <strong>} ;</strong> 等结尾符号，需要用引号包裹</li>
+<li>文件判断（file existence）：-f !-f</li>
+<li>目录判断（directory existence）：-d !-d</li>
+<li>文件、目录、超链（file, directory, or symbolic link existence）：-e !-e</li>
+<li>可执行文件（executable file）：-x !-x</li>
+</ul>
+<p><a href="http://test.eminoda.com:82/user" target="_blank" rel="noopener">http://test.eminoda.com:82/user</a><br><a href="http://test.eminoda.com:82/userrr" target="_blank" rel="noopener">http://test.eminoda.com:82/userrr</a><br><a href="http://test.eminoda.com:82/id/123" target="_blank" rel="noopener">http://test.eminoda.com:82/id/123</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">set $test 0;</span><br><span class="line">if ( $request_uri !~ \&#x2F;admin)&#123;</span><br><span class="line">    set $test 1;</span><br><span class="line">&#125;</span><br><span class="line">if ( $request_uri ~ &#39;(\&#x2F;use)r&#123;2,3&#125;$&#39;)&#123;</span><br><span class="line">    set $test 2;</span><br><span class="line">&#125;</span><br><span class="line">if ( $request_uri ~* \&#x2F;id\&#x2F;[1-9]+)&#123;</span><br><span class="line">    set $test 3;</span><br><span class="line">&#125;</span><br><span class="line">location &#x2F; &#123;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1:9000&#x2F;$test;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;1 404 4.039 ms - 1215</span><br><span class="line">GET &#x2F;2 404 4.609 ms - 1215</span><br><span class="line">GET &#x2F;3 404 4.540 ms - 1215</span><br></pre></td></tr></table></figure>
+<h2 id="return"><a href="#return" class="headerlink" title="return"></a>return</h2><ul>
+<li>return http_status</li>
+<li>return http_status URL</li>
+<li>return URL</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+	
+	<script>tags.push('nginx')</script>
+	
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2018/08/10/nginx-basic-learn/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: 'nginx 基础学习进阶',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510209535').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/legacy/tags/nginx/" rel="tag"># nginx</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2018/08/03/js-promise-return/" rel="next" title="prmoise 返回遇到个问题">
+                <i class="fa fa-chevron-left"></i> prmoise 返回遇到个问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2018/08/14/mongo-backup/" rel="prev" title="mongo 数据库的备份迁移">
+                mongo 数据库的备份迁移 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#命令启动，停止，重启-配置"><span class="nav-number">1.</span> <span class="nav-text">命令启动，停止，重启 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#quit-和-stop-有何区别？"><span class="nav-number">1.1.</span> <span class="nav-text">quit 和 stop 有何区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置文件错误，reload-是否会影响线上？"><span class="nav-number">1.2.</span> <span class="nav-text">配置文件错误，reload 是否会影响线上？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#除了-stop-等，怎么停止-nginx-服务？"><span class="nav-number">1.3.</span> <span class="nav-text">除了 stop 等，怎么停止 nginx 服务？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#了解更多-nginx-控制命令"><span class="nav-number">1.4.</span> <span class="nav-text">了解更多 nginx 控制命令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nginx-配置文件的结构"><span class="nav-number">2.</span> <span class="nav-text">nginx 配置文件的结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件服务"><span class="nav-number">3.</span> <span class="nav-text">文件服务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用场景"><span class="nav-number">3.1.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#root-和-alias-的区别？"><span class="nav-number">3.2.</span> <span class="nav-text">root 和 alias 的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#怎么权衡-root-和-alias-的使用？"><span class="nav-number">3.3.</span> <span class="nav-text">怎么权衡 root 和 alias 的使用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#alias-和-正则匹配问题？"><span class="nav-number">3.4.</span> <span class="nav-text">alias 和 正则匹配问题？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#设置简单的代理-Proxy-服务"><span class="nav-number">4.</span> <span class="nav-text">设置简单的代理 Proxy 服务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#location"><span class="nav-number">4.1.</span> <span class="nav-text">location</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proxy-pass"><span class="nav-number">4.2.</span> <span class="nav-text">proxy_pass</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#proxy-pass-有些其他规则，request-URI-不确定被替换更改"><span class="nav-number">4.2.1.</span> <span class="nav-text">proxy_pass 有些其他规则，request URI 不确定被替换更改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rewrite"><span class="nav-number">4.3.</span> <span class="nav-text">rewrite</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#last"><span class="nav-number">4.3.1.</span> <span class="nav-text">last</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#break"><span class="nav-number">4.3.2.</span> <span class="nav-text">break</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redirect"><span class="nav-number">4.3.3.</span> <span class="nav-text">redirect</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#permanent"><span class="nav-number">4.3.4.</span> <span class="nav-text">permanent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ngx-http-rewrite-module"><span class="nav-number">4.3.5.</span> <span class="nav-text">ngx_http_rewrite_module</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ngx-http-rewrite-module-1"><span class="nav-number">5.</span> <span class="nav-text">ngx_http_rewrite_module</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#break-1"><span class="nav-number">5.1.</span> <span class="nav-text">break</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#if-条件判断"><span class="nav-number">5.2.</span> <span class="nav-text">if 条件判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#return"><span class="nav-number">5.3.</span> <span class="nav-text">return</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

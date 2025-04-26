@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="http,graphQL," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="graphQL A query language for your APIGraphQL 用于作为 API 查询的一种语言，针对 API 服务提供全面、易懂的数据描述，使得客户端能够能容易，能好的获取数据。一个强大的developer tools  当然我们只看graphQL.js 快速上手Basic Types 基础类型 String Int Float Boolean ID  默认每个类型可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初识 GraphQL">
+<meta property="og:url" content="http://yoursite.com/2018/08/22/graphQL-quickstart/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="graphQL A query language for your APIGraphQL 用于作为 API 查询的一种语言，针对 API 服务提供全面、易懂的数据描述，使得客户端能够能容易，能好的获取数据。一个强大的developer tools  当然我们只看graphQL.js 快速上手Basic Types 基础类型 String Int Float Boolean ID  默认每个类型可以">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/graphQL-express.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/gql.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/fields.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/arguments.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/alias.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/fragment.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/operationName.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/variables.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/directives.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/mutations.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/meta.png">
+<meta property="article:published_time" content="2018-08-22T07:57:48.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.571Z">
+<meta property="article:author" content="Eminoda">
+<meta property="article:tag" content="http">
+<meta property="article:tag" content="graphQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/graphQL-express.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/22/graphQL-quickstart/"/>
+
+
+
+
+
+  <title>初识 GraphQL | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2018/08/22/graphQL-quickstart/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">初识 GraphQL</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-22T15:57:48+08:00">
+                2018-08-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">开发</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">前端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="graphQL"><a href="#graphQL" class="headerlink" title="graphQL"></a><a href="http://graphql.github.io/" target="_blank" rel="noopener">graphQL</a></h1><blockquote>
+<p>A query language for your API<br>GraphQL 用于作为 API 查询的一种语言，针对 API 服务提供全面、易懂的数据描述，使得客户端能够能容易，能好的获取数据。一个强大的<strong>developer tools</strong></p>
+</blockquote>
+<p>当然我们只看<a href="http://graphql.github.io/graphql-js/" target="_blank" rel="noopener">graphQL.js</a></p>
+<h1 id="快速上手"><a href="#快速上手" class="headerlink" title="快速上手"></a>快速上手</h1><h2 id="Basic-Types-基础类型"><a href="#Basic-Types-基础类型" class="headerlink" title="Basic Types 基础类型"></a>Basic Types 基础类型</h2><ul>
+<li>String</li>
+<li>Int</li>
+<li>Float</li>
+<li>Boolean</li>
+<li>ID</li>
+</ul>
+<p><strong>默认每个类型可以为空，可以定义！来特殊注明不能为空</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">type Query&#123;</span><br><span class="line">    hello:String</span><br><span class="line">    test:String!</span><br><span class="line">    number:Int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果 test 定义为 String，若没有数据将返回 null。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;data&quot;:&#123;&quot;hello&quot;:&quot;Hello world!&quot;,&quot;test&quot;:null,&quot;num&quot;:1&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>定义 String!，若无数据，将报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;   &quot;errors&quot;:[&#123;</span><br><span class="line">        &quot;message&quot;:&quot;Cannot return null for non-nullable field Query.test.&quot;,&quot;locations&quot;:[&#123;&quot;line&quot;:1,&quot;column&quot;:9&#125;],&quot;path&quot;:[&quot;test&quot;]</span><br><span class="line">    &#125;],</span><br><span class="line">    &quot;data&quot;:null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Passing-Arguments-传递参数"><a href="#Passing-Arguments-传递参数" class="headerlink" title="Passing Arguments 传递参数"></a>Passing Arguments 传递参数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">var schema &#x3D; buildSchema(&#96;</span><br><span class="line">  type Query&#123;</span><br><span class="line">    hello:String</span><br><span class="line">    test:String!</span><br><span class="line">    num(numDice: Int!, numSides: Int):Int</span><br><span class="line">  &#125;</span><br><span class="line">&#96;)</span><br><span class="line">var root &#x3D; &#123;</span><br><span class="line">  hello: () &#x3D;&gt; &#123;</span><br><span class="line">    return &#39;Hello world!&#39;;</span><br><span class="line">  &#125;,</span><br><span class="line">  test: () &#x3D;&gt; &#123;</span><br><span class="line">    return &#39;test&#39;;</span><br><span class="line">  &#125;,</span><br><span class="line">  num: (args) &#x3D;&gt; &#123;</span><br><span class="line">    &#x2F;&#x2F; &#123; numDice: 2, numSides: 3 &#125;</span><br><span class="line">    console.log(args);</span><br><span class="line">    return 1;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">graphql(schema, &#39;&#123; hello test num(numDice:2,numSides:3)&#125;&#39;, root).then((response) &#x3D;&gt; &#123;</span><br><span class="line">    &#x2F;&#x2F; &#123;&quot;data&quot;:&#123;&quot;hello&quot;:&quot;Hello world!&quot;,&quot;test&quot;:&quot;123&quot;,&quot;num&quot;:1&#125;&#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="使用-Express-构建-GraphQL-服务"><a href="#使用-Express-构建-GraphQL-服务" class="headerlink" title="使用 Express 构建 GraphQL 服务"></a>使用 Express 构建 GraphQL 服务</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install express express-graphql graphql --save</span><br></pre></td></tr></table></figure>
+<p>app.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var gql1 &#x3D; require(&#39;.&#x2F;graph&#x2F;test1.js&#39;);</span><br><span class="line">var app &#x3D; express();</span><br><span class="line">app.use(&#39;&#x2F;gql&#39;, gql1);</span><br></pre></td></tr></table></figure>
+<p>graph/test1.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">var &#123;</span><br><span class="line">    buildSchema</span><br><span class="line">&#125; &#x3D; require(&#39;graphql&#39;);</span><br><span class="line">var graphqlHTTP &#x3D; require(&#39;express-graphql&#39;);</span><br><span class="line"></span><br><span class="line">let schema &#x3D; buildSchema(&#96;</span><br><span class="line">type Query&#123;</span><br><span class="line">  hello:String</span><br><span class="line">  test:String!</span><br><span class="line">  num(numDice: Int!, numSides: Int):Int</span><br><span class="line">&#125;</span><br><span class="line">&#96;)</span><br><span class="line">let root &#x3D; &#123;</span><br><span class="line">    hello: () &#x3D;&gt; &#123;</span><br><span class="line">        return &#39;Hello world!&#39;;</span><br><span class="line">    &#125;,</span><br><span class="line">    test: () &#x3D;&gt; &#123;</span><br><span class="line">        return &#39;test&#39;;</span><br><span class="line">    &#125;,</span><br><span class="line">    num: (args) &#x3D;&gt; &#123;</span><br><span class="line">        &#x2F;&#x2F; &#123; numDice: 2, numSides: 3 &#125;</span><br><span class="line">        console.log(args);</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">module.exports &#x3D; graphqlHTTP(&#123;</span><br><span class="line">    schema: schema,</span><br><span class="line">    rootValue: root,</span><br><span class="line">    graphiql: true,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>插件效果：<br><img src="/legacy/2018/08/22/graphQL-quickstart/graphQL-express.png" class=""><br><strong>express-graphql</strong>会自动解析 req.query 的参数。当然还可以集成其他中间件 Middleware(<a href="http://www.passportjs.org/" target="_blank" rel="noopener"><strong>Passport</strong></a>,<strong>express-jwt</strong>,<strong>express-session</strong>)来稳定、扩展这个微服务。</p>
+<h2 id="Mutations-and-Input-Types-根据输入值改变行为"><a href="#Mutations-and-Input-Types-根据输入值改变行为" class="headerlink" title="Mutations and Input Types 根据输入值改变行为"></a>Mutations and Input Types 根据输入值改变行为</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">let schema &#x3D; buildSchema(&#96;</span><br><span class="line"># 定义传入对象类型</span><br><span class="line">input MessageInput&#123;</span><br><span class="line">    message:String</span><br><span class="line">&#125;</span><br><span class="line"># 定义Message对象，类似泛型</span><br><span class="line">type Message&#123;</span><br><span class="line">    message:String</span><br><span class="line">&#125;</span><br><span class="line"># 某种行为</span><br><span class="line">type Mutation &#123;</span><br><span class="line">    # 保存传入数据</span><br><span class="line">    setMessage(input: MessageInput): Message</span><br><span class="line">&#125;</span><br><span class="line"># Query必须定义</span><br><span class="line">type Query &#123;</span><br><span class="line">    getMessage: String</span><br><span class="line">&#125;</span><br><span class="line">&#96;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义Message对象</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Message</span>(<span class="params">input</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.message = input.message;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 模拟数据源</span></span><br><span class="line"><span class="keyword">var</span> fakeDatabase = &#123;</span><br><span class="line">  message: <span class="string">'data from DB'</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> root = &#123;</span><br><span class="line">  <span class="comment">// 实现保存数据，返回新Message对象</span></span><br><span class="line">  setMessage: <span class="function"><span class="keyword">function</span>(<span class="params">input</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// &#123; input: &#123; message: 'abc' &#125; &#125;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Message(input.input);</span><br><span class="line">  &#125;,</span><br><span class="line">  getMessage: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> fakeDatabase.message;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<img src="/legacy/2018/08/22/graphQL-quickstart/gql.png" class="">
+<p>如果没使用 express-graph 方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">graphql(schema,</span><br><span class="line">    &#96;</span><br><span class="line">    mutation CreateMessage($input: MessageInput) &#123;</span><br><span class="line">        setMessage(input:$input)&#123;message&#125;</span><br><span class="line"></span><br><span class="line">&#125;&#96;, root, &#123;&#125;, &#123;</span><br><span class="line">        input: &#123;</span><br><span class="line">            message: &quot;123&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;CreateMessage&quot;</span><br><span class="line">).then((response) &#x3D;&gt; &#123;</span><br><span class="line">    console.log(response);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h1 id="Queries-and-Mutations-查询和转变"><a href="#Queries-and-Mutations-查询和转变" class="headerlink" title="Queries and Mutations 查询和转变"></a>Queries and Mutations 查询和转变</h1><h2 id="Fields-字段（像是定义一个对象）"><a href="#Fields-字段（像是定义一个对象）" class="headerlink" title="Fields 字段（像是定义一个对象）"></a>Fields 字段（像是定义一个对象）</h2><p>在 query 定义 fields，来告诉 GraphQL 该查询什么数据与之对应。<br>每个 fields 有自己的 name，和字符串的 type（对象中属性）</p>
+<img src="/legacy/2018/08/22/graphQL-quickstart/fields.png" class="">
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">let schema &#x3D; buildSchema(&#96;</span><br><span class="line">    type Query&#123;</span><br><span class="line">        hexo:Hexo</span><br><span class="line">    &#125;</span><br><span class="line">    type Hexo&#123;</span><br><span class="line">        name:String,</span><br><span class="line">        age:Int</span><br><span class="line">    &#125;</span><br><span class="line">&#96;)</span><br><span class="line">function Hexo(name, age) &#123;</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">    this.age &#x3D; age;</span><br><span class="line">&#125;</span><br><span class="line">var root &#x3D; &#123;</span><br><span class="line">    hexo: () &#x3D;&gt; &#123;</span><br><span class="line">        return new Hexo(&#39;abc&#39;, 12);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong><br>fields 中的属性可以按需定义，但是前提是 schema 要维护好。在这个前提下，query 可以任意增减属性，相当于数据过滤效果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">query&#123;</span><br><span class="line">  hexo&#123;</span><br><span class="line">    name</span><br><span class="line">    country</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&quot;message&quot;: &quot;Cannot query field \&quot;country\&quot; on type \&quot;Hexo\&quot;.&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="Arguments-参数"><a href="#Arguments-参数" class="headerlink" title="Arguments 参数"></a>Arguments 参数</h2><p>在 query 定义参数列表，供 root 解析处理。</p>
+<img src="/legacy/2018/08/22/graphQL-quickstart/arguments.png" class="">
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">let schema &#x3D; buildSchema(&#96;</span><br><span class="line">    type Query&#123;</span><br><span class="line">        hexo(id:ID):Hexo</span><br><span class="line">    &#125;</span><br><span class="line">    type Hexo&#123;</span><br><span class="line">        id:ID,</span><br><span class="line">        name:String,</span><br><span class="line">        age:Int</span><br><span class="line">    &#125;</span><br><span class="line">&#96;)</span><br><span class="line">function Hexo(id, name, age) &#123;</span><br><span class="line">    this.id &#x3D; id;</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">    this.age &#x3D; age;</span><br><span class="line">&#125;</span><br><span class="line">var root &#x3D; &#123;</span><br><span class="line">    hexo: (&#123;</span><br><span class="line">        id</span><br><span class="line">    &#125;) &#x3D;&gt; &#123;</span><br><span class="line">        return new Hexo(id, &#39;abc&#39;, 12);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong><br>在 query 参数列表也要和 schema 定义一致；同时 root 中获取传入的参数需要通过<strong>解构</strong>来获取</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type Query&#123;</span><br><span class="line">    hexo(ids:ID):Hexo</span><br><span class="line">&#125;</span><br><span class="line">&quot;message&quot;: &quot;Unknown argument \&quot;id\&quot; on field \&quot;hexo\&quot; of type \&quot;Query\&quot;. Did you mean \&quot;ids\&quot;?&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="Aliases-别名"><a href="#Aliases-别名" class="headerlink" title="Aliases 别名"></a>Aliases 别名</h2><p>query 通过类似泛型的说明（不知是否恰当），自定义返回数据的对象字段。<br><img src="/legacy/2018/08/22/graphQL-quickstart/alias.png" class=""></p>
+<p><strong>注意</strong><br>对象，字段属性都是可以起别名的</p>
+<h2 id="Fragments-片段"><a href="#Fragments-片段" class="headerlink" title="Fragments 片段"></a>Fragments 片段</h2><p>类似上面那个需求，可能我们都很多复杂的字段，可以通过这种片段的方式简化 gql 代码。同时 fragments 又是依托于对象，理解 query 更为快速<br><img src="/legacy/2018/08/22/graphQL-quickstart/fragment.png" class=""></p>
+<h2 id="Inline-Fragments"><a href="#Inline-Fragments" class="headerlink" title="Inline Fragments"></a>Inline Fragments</h2><p>query 中，行内片段。多用于 interface 的数据</p>
+<h2 id="Operation-name-操作说明"><a href="#Operation-name-操作说明" class="headerlink" title="Operation name 操作说明"></a>Operation name 操作说明</h2><p>用于<strong>query, mutation, or subscription and describes</strong>，说明本次操作的意图。当然像 query，也可以省略 operation name（类似匿名查询）。<br>主要作用，更语义的说明 query 是干啥的，也在调试服务端时，分析 gql logger。<br><img src="/legacy/2018/08/22/graphQL-quickstart/operationName.png" class=""></p>
+<h2 id="Variables-变量"><a href="#Variables-变量" class="headerlink" title="Variables 变量"></a>Variables 变量</h2><p>上些例子，都是在 query 的 fields 上配置参数，并且参数是写死的。通常在实际应用上，我们需要动态可变的参数。<br>可以看下图中\$input:<br><img src="/legacy/2018/08/22/graphQL-quickstart/variables.png" class=""></p>
+<ul>
+<li>在 query 中，使用<strong>\$variableName</strong>类似占位符一样，定义静态值</li>
+<li>在 query 上，声明<strong>\$variableName</strong>。</li>
+<li>维护请求字段 variableName，传入数据</li>
+</ul>
+<p><strong>注意</strong></p>
+<ul>
+<li>声明参数，<strong>需要用\$前缀说明</strong></li>
+<li>\$episode: Episode = JEDI 方式定义输入参数默认值</li>
+</ul>
+<h2 id="Directives-指令"><a href="#Directives-指令" class="headerlink" title="Directives 指令"></a>Directives 指令</h2><p>可以制定 fields 中字段的显示，如果 field 中某个字段是对象，可以在指令后面继续和 field 定义字段方式一样，定义属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">hexo(id:$input)&#123;</span><br><span class="line">  id</span><br><span class="line">  name</span><br><span class="line">	friend @skip(if: $ignoreAge)&#123;</span><br><span class="line">    id</span><br><span class="line">    name</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>@include(if: Boolean) Only include this field in the result if the argument is true</li>
+<li>@skip(if: Boolean) Skip this field if the argument is true.<img src="/legacy/2018/08/22/graphQL-quickstart/directives.png" class="">
+<strong>注意</strong><br>query 上的参数，需要指定<strong>!</strong></li>
+</ul>
+<h2 id="Mutations-行为改变"><a href="#Mutations-行为改变" class="headerlink" title="Mutations 行为改变"></a>Mutations 行为改变</h2><p>GrapQL 是查询语句，但是避免不了某些查询会持久化数据或者更改，像 crud 里面的 create，update，delete 等情况。为区别 query，可以使用 mutations，就是体现这种约定。<br><img src="/legacy/2018/08/22/graphQL-quickstart/mutations.png" class=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">let schema &#x3D; buildSchema(&#96;</span><br><span class="line">    type Hexo&#123;</span><br><span class="line">        id:ID,</span><br><span class="line">        name:String,</span><br><span class="line">        age:Int,</span><br><span class="line">        friend:Hexo</span><br><span class="line">    &#125;</span><br><span class="line">    type Mutation&#123;</span><br><span class="line">        createHexo:Hexo</span><br><span class="line">    &#125;</span><br><span class="line">&#96;)</span><br><span class="line">var root &#x3D; &#123;</span><br><span class="line">    createHexo: () &#x3D;&gt; &#123;</span><br><span class="line">        return new Hexo(444, &#39;bbb&#39;, 44);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong><br>搞清 mutation 和 query 区别，通常 mutation 也有自己的 mutation fields。<strong>mutation fields 是依次执行，而 query 的 fields 是并列</strong></p>
+<h2 id="Meta-fields"><a href="#Meta-fields" class="headerlink" title="Meta fields"></a>Meta fields</h2><p>query 增加<strong>_typename</strong>，将返回 schema 的 type<br><img src="/legacy/2018/08/22/graphQL-quickstart/meta.png" class=""></p>
+<h1 id="Schemas-and-Types"><a href="#Schemas-and-Types" class="headerlink" title="Schemas and Types"></a><a href="http://graphql.github.io/learn/schema/" target="_blank" rel="noopener">Schemas and Types</a></h1><h2 id="Type-system"><a href="#Type-system" class="headerlink" title="Type system"></a>Type system</h2><p>这是个简单的 query 语句，但能看到如下特点：</p>
+<ul>
+<li>定义一个根对象，如果你隐去 query 和 operation name</li>
+<li>设置一个 hexo，当做 fields</li>
+<li>根据查询的数据对象，将包含 id、name fields</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">query queryHexo&#123;</span><br><span class="line">  hexo&#123;</span><br><span class="line">    id</span><br><span class="line">    name</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Object-types-and-fields"><a href="#Object-types-and-fields" class="headerlink" title="Object types and fields"></a>Object types and fields</h2><p>在 schems 中,定义 Hexo 这样一个 type，在 Query 中会使用到这个 type</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">type Hexo&#123;</span><br><span class="line">    id:ID,</span><br><span class="line">    name:String,</span><br><span class="line">    age:Int</span><br><span class="line">&#125;</span><br><span class="line">type Query&#123;</span><br><span class="line">    hexo(id:ID):Hexo</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Hexo</strong> GraphQL Object Type</li>
+<li>id,name,age 作为 fields，在 Type 里</li>
+<li>每个 field 将对应有 scalar types</li>
+</ul>
+<h2 id="Scalar-types"><a href="#Scalar-types" class="headerlink" title="Scalar types"></a>Scalar types</h2><p>fields 在解析时，会有对应的类型作为区分。</p>
+<ul>
+<li>Int: A signed 32‐bit integer.</li>
+<li>Float: A signed double-precision floating-point value.</li>
+<li>String: A UTF‐8 character sequence.</li>
+<li>Boolean: true or false.</li>
+<li>ID: The ID scalar type represents a unique identifier, often used to refetch an object or as the key for a cache. The ID type is serialized in the same way as a String; however, defining it as an ID signifies that it is not intended to be human‐readable.</li>
+</ul>
+<h2 id="Enumeration-types"><a href="#Enumeration-types" class="headerlink" title="Enumeration types"></a>Enumeration types</h2><p>枚举类型，有个好处：对于已知的后台枚举数据，可以预先控制</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">enum Action&#123;</span><br><span class="line">    superman,</span><br><span class="line">    people</span><br><span class="line">&#125;</span><br><span class="line">type Hexo&#123;</span><br><span class="line">    id:ID,</span><br><span class="line">    name:String,</span><br><span class="line">    age:Int,</span><br><span class="line">    action:Action</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Lists-and-Non-Null"><a href="#Lists-and-Non-Null" class="headerlink" title="Lists and Non-Null"></a>Lists and Non-Null</h2><p>定义数据列表、非空类型</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type Hexo&#123;</span><br><span class="line">    name:String!,</span><br><span class="line">    friends:[Hexo]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Interfaces"><a href="#Interfaces" class="headerlink" title="Interfaces"></a>Interfaces</h2><p>了解面向对象，基本知道抽象，实现之类的概念。<br>这里 GraphQL 也有这样的思想，如下：<br>可以定义一个 Animal，然后 Hexo，People 分别对 Animal 实现，并且扩展，有什么好处？<br><strong>在不同查询结果中，可以维护不同的 type</strong>，来获取指定的对象数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">type Query&#123;</span><br><span class="line">    hexo(id:ID):People</span><br><span class="line">&#125;</span><br><span class="line">interface Animal&#123;</span><br><span class="line">    id:ID</span><br><span class="line">&#125;</span><br><span class="line">type Hexo implements Animal&#123;</span><br><span class="line">    id:ID,</span><br><span class="line">    name:String,</span><br><span class="line">    age:Int,</span><br><span class="line">    friends:[Hexo]!</span><br><span class="line">&#125;</span><br><span class="line">type People implements Animal&#123;</span><br><span class="line">    id:ID,</span><br><span class="line">    name:String</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Union-types"><a href="#Union-types" class="headerlink" title="Union types"></a>Union types</h2>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+	
+	<script>tags.push('http')</script>
+	
+	<script>tags.push('graphQL')</script>
+	
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2018/08/22/graphQL-quickstart/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: '初识 GraphQL',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510209309').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/legacy/tags/http/" rel="tag"># http</a>
+          
+            <a href="/legacy/tags/graphQL/" rel="tag"># graphQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2018/08/20/css-flex/" rel="next" title="flex 弹性布局">
+                <i class="fa fa-chevron-left"></i> flex 弹性布局
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2018/08/24/restful-best-practise/" rel="prev" title="Restful 最佳实践">
+                Restful 最佳实践 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#graphQL"><span class="nav-number">1.</span> <span class="nav-text">graphQL</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#快速上手"><span class="nav-number">2.</span> <span class="nav-text">快速上手</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-Types-基础类型"><span class="nav-number">2.1.</span> <span class="nav-text">Basic Types 基础类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Passing-Arguments-传递参数"><span class="nav-number">2.2.</span> <span class="nav-text">Passing Arguments 传递参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-Express-构建-GraphQL-服务"><span class="nav-number">2.3.</span> <span class="nav-text">使用 Express 构建 GraphQL 服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mutations-and-Input-Types-根据输入值改变行为"><span class="nav-number">2.4.</span> <span class="nav-text">Mutations and Input Types 根据输入值改变行为</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Queries-and-Mutations-查询和转变"><span class="nav-number">3.</span> <span class="nav-text">Queries and Mutations 查询和转变</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Fields-字段（像是定义一个对象）"><span class="nav-number">3.1.</span> <span class="nav-text">Fields 字段（像是定义一个对象）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Arguments-参数"><span class="nav-number">3.2.</span> <span class="nav-text">Arguments 参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Aliases-别名"><span class="nav-number">3.3.</span> <span class="nav-text">Aliases 别名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fragments-片段"><span class="nav-number">3.4.</span> <span class="nav-text">Fragments 片段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inline-Fragments"><span class="nav-number">3.5.</span> <span class="nav-text">Inline Fragments</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Operation-name-操作说明"><span class="nav-number">3.6.</span> <span class="nav-text">Operation name 操作说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Variables-变量"><span class="nav-number">3.7.</span> <span class="nav-text">Variables 变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Directives-指令"><span class="nav-number">3.8.</span> <span class="nav-text">Directives 指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mutations-行为改变"><span class="nav-number">3.9.</span> <span class="nav-text">Mutations 行为改变</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Meta-fields"><span class="nav-number">3.10.</span> <span class="nav-text">Meta fields</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Schemas-and-Types"><span class="nav-number">4.</span> <span class="nav-text">Schemas and Types</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Type-system"><span class="nav-number">4.1.</span> <span class="nav-text">Type system</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-types-and-fields"><span class="nav-number">4.2.</span> <span class="nav-text">Object types and fields</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scalar-types"><span class="nav-number">4.3.</span> <span class="nav-text">Scalar types</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Enumeration-types"><span class="nav-number">4.4.</span> <span class="nav-text">Enumeration types</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lists-and-Non-Null"><span class="nav-number">4.5.</span> <span class="nav-text">Lists and Non-Null</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interfaces"><span class="nav-number">4.6.</span> <span class="nav-text">Interfaces</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Union-types"><span class="nav-number">4.7.</span> <span class="nav-text">Union types</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

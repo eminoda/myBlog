@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="vue," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言《vue 基础》系列是再次回炉 vue 记的笔记，除了官网那部分知识点外，还会加入自己的一些理解。（里面会有部分和官网相同的文案，有经验的同学择感兴趣的阅读） 参数传递示范页面跳转参数传递几个方式。 query 参数第一个就是如何获取 url 问号后面的参数，query 就是描述这块参数的“专用单词”。 123456&#x2F;&#x2F; url: http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;#&#x2F;router&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue 基础-路由开发指南">
+<meta property="og:url" content="http://yoursite.com/2019/12/03/vue-base-router/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="前言《vue 基础》系列是再次回炉 vue 记的笔记，除了官网那部分知识点外，还会加入自己的一些理解。（里面会有部分和官网相同的文案，有经验的同学择感兴趣的阅读） 参数传递示范页面跳转参数传递几个方式。 query 参数第一个就是如何获取 url 问号后面的参数，query 就是描述这块参数的“专用单词”。 123456&#x2F;&#x2F; url: http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;#&#x2F;router&#x2F;">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/12/03/vue-base-router/dynamic.gif">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/12/03/vue-base-router/watchRouter.gif">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/12/03/vue-base-router/replace.gif">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/12/03/vue-base-router/nest.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/12/03/vue-base-router/peer.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/12/03/vue-base-router/router-order.png">
+<meta property="article:published_time" content="2019-12-03T01:49:30.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.711Z">
+<meta property="article:author" content="Eminoda">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/legacy/2019/12/03/vue-base-router/dynamic.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/03/vue-base-router/"/>
+
+
+
+
+
+  <title>vue 基础-路由开发指南 | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2019/12/03/vue-base-router/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">vue 基础-路由开发指南</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-03T09:49:30+08:00">
+                2019-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">开发</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">前端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>《vue 基础》系列是再次回炉 vue 记的笔记，除了官网那部分知识点外，还会加入自己的一些理解。（里面会有部分和官网相同的文案，有经验的同学择感兴趣的阅读）</p>
+<h1 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h1><p>示范页面跳转参数传递几个方式。</p>
+<h2 id="query-参数"><a href="#query-参数" class="headerlink" title="query 参数"></a>query 参数</h2><p>第一个就是如何获取 url 问号后面的参数，query 就是描述这块参数的“专用单词”。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// url: http://127.0.0.1:8080/#/router/params/foo?name=abc</span></span><br><span class="line">data() &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    queryByRoute: <span class="keyword">this</span>.$route.query, <span class="comment">// &#123;name:'abc'&#125;</span></span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="path-参数"><a href="#path-参数" class="headerlink" title="path 参数"></a>path 参数</h2><p>基于 Restful 规范，我们会设置动态路由（但整个地址的含义是一样的），这样就会有获取地址上的动态参数的需求。</p>
+<p>那怎么方便的获取其中的变量呢？vue-router 也给我准备好了相关 api ，功能是通过 <strong>path-to-regexp</strong> 这个模块完成。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// router.js</span></span><br><span class="line">&#123;</span><br><span class="line">  name: <span class="string">'params'</span>,</span><br><span class="line">  path: <span class="string">'params/:pathParam'</span>,</span><br><span class="line">  component: Params</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// url: http://127.0.0.1:8080/#/router/params/foo?name=abc</span></span><br><span class="line">data() &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    pathParamByRoute: <span class="keyword">this</span>.$route.params.pathParam <span class="comment">// foo</span></span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="props-参数"><a href="#props-参数" class="headerlink" title="props 参数"></a>props 参数</h2><p>上面的示例都涉及 this.\$route ，这样使得路由模块和组件的耦合度较高。vue-router 中可以设置 props 属性来注入到 component 中的对应的 props 属性，这样我们的代码会是这样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// router.js</span></span><br><span class="line">&#123;</span><br><span class="line">  name: <span class="string">'params'</span>,</span><br><span class="line">  path: <span class="string">'params/:pathParam'</span>,</span><br><span class="line">  component: Params,</span><br><span class="line">  props: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// url: http://127.0.0.1:8080/#/router/params/foo?name=abc</span></span><br><span class="line">props: &#123;</span><br><span class="line">  pathParam: <span class="built_in">String</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>这样我们就能在组件的 props 属性中拿到 url 对应的动态参数。就像父子组件参数传递一样。</p>
+<h1 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h1><p>所谓动态路由，就是以冒号 :xxx 来定义地址某部分的路由，通常是基于 Restful 规范，比如下面使用动态的 id 定义的地址：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routes = [</span><br><span class="line">  &#123;</span><br><span class="line">    path: <span class="string">"/user/:id"</span>,</span><br><span class="line">    component: User</span><br><span class="line">  &#125;</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>相信经验丰富的你一定遇到过这样的问题：明明地址变了，但组件没有重新进行“刷新”。</p>
+<p>我们可以通过 vue 的生命周期来验证组件是否会重新渲染：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">created() &#123;</span><br><span class="line">  <span class="keyword">this</span>.$message(<span class="string">'当前组件被创建'</span>);</span><br><span class="line">&#125;,</span><br><span class="line">methods: &#123;</span><br><span class="line">  changeRouterUrl() &#123;</span><br><span class="line">    <span class="keyword">this</span>.id++;</span><br><span class="line">    <span class="keyword">this</span>.$router.push(&#123; <span class="attr">path</span>: <span class="string">'/router/'</span> + <span class="keyword">this</span>.id &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我每次通过 button 触发 changeRouterUrl 方法来进行 id 的累加使得 url 发生变化。但 created 一直没有执行第二次。</p>
+<img src="/legacy/2019/12/03/vue-base-router/dynamic.gif" class="" title="一个简单的 gif">
+<p>那怎么解决的？</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>我们知道当定义好 Vue.use(Router); 后，我们就能在实例化后的 vue 中，通过 this.\$route 路由对象来获取相关属性了。</p>
+<p>知道这点后，就通过 watch 来监听 \$route 对象即可。</p>
+<p>同时也能用 \$route 中对应的 to、from 概念对应上 watch 接受的 newVal、oldVal 两个变化前后的参数。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">watch: &#123;</span><br><span class="line">  $route(to, <span class="keyword">from</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.$message(<span class="string">'路由更新了，你可以在这里做任何事情'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<img src="/legacy/2019/12/03/vue-base-router/watchRouter.gif" class="" title="一个简单的 gif">
+<p>这样就能在每次动态路由改动时，通过监听 \$route 来自定义需要刷新组件那部分的数据了。</p>
+<h1 id="路由跳转"><a href="#路由跳转" class="headerlink" title="路由跳转"></a>路由跳转</h1><p>这属于路由参数获取外，用的第一多的功能。下面示例 vue-router 中 4 种常见的跳转用法。</p>
+<h2 id="普通跳转"><a href="#普通跳转" class="headerlink" title="普通跳转"></a>普通跳转</h2><p>声明式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">router-link</span> <span class="attr">:to</span>=<span class="string">"paramsRoute"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">el-button</span> <span class="attr">type</span>=<span class="string">"primary"</span>&gt;</span>试一试：声明式跳转<span class="tag">&lt;/<span class="name">el-button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">router-link</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>编程式：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// paramsRoute: &#123; path: '/router/params/foo', query: &#123; name: 'fromJump' &#125; &#125;</span></span><br><span class="line"><span class="keyword">this</span>.$router.push(<span class="keyword">this</span>.paramsRoute);</span><br></pre></td></tr></table></figure>
+<h2 id="replace-跳转"><a href="#replace-跳转" class="headerlink" title="replace 跳转"></a>replace 跳转</h2><p>一开始我不太理解 <strong>replace</strong> 有什么用，但当我用到 <strong>element-ui</strong> 中的 <strong>breadcrumb</strong> 面包屑功能时，注意到了其中 <strong>replace</strong> 属性。</p>
+<blockquote>
+<p>replace: 在使用 to 进行路由跳转时，启用 <strong>replace</strong> 将不会向 <strong>history</strong> 添加新记录</p>
+</blockquote>
+<p><strong>有什么用？</strong></p>
+<p>我们都知道路由有 history 功能，每当点击浏览器返回时，将回到之前访问的页面记录。</p>
+<p>假如页面设计有 3 层（首页、产品列表、产品详情页），当从 1 级页面（首页）跳转到 2 级页面（产品列表）后，我们点击浏览器后退按钮一切都正常；但当 2 级页面跳转到 3 级页面（详情页）后，再返回 2 级页面似乎也没问题，<strong>但当你再次返回时，却又回到了 3 级页面</strong>（其实用户想回到最初的 1 级页面，虽然代码上符合逻辑，但现在一定出错了）</p>
+<p>原先我遇到类似问题，都是在最后级页面通过“写死”的路由地址来解决这个 bug，但其实现在有更好的方式，那就是 <strong>replace</strong> 。</p>
+<p>如下是模拟这 bug 的重现：</p>
+<p>tab 从： 路由跳转 –&gt; 动态路由 –&gt; 路由跳转（清除 history） –&gt; 参数传递</p>
+<p>最后 <strong>浏览器返回</strong> 后，路由没有切换到上次访问的路由记录，而是跳到再上次的记录。</p>
+<img src="/legacy/2019/12/03/vue-base-router/replace.gif" class="" title="一个简单的 gif">
+<p>声明式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 注意多了个 replace 属性 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">router-link</span> <span class="attr">:to</span>=<span class="string">"paramsRoute"</span> <span class="attr">replace</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">el-button</span> <span class="attr">type</span>=<span class="string">"primary"</span>&gt;</span>试一试：声明式跳转<span class="tag">&lt;/<span class="name">el-button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">router-link</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>编程式：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.$router.replace(<span class="keyword">this</span>.paramsRoute);</span><br></pre></td></tr></table></figure>
+<h2 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h2><p>重定向概念多数出现在服务器端，但路由中的重定向你一定也见过，虽然原理不同，但最终的“效果”类似。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routes = [&#123; <span class="attr">path</span>: <span class="string">"/"</span>, <span class="attr">redirect</span>: <span class="string">"/router"</span> &#125;];</span><br></pre></td></tr></table></figure>
+<p>最终你访问 / 时，页面地址会变成 /router ，并渲染 /router 对应的 component。但需注意：浏览器并没有收到类似 3xx 的重定向状态码。</p>
+<h2 id="“前进-后退”-跳转"><a href="#“前进-后退”-跳转" class="headerlink" title="“前进/后退” 跳转"></a>“前进/后退” 跳转</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">el-button</span> <span class="attr">type</span>=<span class="string">"primary"</span> @<span class="attr">click</span>=<span class="string">"$router.go(-1)"</span>&gt;</span>试一试：返回上一级历史页面<span class="tag">&lt;/<span class="name">el-button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>类似还有：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.$router.back();</span><br><span class="line"><span class="keyword">this</span>.$router.forward();</span><br></pre></td></tr></table></figure>
+<p>他们都是基于 window.history 相关 api 来实现的功能。</p>
+<h1 id="嵌套路由"><a href="#嵌套路由" class="headerlink" title="嵌套路由"></a>嵌套路由</h1><p>对于简单的路由，我们模板定义如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"app"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">router-view</span>&gt;</span><span class="tag">&lt;/<span class="name">router-view</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我们可以在路由文件 router.js 中定义一堆路由地址：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> router = [</span><br><span class="line">  &#123;</span><br><span class="line">    path: <span class="string">"/a"</span>,</span><br><span class="line">    component: componentA</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    path: <span class="string">"/b"</span>,</span><br><span class="line">    component: componentB</span><br><span class="line">  &#125;</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p>这些都是一级路由。那路由怎么实现嵌套呢？</p>
+<h2 id="父子路由"><a href="#父子路由" class="headerlink" title="父子路由"></a>父子路由</h2><p>利用 children 属性</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routes = [</span><br><span class="line">  &#123; <span class="attr">path</span>: <span class="string">"/"</span>, <span class="attr">redirect</span>: <span class="string">"/router"</span> &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    path: <span class="string">"/router"</span>,</span><br><span class="line">    component: RouterIndex,</span><br><span class="line">    redirect: <span class="string">"/router/jump"</span>,</span><br><span class="line">    children: [</span><br><span class="line">      &#123; <span class="attr">name</span>: <span class="string">"jump"</span>, <span class="attr">path</span>: <span class="string">"jump"</span>, <span class="attr">component</span>: Jump &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">"nest"</span>,</span><br><span class="line">        path: <span class="string">"nest"</span>,</span><br><span class="line">        component: NestIndex,</span><br><span class="line">        children: [</span><br><span class="line">          &#123;</span><br><span class="line">            name: <span class="string">"wrap"</span>,</span><br><span class="line">            path: <span class="string">"wrap"</span>,</span><br><span class="line">            component: NestChild1</span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">      ...</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p>这个例子出现了两个 children ，也就是一个普通的 <strong>三级路由</strong> 形式。</p>
+<img src="/legacy/2019/12/03/vue-base-router/nest.png" class="" title="父子路由嵌套">
+<h2 id="路由多组件"><a href="#路由多组件" class="headerlink" title="路由多组件"></a>路由多组件</h2><p>有时候会出现一个路由地址中需要出现 sidebar（侧导航栏） 和 main（主内容）两个 view 模块。</p>
+<p>抽象的话，就是存在两个 router-view，这是可以把原先的 component 定义成复数 components，通过 <strong>命名视图</strong> 来完成这样的功能。</p>
+<img src="/legacy/2019/12/03/vue-base-router/peer.png" class="" title="同级路由">
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"view"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h3</span>&gt;</span>路由嵌套<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">vv-header</span> <span class="attr">:headers</span>=<span class="string">"headers"</span>&gt;</span><span class="tag">&lt;/<span class="name">vv-header</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">router-view</span>&gt;</span><span class="tag">&lt;/<span class="name">router-view</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">el-row</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">el-col</span> <span class="attr">:span</span>=<span class="string">"12"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">router-view</span> <span class="attr">name</span>=<span class="string">"left"</span>&gt;</span><span class="tag">&lt;/<span class="name">router-view</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">el-col</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">el-col</span> <span class="attr">:span</span>=<span class="string">"12"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">router-view</span> <span class="attr">name</span>=<span class="string">"right"</span>&gt;</span><span class="tag">&lt;/<span class="name">router-view</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">el-col</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">el-row</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// router.js</span></span><br><span class="line">&#123;</span><br><span class="line">  name: <span class="string">'peer'</span>,</span><br><span class="line">  path: <span class="string">'peer'</span>,</span><br><span class="line">  components: &#123;</span><br><span class="line">    <span class="keyword">default</span>: NestChild1,</span><br><span class="line">    left: NestChild2,</span><br><span class="line">    right: NestChild3</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原先我只在一个父组件中使用一个 router-view ，通过 components 的定义可以出现多个 router-view ，来完成多样的布局可能。</p>
+<h1 id="健壮的路由体系"><a href="#健壮的路由体系" class="headerlink" title="健壮的路由体系"></a>健壮的路由体系</h1><h2 id="路由守卫"><a href="#路由守卫" class="headerlink" title="路由守卫"></a>路由守卫</h2><p>守卫这个思想，最初我是在 angular 看到的，然而 vue 里也有对应的概念。但在整个程序设计语言中，还是觉得用 java 里的拦截器描述最为恰当。</p>
+<h3 id="全局前置守卫-beforeEach"><a href="#全局前置守卫-beforeEach" class="headerlink" title="全局前置守卫 beforeEach"></a>全局前置守卫 beforeEach</h3><p>beforeEach 接受 to、from、next 三个参数，前两者分别是路由对象，代表到哪里去、从哪里来。</p>
+<p>next 是整个方法最后 resolve 的回调钩子。如果始终没有在这方法中执行，那么永远进入不到后续路由中。</p>
+<p>我们能在里面做什么？看这个例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routers = <span class="keyword">new</span> Router(&#123;</span><br><span class="line">  routes</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 拦截</span></span><br><span class="line">routers.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 特定路由做验证</span></span><br><span class="line">  <span class="keyword">if</span> (to.name == <span class="string">"guard"</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"验证用户登录"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  next();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>可以对需要的路由做个判断，目标地址如果是需要用户授权的页面，可以在这里统一的做用户信息的判断，来决定是否“放”到后续 to 路由。</p>
+<h3 id="全局后置路由-afterEach"><a href="#全局后置路由-afterEach" class="headerlink" title="全局后置路由 afterEach"></a>全局后置路由 afterEach</h3><p>这是一个 to 路由跳转后，执行的路由方法。与 beforeEach 不同，它不具备 next 参数，也就不具备“守卫”功能。</p>
+<p>我们可以统一在此处做些状态信息的处理，以便 component 能更好的处理。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">routers.afterEach(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"路由请求结束"</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="全局解析守卫"><a href="#全局解析守卫" class="headerlink" title="全局解析守卫"></a>全局解析守卫</h3><p>在 afterEach 之前被调用，当路由组件被解析后则触发。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">routers.beforeResolve(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"beforeResolve 路由解析"</span>);</span><br><span class="line">  next();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="路由独享的守卫-beforeEnter"><a href="#路由独享的守卫-beforeEnter" class="headerlink" title="路由独享的守卫 beforeEnter"></a>路由独享的守卫 beforeEnter</h3><p>上面这两个都是全局范围的，如果只想让某个特定路由执行特殊“任务”，可以在路由定义上使用 beforeEnter，它和 beforeEach 一样具备守卫功能，即可以调用 next：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  name: <span class="string">'notFound'</span>,</span><br><span class="line">  path: <span class="string">'*'</span>,</span><br><span class="line">  component: NotFound,</span><br><span class="line">  beforeEnter: <span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">from</span>, <span class="string">'error'</span>);</span><br><span class="line">    next();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="组件内的守卫-beforeRouteXXX"><a href="#组件内的守卫-beforeRouteXXX" class="headerlink" title="组件内的守卫 beforeRouteXXX"></a>组件内的守卫 beforeRouteXXX</h3><p>为了更细粒度的控制组件的交互，vue-router 也提供了组件内部的路由方法，他们和 data、methods 等组件属性一样使用。</p>
+<p>使用示例如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  data() &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 组件还未进入前触发，注意：无法使用 this 来调用相关方法</span></span><br><span class="line">  beforeRouteEnter(to, <span class="keyword">from</span>, next) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"component beforeRouteEnter"</span>);</span><br><span class="line">    next();</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 动态路由切换地址时才会触发</span></span><br><span class="line">  beforeRouteUpdate(to, <span class="keyword">from</span>, next) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"component beforeRouteUpdate"</span>);</span><br><span class="line">    next();</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 准备跳转其他路由时触发</span></span><br><span class="line">  beforeRouteLeave(to, <span class="keyword">from</span>, next) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"component beforeRouteLeave"</span>);</span><br><span class="line">    next();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="路由执行顺序"><a href="#路由执行顺序" class="headerlink" title="路由执行顺序"></a>路由执行顺序</h3><p>分两块：不同路由切换、动态路由切换</p>
+<p>记肯定记不住的，我画了一个简单的图供参考：</p>
+<img src="/legacy/2019/12/03/vue-base-router/router-order.png" class="" title="路由顺序">
+<h2 id="设置路由名称"><a href="#设置路由名称" class="headerlink" title="设置路由名称"></a>设置路由名称</h2><p>我们知道每个路由 router 具备 path、component 这两个基础属性，同常我们一个项目里可能所有的路由都是这两个属性。</p>
+<p>但你有没有设置过 路由名称？我个人以前是没有用过，因为不知道其中的好处。</p>
+<p>它的用法很简单：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注意这个 name 属性</span></span><br><span class="line">&#123; <span class="attr">name</span>: <span class="string">'dynamic'</span>, <span class="attr">path</span>: <span class="string">':dynamic'</span>, <span class="attr">component</span>: DynamicRouter &#125;</span><br></pre></td></tr></table></figure>
+<p>你注意到他只是比普通路由多了个 name 属性，但会给整个开发体验上带来一丝“温暖”。</p>
+<p>为什么？</p>
+<p>以前我们可能直接在路由的跳转中明确写出目标路由的 path ，但这个 path 是极有可能因为疏忽大意少个斜杠或者单词拼写错误而无法跳转，如果没有较完善的测试机制可能很难发现。</p>
+<p>现在这个 name 属性会提高我们路由的相对稳定性，也有助于我们的开发效率：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.$router.push(&#123; <span class="attr">name</span>: <span class="string">"dynamic"</span>, <span class="attr">params</span>: &#123; <span class="attr">dynamic</span>: <span class="number">1</span> &#125; &#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">  err;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="动态路由的顺序问题"><a href="#动态路由的顺序问题" class="headerlink" title="动态路由的顺序问题"></a>动态路由的顺序问题</h2><p>越来越多的接口是基于 Restful 规范，这样会使得我们出现很多动态路由。但由于各种地址的设计问题，会存在其他路由被这个动态路由覆盖的问题。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'jump'</span>, <span class="attr">path</span>: <span class="string">'jump'</span>, <span class="attr">component</span>: Jump &#125;</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">'dynamic'</span>, <span class="attr">path</span>: <span class="string">':dynamic'</span>, <span class="attr">component</span>: DynamicRouter &#125;,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>你能想象把上述两则路由的顺序颠倒的后果吗？那么永远都不会再触发 jump 路由了。</p>
+<p>有幸，我们的 vue-router 基于先定义先执行的原则，相比后端 springboot 一些路由问题解决起来轻松愉快多了。只需要平时多注意些。</p>
+<h2 id="异步路由加载"><a href="#异步路由加载" class="headerlink" title="异步路由加载"></a>异步路由加载</h2><p>经验丰富的我们都清楚，所有 js 打包在一个 bundle 是非常消耗服务器资源的，这毕竟是现代单页面应用的通病。</p>
+<p>设置一个菊花 loading 图来让用户体验更加好些，但可以通过路由＋ webpack 的打包机制，利用路由异步动态加载所需要的组件 js，达到优化效果更佳。</p>
+<p>现代构建工具已经帮我们把 api 优化好了，简单使用如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> RouterIndex = <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">require</span>.ensure([], () =&gt; <span class="built_in">require</span>(<span class="string">"./pages/Router/Index.vue"</span>), <span class="string">"RouterIndex"</span>);</span><br><span class="line"><span class="keyword">const</span> DynamicRouter = <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">"./pages/Router/DynamicRouter.vue"</span>);</span><br><span class="line"><span class="keyword">const</span> NotFound = <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">"./pages/Router/NotFound.vue"</span>);</span><br><span class="line"><span class="keyword">const</span> Params = <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">"./pages/Router/Params.vue"</span>);</span><br></pre></td></tr></table></figure>
+<p>这样能使得整个服务器的负载压力更小些，用户体验也更好。</p>
+<h2 id="404-后备选项"><a href="#404-后备选项" class="headerlink" title="404 后备选项"></a>404 后备选项</h2><p>通常 404 页面都是由服务器后端来提供，但我们简单的项目通常都是单页面应用，并且页面不经过服务端渲染。</p>
+<p>所以对于客户端的异常页面跳转需要有个最后通配的地址来做渲染。使得整个应用“看似”更好些。</p>
+<p>你总不希望你做的页面在用户一通乱点后，出现一个 nginx 提供的 404 Not Found 页面吧？</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">path</span>: <span class="string">'*'</span>, <span class="attr">component</span>: NotFound &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>一个很简单的例子，希望能帮到遇到此类问题的同学。</p>
+<p>tips: 如果你需要快速掌握相关 vue 概念，有兴趣可以查看如下项目（当然还在建设中，本文章所有 demo 都处于此处，确保能正常 work ）</p>
+<blockquote>
+<p><a href="https://gitee.com/eminoda/practice/tree/master/vue-demo" target="_blank" rel="noopener">https://gitee.com/eminoda/practice/tree/master/vue-demo</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+	
+	<script>tags.push('vue')</script>
+	
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2019/12/03/vue-base-router/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: 'vue 基础-路由开发指南',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510207007').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/legacy/tags/vue/" rel="tag"># vue</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2019/11/25/js-event-loop/" rel="next" title="从事件轮询 Event Loop，看 microTask、macroTask">
+                <i class="fa fa-chevron-left"></i> 从事件轮询 Event Loop，看 microTask、macroTask
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2019/12/03/vue-learn-start/" rel="prev" title="vue 源码学习-准备工作">
+                vue 源码学习-准备工作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数传递"><span class="nav-number">2.</span> <span class="nav-text">参数传递</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#query-参数"><span class="nav-number">2.1.</span> <span class="nav-text">query 参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#path-参数"><span class="nav-number">2.2.</span> <span class="nav-text">path 参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#props-参数"><span class="nav-number">2.3.</span> <span class="nav-text">props 参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#动态路由"><span class="nav-number">3.</span> <span class="nav-text">动态路由</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题"><span class="nav-number">3.1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决"><span class="nav-number">3.2.</span> <span class="nav-text">解决</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#路由跳转"><span class="nav-number">4.</span> <span class="nav-text">路由跳转</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#普通跳转"><span class="nav-number">4.1.</span> <span class="nav-text">普通跳转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#replace-跳转"><span class="nav-number">4.2.</span> <span class="nav-text">replace 跳转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重定向"><span class="nav-number">4.3.</span> <span class="nav-text">重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#“前进-后退”-跳转"><span class="nav-number">4.4.</span> <span class="nav-text">“前进&#x2F;后退” 跳转</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#嵌套路由"><span class="nav-number">5.</span> <span class="nav-text">嵌套路由</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#父子路由"><span class="nav-number">5.1.</span> <span class="nav-text">父子路由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#路由多组件"><span class="nav-number">5.2.</span> <span class="nav-text">路由多组件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#健壮的路由体系"><span class="nav-number">6.</span> <span class="nav-text">健壮的路由体系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#路由守卫"><span class="nav-number">6.1.</span> <span class="nav-text">路由守卫</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#全局前置守卫-beforeEach"><span class="nav-number">6.1.1.</span> <span class="nav-text">全局前置守卫 beforeEach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全局后置路由-afterEach"><span class="nav-number">6.1.2.</span> <span class="nav-text">全局后置路由 afterEach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全局解析守卫"><span class="nav-number">6.1.3.</span> <span class="nav-text">全局解析守卫</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由独享的守卫-beforeEnter"><span class="nav-number">6.1.4.</span> <span class="nav-text">路由独享的守卫 beforeEnter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件内的守卫-beforeRouteXXX"><span class="nav-number">6.1.5.</span> <span class="nav-text">组件内的守卫 beforeRouteXXX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由执行顺序"><span class="nav-number">6.1.6.</span> <span class="nav-text">路由执行顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置路由名称"><span class="nav-number">6.2.</span> <span class="nav-text">设置路由名称</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态路由的顺序问题"><span class="nav-number">6.3.</span> <span class="nav-text">动态路由的顺序问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步路由加载"><span class="nav-number">6.4.</span> <span class="nav-text">异步路由加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#404-后备选项"><span class="nav-number">6.5.</span> <span class="nav-text">404 后备选项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

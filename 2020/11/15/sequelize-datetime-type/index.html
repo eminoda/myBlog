@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="sequelize," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言对于前端虽说有 Node.js 加持，能胜任多平台的产品开发，但因为不是主攻后端，一些数据库知识点偏弱，加上使用 sequelize 等库开箱即用的 api，使得某些细节处理不当很容易导致一些问题。 这篇就谈谈时间（时区）相关的概念，数据库中日期类型，以及结合 sequelize 的实际使用心得。 几种时间约定GMT 格林威治标准时间 格林尼治平均时间（Greenwich Mean Time，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库日期类型在 sequelize 的使用">
+<meta property="og:url" content="http://yoursite.com/2020/11/15/sequelize-datetime-type/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="前言对于前端虽说有 Node.js 加持，能胜任多平台的产品开发，但因为不是主攻后端，一些数据库知识点偏弱，加上使用 sequelize 等库开箱即用的 api，使得某些细节处理不当很容易导致一些问题。 这篇就谈谈时间（时区）相关的概念，数据库中日期类型，以及结合 sequelize 的实际使用心得。 几种时间约定GMT 格林威治标准时间 格林尼治平均时间（Greenwich Mean Time，">
+<meta property="og:image" content="http://yoursite.com/legacy/2020/11/15/sequelize-datetime-type/timezone.jpg">
+<meta property="article:published_time" content="2020-11-15T09:23:38.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.774Z">
+<meta property="article:author" content="Eminoda">
+<meta property="article:tag" content="sequelize">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/legacy/2020/11/15/sequelize-datetime-type/timezone.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/11/15/sequelize-datetime-type/"/>
+
+
+
+
+
+  <title>数据库日期类型在 sequelize 的使用 | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2020/11/15/sequelize-datetime-type/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">数据库日期类型在 sequelize 的使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-15T17:23:38+08:00">
+                2020-11-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">开发</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">前端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>对于前端虽说有 Node.js 加持，能胜任多平台的产品开发，但因为不是主攻后端，一些数据库知识点偏弱，加上使用 sequelize 等库开箱即用的 api，使得某些细节处理不当很容易导致一些问题。</p>
+<p>这篇就谈谈时间（时区）相关的概念，数据库中日期类型，以及结合 sequelize 的实际使用心得。</p>
+<h1 id="几种时间约定"><a href="#几种时间约定" class="headerlink" title="几种时间约定"></a>几种时间约定</h1><h2 id="GMT-格林威治标准时间"><a href="#GMT-格林威治标准时间" class="headerlink" title="GMT 格林威治标准时间"></a>GMT 格林威治标准时间</h2><blockquote>
+<p>格林尼治平均时间（Greenwich Mean Time，GMT）是指位于英国伦敦郊区的皇家格林尼治天文台当地的平太阳时，因为本初子午线被定义为通过那里的经线。</p>
+</blockquote>
+<p>为了形象理解，找了张时区的地理图：</p>
+<img src="/legacy/2020/11/15/sequelize-datetime-type/timezone.jpg" class="">
+<p>能看到整个地球被划分为 24 个时区，以本初子午线为分割点（0 时区），以左为西时区，以右为东时区，我国为东 8 区。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="built_in">Date</span>()</span><br><span class="line">Sun Nov <span class="number">15</span> <span class="number">2020</span> <span class="number">09</span>:<span class="number">00</span>:<span class="number">00</span> GMT+<span class="number">0800</span> (中国标准时间)</span><br></pre></td></tr></table></figure>
+<h2 id="UTC-协调世界时"><a href="#UTC-协调世界时" class="headerlink" title="UTC 协调世界时"></a>UTC 协调世界时</h2><blockquote>
+<p>以原子时秒长为基础，在时刻上尽量接近于世界时的一种时间计量系统。<strong>比 GMT 更为精确</strong>。</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回协调世界时（UTC）相对于当前时区的时间差值，单位为分钟。</span></span><br><span class="line"><span class="keyword">const</span> offsetZone = <span class="keyword">new</span> <span class="built_in">Date</span>().getTimezoneOffset() / <span class="number">60</span>; <span class="comment">// -8</span></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Date</span>().toUTCString(); <span class="comment">// "Sun, 15 Nov 2020 01:00:00 GMT"</span></span><br></pre></td></tr></table></figure>
+<h2 id="ISO-8601"><a href="#ISO-8601" class="headerlink" title="ISO 8601"></a>ISO 8601</h2><blockquote>
+<p>国际标准 ISO 8601，是国际标准化组织的日期和时间的表示方法，全称为《数据存储和交换形式·信息交换·日期和时间的表示方法》。</p>
+</blockquote>
+<p>格式：<strong>YYYY-MM-DDTHH:mm:ss.sssZ</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="built_in">Date</span>().toISOString(); <span class="comment">// "2020-11-15T01:00:00.000Z"</span></span><br></pre></td></tr></table></figure>
+<p>熟悉下 iso 规范的时间，实际本地时间是多少？</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment'</span>);</span><br><span class="line"><span class="keyword">const</span> isoDate = <span class="string">'2020-11-09T13:25:32.000Z'</span>;</span><br><span class="line"></span><br><span class="line">moment(isoDate).format(<span class="string">'YYYY-MM-DD HH:mm:hh'</span>); <span class="comment">//2020-11-09 21:25:09</span></span><br></pre></td></tr></table></figure>
+<h1 id="数据库中的日期类型"><a href="#数据库中的日期类型" class="headerlink" title="数据库中的日期类型"></a>数据库中的日期类型</h1><p>先看下数据库有日期类型，以及他们的特点：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>长度</th>
+<th>日期格式</th>
+<th>日期范围</th>
+<th>特殊</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DATETIME</td>
+<td>8 bytes</td>
+<td>YYYY-MM-DD HH:MM:SS</td>
+<td>1000-01-01 00:00:00 ~ 9999-12-31 23:59:59</td>
+<td>不涉及时区（依照数据源原样存储）</td>
+</tr>
+<tr>
+<td>TIMESTAMP</td>
+<td>4 bytes</td>
+<td>YYYY-MM-DD HH:MM:SS</td>
+<td>19700101080001 ~ 20380119111407</td>
+<td>涉及时区（将当地时间转为 UTC 储存）</td>
+</tr>
+<tr>
+<td>TIME</td>
+<td>3 bytes</td>
+<td>HH:MM:SS</td>
+<td>-838:59:59~838:59:59</td>
+<td>-</td>
+</tr>
+<tr>
+<td>DATE</td>
+<td>3 bytes</td>
+<td>YYYY-MM-DD</td>
+<td>1000-01-01 ~ 9999-12-31</td>
+<td>-</td>
+</tr>
+<tr>
+<td>YEAR</td>
+<td>1 bytes</td>
+<td>YYYY</td>
+<td>1901 ~ 2155</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>能看到对 <strong>DATETIME</strong> 和 <strong>TIMESTAMP</strong> 做了特殊说明，他们两者在和 <strong>sequelize</strong> 一起使用时必然会遇到些问题，下面通过一个例子来说明。</p>
+<h1 id="sequelize-中的日期类型"><a href="#sequelize-中的日期类型" class="headerlink" title="sequelize 中的日期类型"></a>sequelize 中的日期类型</h1><h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><p>首先创建 <strong>time_diff</strong> 表，创建不同的日期类型字段：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+-------------+-------------+------+-----+---------+----------+</span><br><span class="line">| Field       | Type        | Null | Key | Default | Extra    |</span><br><span class="line">+-------------+-------------+------+-----+---------+----------+</span><br><span class="line">| source_time | varchar(<span class="number">60</span>) | YES  |     | NULL    |          |</span><br><span class="line">| t_date      | date        | YES  |     | NULL    |          |</span><br><span class="line">| t_datetime  | datetime    | YES  |     | NULL    |          |</span><br><span class="line">| t_timestamp | timestamp   | YES  |     | NULL    |          |</span><br><span class="line">+-------------+-------------+------+-----+---------+----------+</span><br></pre></td></tr></table></figure>
+<p>然后通过 <strong>Model.create</strong> 往该表插入一条数据（每列赋值均为 <strong>new Date</strong> ）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模型定义</span></span><br><span class="line"><span class="keyword">const</span> TimeDiff = sequelize.define(</span><br><span class="line">  <span class="string">'TimeDiff'</span>,</span><br><span class="line">  &#123;</span><br><span class="line">    sourceTime: DataTypes.STRING,</span><br><span class="line">    tDate: DataTypes.DATE,</span><br><span class="line">    tDatetime: DataTypes.DATE,</span><br><span class="line">    tTimestamp: DataTypes.DATE,</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    freezeTableName: <span class="literal">true</span>,</span><br><span class="line">    tableName: <span class="string">'time_diff'</span>,</span><br><span class="line">    timestamps: <span class="literal">false</span>,</span><br><span class="line">    underscored: <span class="literal">true</span>,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> time = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'time'</span>, time);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 新增记录</span></span><br><span class="line">TimeDiff.create(&#123;</span><br><span class="line">  sourceTime: time.toString(),</span><br><span class="line">  tDate: time,</span><br><span class="line">  tDatetime: time,</span><br><span class="line">  tTimestamp: time,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>结果能看到虽然在 sequelize 中对每列的值设置都一样,但实际却不同:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-----------------------------------------------+------------+---------------------+---------------------+</span><br><span class="line">| source_time                                   | t_date     | t_datetime          | t_timestamp         |</span><br><span class="line">+-----------------------------------------------+------------+---------------------+---------------------+</span><br><span class="line">| Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00) | 2020-11-09 | 2020-11-09 13:25:32 | 2020-11-09 21:25:32 |</span><br><span class="line">+-----------------------------------------------+------------+---------------------+---------------------+</span><br></pre></td></tr></table></figure>
+<p>能看到 <strong>t_date</strong> 只展示了年月日 <strong>YYYY-MM-DD</strong> ， <strong>t_datetime</strong> 和 <strong>t_timestamp</strong> 虽然日期格式都为 <strong>YYYY-MM-DD HH:mm:ss</strong> ，但之间相差 8 小时，那怎么将他们入库时时区相同呢？</p>
+<h2 id="时区设置"><a href="#时区设置" class="headerlink" title="时区设置"></a>时区设置</h2><p>那就要在 <strong>sequelize</strong> 设置制定时区了：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  database: <span class="string">'ebone'</span>,</span><br><span class="line">  username: <span class="string">'root'</span>,</span><br><span class="line">  password: <span class="string">'root'</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">  host: <span class="string">'127.0.0.1'</span>,</span><br><span class="line">  dialect: <span class="string">'mysql'</span>,</span><br><span class="line">  timezone: <span class="string">'+08:00'</span>, <span class="comment">// 时区设置</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> sequelize = <span class="keyword">new</span> Sequelize(config.database, config.username, config.password, options);</span><br></pre></td></tr></table></figure>
+<p>设置完毕后，我们再插入一条数据将发现这两个字段时区相同了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+-----------------------------------------------+------------+---------------------+---------------------+</span><br><span class="line">| source_time                                   | t_date     | t_datetime          | t_timestamp         |</span><br><span class="line">+-----------------------------------------------+------------+---------------------+---------------------+</span><br><span class="line">| Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00) | 2020-11-09 | 2020-11-09 13:25:32 | 2020-11-09 21:25:32 |</span><br><span class="line">| Mon Nov 09 2020 21:37:20 GMT+0800 (GMT+08:00) | 2020-11-09 | 2020-11-09 21:37:20 | 2020-11-09 21:37:20 |</span><br><span class="line">+-----------------------------------------------+------------+---------------------+---------------------+</span><br></pre></td></tr></table></figure>
+<h2 id="查询结果的“不同”"><a href="#查询结果的“不同”" class="headerlink" title="查询结果的“不同”"></a>查询结果的“不同”</h2><p>除了插入行数据，当我们查询记录时，能看到更有意思的现象（<strong>不设置 sequelize 时区选项</strong>）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TimeDiff.findAll(&#123;</span><br><span class="line">  raw: <span class="literal">true</span>,</span><br><span class="line">&#125;).then(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(data);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  <span class="comment">// 未设置时区时，新增的数据</span></span><br><span class="line">  &#123;</span><br><span class="line">    sourceTime: <span class="string">'Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00)'</span>,</span><br><span class="line">    tDate: <span class="string">'2020-11-09'</span>,</span><br><span class="line">    tDatetime: <span class="string">'2020-11-09T13:25:32.000Z'</span>, <span class="comment">// ？？？</span></span><br><span class="line">    tTimestamp: <span class="string">'2020-11-09T13:25:32.000Z'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 已设置时区时，新增的数据</span></span><br><span class="line">  &#123;</span><br><span class="line">    sourceTime: <span class="string">'Mon Nov 09 2020 21:37:20 GMT+0800 (GMT+08:00)'</span>,</span><br><span class="line">    tDate: <span class="string">'2020-11-09'</span>,</span><br><span class="line">    tDatetime: <span class="string">'2020-11-09T21:37:20.000Z'</span>, <span class="comment">// ？？？</span></span><br><span class="line">    tTimestamp: <span class="string">'2020-11-09T13:37:20.000Z'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p>而当我们 <strong>sequelize</strong> 设置时区（+8:00）后，看下取值的结果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    sourceTime: <span class="string">'Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00)'</span>,</span><br><span class="line">    tDate: <span class="string">'2020-11-09'</span>,</span><br><span class="line">    tDatetime: <span class="string">'2020-11-09T05:25:32.000Z'</span>,</span><br><span class="line">    tTimestamp: <span class="string">'2020-11-09T13:25:32.000Z'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    sourceTime: <span class="string">'Mon Nov 09 2020 21:37:20 GMT+0800 (GMT+08:00)'</span>,</span><br><span class="line">    tDate: <span class="string">'2020-11-09'</span>,</span><br><span class="line">    tDatetime: <span class="string">'2020-11-09T13:37:20.000Z'</span>,</span><br><span class="line">    tTimestamp: <span class="string">'2020-11-09T13:37:20.000Z'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p>对比时区设置前后的查询结果，能看到通过 sequelize 查询到的这两条数据有这几个特点：</p>
+<ol>
+<li><strong>sequelize</strong> 帮我们把 <strong>tDatetime</strong> 和 <strong>tTimestamp</strong> 统一为 iso 时间格式</li>
+<li>未设置时区，<strong>DateTime</strong> 类型的值直接取出显示，设置后，将对设置时区进行偏移后再显示</li>
+<li>对 <strong>Timestamp</strong> 类型的值始终相同</li>
+</ol>
+<h1 id="为何会有这样的不同呢？"><a href="#为何会有这样的不同呢？" class="headerlink" title="为何会有这样的不同呢？"></a>为何会有这样的不同呢？</h1><h2 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h2><p>我们设置时间类型的字段都会通过 <strong>sequelize</strong> 进行转义，并进入 <strong>_applyTimezone</strong> 方法。如果我们没有设置过时区，默认时区为 +00:00（options.timezone 判断非空）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DATE</span> <span class="keyword">extends</span> <span class="title">ABSTRACT</span> </span>&#123;</span><br><span class="line">  _applyTimezone(date, options) &#123;</span><br><span class="line">    <span class="keyword">if</span> (options.timezone) &#123;</span><br><span class="line">      <span class="keyword">if</span> (momentTz.tz.zone(options.timezone)) &#123;</span><br><span class="line">        <span class="keyword">return</span> momentTz(date).tz(options.timezone);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// moment(date).utcOffset('+00:00')</span></span><br><span class="line">      <span class="keyword">return</span> (date = moment(date).utcOffset(options.timezone));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> momentTz(date);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而 <strong>utcOffset</strong> 起什么作用呢？首先看下默认情况下 <strong>utcOffset</strong> （不设置参数时），utc 时区的偏移量：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">moment().utcOffset(); <span class="comment">// 480(480/60=8小时) +08:00</span></span><br></pre></td></tr></table></figure>
+<p><strong>当未设置时区时（+00:00）:</strong></p>
+<p>如果设置 <strong>2020-11-09 21:25:32</strong> （ 本地+08:00 时间）值时，通过 <strong>utcOffset(+00:00)</strong> 方法偏移后，对于 <strong>DateTime</strong> 将落库 <strong>2020-11-09 13:25:32</strong> （<strong>2020-11-09 21:25:32</strong> 减去 8 小时）；</p>
+<p>由于数据库 mysql 设置的时区为本地时间，实际落库为 <strong>2020-11-09 21:25:32</strong>（<strong>2020-11-09 13:25:32</strong> 多加 8 小时），最终<br>为：<strong>2020-11-09 21:25:32</strong></p>
+<p><strong>当设置时区时（+08:00）：</strong></p>
+<p>通过 <strong>utcOffset(+08:00)</strong> 偏移，由于时区和本地一致，所以偏移“无效”，<strong>DateTime</strong> 类型的值将为 <strong>2020-11-09 21:25:32</strong>；</p>
+<p>同时和 mysql 时区一致，对于 <strong>TimeStamp</strong> 的落库值也为：<strong>2020-11-09 21:25:32</strong></p>
+<h2 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h2><p>通过 <strong>seqeulize</strong> 从 <strong>mysql</strong> 查询时，会对取到结果进行解析，对于 <strong>DateTime</strong> 类型的字段会执行 <strong>parse</strong> 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Datetime</span></span><br><span class="line"><span class="comment">// sequelize\lib\dialects\mysql\data-types.js</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DATE</span> <span class="keyword">extends</span> <span class="title">BaseTypes</span>.<span class="title">DATE</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 2020-11-09 13:25:32</span></span><br><span class="line">  <span class="keyword">static</span> parse(value, options) &#123;</span><br><span class="line">    value = value.string();</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">if</span> (moment.tz.zone(options.timezone)) &#123;</span><br><span class="line">      value = moment.tz(value, options.timezone).toDate();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// new Date("2020-11-09 13:25:32 +08:00")</span></span><br><span class="line">      value = <span class="keyword">new</span> <span class="built_in">Date</span>(<span class="string">`<span class="subst">$&#123;value&#125;</span> <span class="subst">$&#123;options.timezone&#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们设置了 <strong>options.timezone</strong> ，则会在最后添加时区值。</p>
+<p>对于 <strong>Timestamp</strong> 类型，会选择 <strong>mysql2</strong> 模块内置的方法进行解析：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mysql2\lib\parsers\text_parser.js</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">readCodeFor</span>(<span class="params">type, charset, encodingExpr, config, options</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="keyword">switch</span> (type) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">case</span> Types.DATE:</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">      <span class="keyword">return</span> <span class="string">`packet.parseDate('<span class="subst">$&#123;timezone&#125;</span>')`</span>;</span><br><span class="line">    <span class="keyword">case</span> Types.DATETIME:</span><br><span class="line">    <span class="keyword">case</span> Types.TIMESTAMP:</span><br><span class="line">      <span class="keyword">if</span> (helpers.typeMatch(type, dateStrings, Types)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'packet.readLengthCodedString("ascii")'</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">`packet.parseDateTime('<span class="subst">$&#123;timezone&#125;</span>')`</span>;</span><br><span class="line">    <span class="keyword">case</span> Types.TIME:</span><br><span class="line">      <span class="keyword">return</span> <span class="string">'packet.readLengthCodedString("ascii")'</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mysql2\lib\packets\packet.js</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Packet</span> </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="comment">// +08:00</span></span><br><span class="line">  parseDateTime(timezone) &#123;</span><br><span class="line">    <span class="comment">// 2020-11-09 21:25:32</span></span><br><span class="line">    <span class="keyword">const</span> str = <span class="keyword">this</span>.readLengthCodedString(<span class="string">'binary'</span>);</span><br><span class="line">    <span class="keyword">if</span> (str === <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!timezone || timezone === <span class="string">'local'</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Date</span>(str);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// new Date("2020-11-09 21:25:32+08:00")</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Date</span>(<span class="string">`<span class="subst">$&#123;str&#125;</span><span class="subst">$&#123;timezone&#125;</span>`</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于上述两种类型选择对应解析方法都功能都是相同的，那为何会有上面查询出结果“不同”的现象？原因还是 <strong>DateTime，TimeStamp 和时区的关系</strong>。</p>
+<p>我们以这条记录，在不同时区设置的查询结果进行分析：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-----------------------------------------------+------------+---------------------+---------------------+</span><br><span class="line">| source_time                                   | t_date     | t_datetime          | t_timestamp         |</span><br><span class="line">+-----------------------------------------------+------------+---------------------+---------------------+</span><br><span class="line">| Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00) | 2020-11-09 | 2020-11-09 13:25:32 | 2020-11-09 21:25:32 |</span><br><span class="line">+-----------------------------------------------+------------+---------------------+---------------------+</span><br></pre></td></tr></table></figure>
+<p><strong>当没有设置过时区（+00:00）时：</strong></p>
+<p>如果 <strong>DateTime</strong> 库值为 <strong>2020-11-09 13:25:32</strong>，最终通过 parse 方法，将返回 new Date(‘2020-11-09 13:25:32+00:00’)，转为 iso 格式，即为：<strong>2020-11-09T13:25:32.000Z</strong>；</p>
+<p>如果 <strong>TimeStamp</strong> 库值为 <strong>2020-11-09 21:25:32</strong>，由于时区不一致，首先 mysql 会根据时区转为 UTC 时间（少 8 小时）为：<strong>2020-11-09 13:25:32</strong>，再进行解析，最终和上面的 <strong>DateTime</strong> 类型的结果一样。</p>
+<p><strong>sequelize</strong> 插叙查询结果如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  sourceTime: <span class="string">'Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00)'</span>,</span><br><span class="line">  tDate: <span class="string">'2020-11-09'</span>,</span><br><span class="line">  tDatetime: <span class="string">'2020-11-09T13:25:32.000Z'</span>, <span class="comment">// ？？？</span></span><br><span class="line">  tTimestamp: <span class="string">'2020-11-09T13:25:32.000Z'</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>而当设置时区后（+08:00）后：</strong></p>
+<p>对于 <strong>DateTime</strong> 类型，对应返回 new Date(‘2020-11-09 13:25:32+08:00’)，转为 iso 格式，即为：<strong>2020-11-09T05:25:32.000Z</strong>；</p>
+<p>而由于 <strong>sequelize</strong> 和 <strong>mysql</strong> 时区一致（+08:00），<strong>TimeStamp</strong> 取出的值直接为：<strong>2020-11-09 21:25:32</strong>，对应返回 new Date(‘2020-11-09 21:25:32+08:00’)，转为 iso 格式，即为：<strong>2020-11-09T13:25:32.000Z</strong>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  sourceTime: <span class="string">'Mon Nov 09 2020 21:25:32 GMT+0800 (GMT+08:00)'</span>,</span><br><span class="line">  tDate: <span class="string">'2020-11-09'</span>,</span><br><span class="line">  tDatetime: <span class="string">'2020-11-09T05:25:32.000Z'</span>,</span><br><span class="line">  tTimestamp: <span class="string">'2020-11-09T13:25:32.000Z'</span>,</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>因为时区涉及数据库 和 sequelize 的设置，同时对于不同时区的客户端解析 ISO 格式时间也会不同，所以有几个最佳实践：</p>
+<ul>
+<li>对 DateTime 类型的字段要小心处理</li>
+<li>sequelize 的时区设置要和数据库保持一致</li>
+<li>服务端相关时间做好服务端解析后，再输出给客户端，减少客户端对时间的操作</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/datetime.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+	
+	<script>tags.push('sequelize')</script>
+	
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2020/11/15/sequelize-datetime-type/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: '数据库日期类型在 sequelize 的使用',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510206311').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/legacy/tags/sequelize/" rel="tag"># sequelize</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2020/10/29/webpack-circular-import/" rel="next" title="webpack import 循环引用，导致引用变量 undefined">
+                <i class="fa fa-chevron-left"></i> webpack import 循环引用，导致引用变量 undefined
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2021/01/29/npm-semver-strategy/" rel="prev" title="如何管理 npm 版本号：语义化版本策略 SemVer">
+                如何管理 npm 版本号：语义化版本策略 SemVer <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#几种时间约定"><span class="nav-number">2.</span> <span class="nav-text">几种时间约定</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GMT-格林威治标准时间"><span class="nav-number">2.1.</span> <span class="nav-text">GMT 格林威治标准时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UTC-协调世界时"><span class="nav-number">2.2.</span> <span class="nav-text">UTC 协调世界时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ISO-8601"><span class="nav-number">2.3.</span> <span class="nav-text">ISO 8601</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据库中的日期类型"><span class="nav-number">3.</span> <span class="nav-text">数据库中的日期类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#sequelize-中的日期类型"><span class="nav-number">4.</span> <span class="nav-text">sequelize 中的日期类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Demo"><span class="nav-number">4.1.</span> <span class="nav-text">Demo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时区设置"><span class="nav-number">4.2.</span> <span class="nav-text">时区设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查询结果的“不同”"><span class="nav-number">4.3.</span> <span class="nav-text">查询结果的“不同”</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为何会有这样的不同呢？"><span class="nav-number">5.</span> <span class="nav-text">为何会有这样的不同呢？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#插入"><span class="nav-number">5.1.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查询"><span class="nav-number">5.2.</span> <span class="nav-text">查询</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">6.1.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

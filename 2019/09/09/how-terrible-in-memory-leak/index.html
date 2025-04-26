@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="性能优化," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="线上环境居然遇到了内存泄露，经过 3 天的摸索，算是解决了：  更换 pm2 版本，由 v3.5.1 降为 v3.4.1  对于这个结论还是不太满意，算是歪打正着。不过还是记录下这几天积累的经验，说不定对正在看此文的你会有帮助。 前言（鼓励）有幸，我这次有充足的时间去排查，没有其他事情干扰。但线上出现内存泄漏，解决起来比业务代码 bug 更难解决，那种头皮发麻的难受。原因如下：  项目代码复杂。排">
+<meta property="og:type" content="article">
+<meta property="og:title" content="令人“头大”的 Nodejs 内存泄露">
+<meta property="og:url" content="http://yoursite.com/2019/09/09/how-terrible-in-memory-leak/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="线上环境居然遇到了内存泄露，经过 3 天的摸索，算是解决了：  更换 pm2 版本，由 v3.5.1 降为 v3.4.1  对于这个结论还是不太满意，算是歪打正着。不过还是记录下这几天积累的经验，说不定对正在看此文的你会有帮助。 前言（鼓励）有幸，我这次有充足的时间去排查，没有其他事情干扰。但线上出现内存泄漏，解决起来比业务代码 bug 更难解决，那种头皮发麻的难受。原因如下：  项目代码复杂。排">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/09/09/how-terrible-in-memory-leak/scope-ref.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/09/09/how-terrible-in-memory-leak/devtools.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/09/09/how-terrible-in-memory-leak/pm2-timewrap.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/09/09/how-terrible-in-memory-leak/pm2-httpMetrics.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/09/09/how-terrible-in-memory-leak/pm2-io.jpg">
+<meta property="og:image" content="http://yoursite.com/legacy/2019/09/09/how-terrible-in-memory-leak/pm2-memory-leak.png">
+<meta property="article:published_time" content="2019-09-09T10:21:29.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.633Z">
+<meta property="article:author" content="Eminoda">
+<meta property="article:tag" content="性能优化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/legacy/2019/09/09/how-terrible-in-memory-leak/scope-ref.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/09/how-terrible-in-memory-leak/"/>
+
+
+
+
+
+  <title>令人“头大”的 Nodejs 内存泄露 | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2019/09/09/how-terrible-in-memory-leak/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">令人“头大”的 Nodejs 内存泄露</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-09T18:21:29+08:00">
+                2019-09-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">开发</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">前端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>线上环境居然遇到了内存泄露，经过 3 天的摸索，算是解决了：</p>
+<blockquote>
+<p>更换 pm2 版本，由 v3.5.1 降为 v3.4.1</p>
+</blockquote>
+<p>对于这个结论还是不太满意，算是歪打正着。不过还是记录下这几天<strong>积累的经验</strong>，说不定对正在看此文的你会有帮助。</p>
+<h2 id="前言（鼓励）"><a href="#前言（鼓励）" class="headerlink" title="前言（鼓励）"></a>前言（鼓励）</h2><p>有幸，我这次有充足的时间去排查，没有其他事情干扰。但线上出现<strong>内存泄漏</strong>，解决起来比业务代码 bug 更难解决，那种头皮发麻的难受。原因如下：</p>
+<ul>
+<li>项目代码复杂。排查“泄漏点”，犹如大海捞针</li>
+<li>开放的前端模式。顾及不暇的 node_modules 模块</li>
+<li>无形的压力。需要时间拿数据做佐证，时间等的越长，压力越来</li>
+</ul>
+<p>不管有没有精力 or 能力，我认为 <strong>解决内存泄漏的最佳实践是：积极的心态 + 冷静的问题定位</strong>。（没错，这是对目前没有解决问题的你说的）</p>
+<h2 id="内存增长的原因"><a href="#内存增长的原因" class="headerlink" title="内存增长的原因"></a>内存增长的原因</h2><p>可以看下这篇文章 <a href="https://marmelab.com/blog/2018/04/03/how-to-track-and-fix-memory-leak-with-nodejs.html" target="_blank" rel="noopener">Finding And Fixing Node.js Memory Leaks: A Practical Guide</a></p>
+<ul>
+<li>全局变量</li>
+<li>代码缓存</li>
+<li>闭包</li>
+<li>…</li>
+</ul>
+<p>Anyway，其实不管什么原因，主要还是 <strong>各种引用</strong> 得不到 V8 GC 的释放。扔一段很经典的代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">calc</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Math</span>.round((data / <span class="number">1024</span> / <span class="number">1024</span>) * <span class="number">100</span>) / <span class="number">100</span> + <span class="string">" MB"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">logger</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> mem = process.memoryUsage();</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>(), <span class="string">"memory now:"</span>, calc(mem.rss));</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> theThing = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">var</span> replaceThing = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  logger();</span><br><span class="line">  <span class="keyword">var</span> originalThing = theThing;</span><br><span class="line">  <span class="keyword">var</span> unused = <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (originalThing) &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"未被调用，但 originalThing 有个 someMethod 的引用"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">  theThing = &#123;</span><br><span class="line">    longStr: <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">1000000</span>).join(<span class="string">"*"</span>),</span><br><span class="line">    someMethod: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"没做任何事情，但我是闭包"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"parse"</span>);</span><br><span class="line">&#125;;</span><br><span class="line">setInterval(replaceThing, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+<p>执行没多久，就从 20M 飚到 几百 M。究其原因，还是因为闭包引用没有及时被销毁。</p>
+<p>具体原因如下：</p>
+<p>虽然 <strong>unused</strong> 没有被调用，但是其中包含 <strong>originalThing</strong> 并指向 <strong>theThing</strong> <strong>，theThing</strong> 在定义时有个 <strong>someMethod</strong> 方法，其就是个闭包（可以访问到 <strong>originalThing</strong>） ，该闭包在 <strong>unused</strong> 中由于引用了 <strong>originalThing</strong> 一直没有被释放。</p>
+<img src="/legacy/2019/09/09/how-terrible-in-memory-leak/scope-ref.png" class="" title="层层嵌套的引用">
+<h2 id="对内存进行“检查”"><a href="#对内存进行“检查”" class="headerlink" title="对内存进行“检查”"></a>对内存进行“检查”</h2><p>如果你对这块有查询过相关资料， <strong>heapdump</strong> 这模块应该频繁出现，这里说下如何使用它来监控项目的内存情况。当然还有 <strong>memwatch</strong> …</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install heapdump -S</span><br></pre></td></tr></table></figure>
+<p>如果你足够幸运，肯定会出现如下问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">error: #error This version of node&#x2F;NAN&#x2F;v8 requires a C++11 compiler</span><br></pre></td></tr></table></figure>
+<p>原版本过低，需要更新 linux 系统的 gcc 等相关库。</p>
+<p>参考如下安装说明：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 安装 repo 仓库</span></span><br><span class="line">wget http://people.centos.org/tru/devtools-2/devtools-2.repo</span><br><span class="line">mv devtools-2.repo /etc/yum.repos.d</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 安装新库</span></span><br><span class="line">yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 备份原库</span></span><br><span class="line">mv /usr/bin/gcc /usr/bin/gcc-4.4.7</span><br><span class="line">mv /usr/bin/g++ /usr/bin/g++-4.4.7</span><br><span class="line">mv /usr/bin/c++ /usr/bin/c++-4.4.7</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建快捷方式，将新库链到需要目录</span></span><br><span class="line">ln -s /opt/rh/devtoolset-2/root/usr/bin/gcc /usr/bin/gcc</span><br><span class="line">ln -s /opt/rh/devtoolset-2/root/usr/bin/c++ /usr/bin/c++</span><br><span class="line">ln -s /opt/rh/devtoolset-2/root/usr/bin/g++ /usr/bin/g++</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 检查版本，确定生效</span></span><br><span class="line">gcc --version</span><br></pre></td></tr></table></figure>
+<p>当然系统是 window 可能还会有更坑的问题：安装 node-gyp、python 出错。</p>
+<p>推荐如下 npm 模块：</p>
+<blockquote>
+<p>windows-build-tools</p>
+</blockquote>
+<p>一键安装相关组件依赖（我们只要静静的等待，因为时间有些久）。他会帮你安装 window 对应的 <strong>NET Framework</strong>，python 这些插件。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --global --production windows-build-tools</span><br></pre></td></tr></table></figure>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>线上很简单的做了一个控制台输出，用于定位问题：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> heapdump = <span class="built_in">require</span>(<span class="string">"heapdump"</span>);</span><br><span class="line"><span class="keyword">let</span> startMem = process.memoryUsage();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">calc</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Math</span>.round((data / <span class="number">1024</span> / <span class="number">1024</span>) * <span class="number">10000</span>) / <span class="number">10000</span> + <span class="string">" MB"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 使用的是 koa</span></span><br><span class="line">router.all(<span class="string">"/foo"</span>, <span class="keyword">async</span> (ctx, next) =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> mem = process.memoryUsage();</span><br><span class="line">  logger.debug(<span class="string">"memory before"</span>, calc(startMem.rss), <span class="string">"memory now:"</span>, calc(mem.rss), <span class="string">"diff increase"</span>, calc(mem.rss - startMem.rss));</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样就能实时看到系统的内存消耗（对比刚启动时）:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2019-09-06 16:30 +08:00: [2019-09-06T16:30:06.700] [DEBUG] transfer - memory before 55.5898 MB memory now: 95.1484 MB diff increase 39.5586 MB</span><br><span class="line">2019-09-06 16:30 +08:00: [2019-09-06T16:30:07.724] [DEBUG] transfer - memory before 56.2148 MB memory now: 69.8438 MB diff increase 13.6289 MB</span><br><span class="line">2019-09-06 16:30 +08:00: [2019-09-06T16:30:10.406] [DEBUG] transfer - memory before 56.2148 MB memory now: 70.5977 MB diff increase 14.3828 MB</span><br><span class="line">2019-09-06 16:30 +08:00: [2019-09-06T16:30:11.018] [DEBUG] transfer - memory before 55.5898 MB memory now: 95.4219 MB diff increase 39.832 MB</span><br><span class="line">2019-09-06 16:30 +08:00: [2019-09-06T16:30:12.827] [DEBUG] transfer - memory before 55.5898 MB memory now: 95.6797 MB diff increase 40.0898 MB</span><br><span class="line">2019-09-06 16:30 +08:00: [2019-09-06T16:30:12.952] [DEBUG] transfer - memory before 55.5898 MB memory now: 94.9688 MB diff increase 39.3789 MB</span><br></pre></td></tr></table></figure>
+<p>添加个快照路由，在按照需要抓取内存此刻使用情况:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">router.all(<span class="string">"/snapshot"</span>, <span class="keyword">async</span> (ctx, next) =&gt; &#123;</span><br><span class="line">  heapdump.writeSnapshot(<span class="string">"./dump-"</span> + <span class="built_in">Date</span>.now() + <span class="string">".heapsnapshot"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="built_in">console</span>.error(err);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>导入到 chrome 的 profile 面板中，对比前后两个文件的变化，定位问题</p>
+<img src="/legacy/2019/09/09/how-terrible-in-memory-leak/devtools.png" class="" title="profile">
+<p>一切顺利就能很快定位到问题代码。但实际要更困难，更摸不着头脑。</p>
+<h2 id="猜测的可能点"><a href="#猜测的可能点" class="headerlink" title="猜测的可能点"></a>猜测的可能点</h2><p>如果按照上述的“检查”操作还是没有定位到问题点，可能这段会对你有所帮助。</p>
+<p>首先要知道自己着手的项目的用途，所用技术，它对你排查问题更有指向意义。</p>
+<p>比如：此项目是基于 node 的中间层服务，对 api 接口进行转换。用于由后端 api 服务的“升级”平滑各客户端的发版时差。（服务可能在 api 调用上有性能瓶颈？）</p>
+<p>技术栈：sequelize + koa + pm2 （熟悉项目的主要框架，从大技术方向着手）</p>
+<p>有幸有个 项目 B 和此项目类似，技术上略有差异。</p>
+<p>综上所述，就猜测了几个可能的 <strong>内存泄露</strong> 原因（附参考文章）：</p>
+<ul>
+<li>代码问题<ul>
+<li>代码逻辑全局缓存问题<ul>
+<li><a href="https://www.mattzeunert.com/2017/01/31/weak-maps.html" target="_blank" rel="noopener">Difference between Map and WeakMap in JavaScript</a></li>
+</ul>
+</li>
+<li>项目本身负载能力</li>
+</ul>
+</li>
+<li>访问量（项目 A 高于 项目 B）<ul>
+<li>对数据库的查询的冲击（sequelize）<ul>
+<li><a href="https://github.com/sequelize/sequelize/issues/9062" target="_blank" rel="noopener">sequelize 4.37.7 造成内存泄漏</a></li>
+<li><a href="https://github.com/sequelize/sequelize/issues/9276" target="_blank" rel="noopener">sequelize 中 ladash api 变量未回收</a></li>
+</ul>
+</li>
+<li>日志读写堆积（log4js）<ul>
+<li><a href="https://claude-ray.github.io/2018/12/21/pm2-cluster-log4js/" target="_blank" rel="noopener">PM2 cluster + log4js？并不理想的组合</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>第三方依赖<ul>
+<li>pm2<ul>
+<li><a href="https://github.com/Unitech/pm2/issues/4302" target="_blank" rel="noopener">pm2 memory leak</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><table>
+<thead>
+<tr>
+<th>可能原因</th>
+<th>测试方式</th>
+<th>验证结果</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代码问题</td>
+<td>ab 压测</td>
+<td>ok</td>
+<td>但需增加重视</td>
+</tr>
+<tr>
+<td>sequlize 版本问题</td>
+<td>ab 压测</td>
+<td>ok</td>
+<td>暂不尝试。目前使用 4.42.0，线上无法承担更换版本的风险</td>
+</tr>
+<tr>
+<td>Ladash _.template</td>
+<td>ab 压测</td>
+<td>ok</td>
+<td>保持现状</td>
+</tr>
+<tr>
+<td>log4js 有背压问题</td>
+<td>ab 压测</td>
+<td>ok</td>
+<td>pm2 &amp; log4js 使用不够友好，在有替代方案前（比如 winston），保持现状</td>
+</tr>
+<tr>
+<td>pm2 版本问题</td>
+<td>线上降低版本 3.5.1 -&gt; 3.4.1</td>
+<td>待验证</td>
+<td>项目 B 使用 3.4.1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>这两天从线上情况上看，修改 pm2 版本后，内存泄漏得到控制。下面由此结论反推验证步骤：</p>
+<ol>
+<li><p>使用 devtools ，发现一天的内存差异，TIMERWRAP 指标突增：</p>
+<img src="/legacy/2019/09/09/how-terrible-in-memory-leak/pm2-timewrap.png" class="" title="profile">
+<p>TIMERWRAP 是 Node 里 Timer 相关定义，猜测是否有定时器在有规律的无限刷新占用性能。</p>
+</li>
+<li><p>继续查看，发现 pm2 有些“格格不入”</p>
+<img src="/legacy/2019/09/09/how-terrible-in-memory-leak/pm2-httpMetrics.png" class="" title="profile">
+<p>metrics 心跳检测，是否有 setTimeout 之类的代码？</p>
+</li>
+<li><p>查看资料，发现相关 issus 中说代码有 leak</p>
+<img src="/legacy/2019/09/09/how-terrible-in-memory-leak/pm2-io.jpg" class="" title="@pm2&#x2F;io">
+<p>查看线上项目相关代码，的确有这段问题代码：</p>
+<img src="/legacy/2019/09/09/how-terrible-in-memory-leak/pm2-memory-leak.png" class="" title="@pm2&#x2F;io">
+<p>对于为何这段 if/else 会造成内存泄漏，有空再研究下。估计类似 dom 的 event 绑定没有解除所致。</p>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<p>我只是知识点的“加工者”， 更多内容请查阅原文链接 :thought_balloon: ， 同时感谢原作者的付出：</p>
+</blockquote>
+<ul>
+<li><a href="http://www.ruanyifeng.com/blog/2017/04/memory-leak.html" target="_blank" rel="noopener">JavaScript 内存泄漏教程</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/40733281" target="_blank" rel="noopener">深入解析 ES Module</a></li>
+<li><a href="https://www.mattzeunert.com/2017/01/31/weak-maps.html" target="_blank" rel="noopener">Difference between Map and WeakMap in JavaScript</a></li>
+<li><a href="http://voidcanvas.com/map-weakmap-pojo/" target="_blank" rel="noopener">ES6 Map vs WeakMap vs plain Objects – Describing the differences</a></li>
+<li><a href="https://github.com/sequelize/sequelize/issues/9062" target="_blank" rel="noopener">sequelize 4.37.7 造成内存泄漏</a></li>
+<li><a href="https://github.com/sequelize/sequelize/issues/9276" target="_blank" rel="noopener">sequelize 中 ladash api 变量未回收</a></li>
+<li><a href="https://claude-ray.github.io/2018/12/21/pm2-cluster-log4js/" target="_blank" rel="noopener">PM2 cluster + log4js？并不理想的组合</a></li>
+<li><a href="https://github.com/Unitech/pm2/issues/4302" target="_blank" rel="noopener">pm2 memory leak</a></li>
+<li><a href="https://blog.csdn.net/f_9628/article/details/88708763" target="_blank" rel="noopener">记录一次安装 heapdump,报 node-gyp rebuild failed 的问题</a></li>
+<li><a href="https://marmelab.com/blog/2018/04/03/how-to-track-and-fix-memory-leak-with-nodejs.html" target="_blank" rel="noopener">Finding And Fixing Node.js Memory Leaks: A Practical Guide</a></li>
+<li><a href="https://www.cnblogs.com/mliudong/p/3635294.html" target="_blank" rel="noopener">JavaScript 内存优化</a></li>
+<li><a href="https://blog.meteor.com/an-interesting-kind-of-javascript-memory-leak-8b47d2e7f156?gi=3db08c12c287" target="_blank" rel="noopener">An interesting kind of JavaScript memory leak</a></li>
+<li><a href="https://jinlong.github.io/2016/05/01/4-Types-of-Memory-Leaks-in-JavaScript-and-How-to-Get-Rid-Of-Them/" target="_blank" rel="noopener">4 类 JavaScript 内存泄漏及如何避免</a></li>
+<li><a href="https://juejin.im/post/5b3ae7b8f265da62cb1db9e0" target="_blank" rel="noopener">JavaScript 闭包详解</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+	
+	<script>tags.push('性能优化')</script>
+	
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2019/09/09/how-terrible-in-memory-leak/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: '令人“头大”的 Nodejs 内存泄露',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510207877').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/legacy/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag"># 性能优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2019/08/07/vue-esm-vs-commonjs/" rel="next" title="ES Module 和 CommonJS 的区别">
+                <i class="fa fa-chevron-left"></i> ES Module 和 CommonJS 的区别
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2019/10/11/webpack-dev-server-hmr/" rel="prev" title="探索 webpack-dev-server 的 HMR">
+                探索 webpack-dev-server 的 HMR <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言（鼓励）"><span class="nav-number">1.</span> <span class="nav-text">前言（鼓励）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存增长的原因"><span class="nav-number">2.</span> <span class="nav-text">内存增长的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对内存进行“检查”"><span class="nav-number">3.</span> <span class="nav-text">对内存进行“检查”</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">3.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用"><span class="nav-number">3.2.</span> <span class="nav-text">使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#猜测的可能点"><span class="nav-number">4.</span> <span class="nav-text">猜测的可能点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#验证"><span class="nav-number">4.1.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结论"><span class="nav-number">4.2.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

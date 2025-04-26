@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="commander," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言如果你想了解命令行脚手架，这篇将带你入个门了解 commander 和 inquirer 库的使用。然后通过一个 Demo 示例来示范如何创作一个脚手架。 commander首先需要知道 commander 这个 npm 库，它帮我们封装了 解析命令行 的能力。我们之后要做的脚手架都是基于 commander 的。 先了解几个简单的使用方式显示帮助&amp;版本信息12345const pro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="打造属于自己的一款命令行 cli 脚手架工具">
+<meta property="og:url" content="http://yoursite.com/2021/10/18/commander-quickstart/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="前言如果你想了解命令行脚手架，这篇将带你入个门了解 commander 和 inquirer 库的使用。然后通过一个 Demo 示例来示范如何创作一个脚手架。 commander首先需要知道 commander 这个 npm 库，它帮我们封装了 解析命令行 的能力。我们之后要做的脚手架都是基于 commander 的。 先了解几个简单的使用方式显示帮助&amp;版本信息12345const pro">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/18/commander-quickstart/chalk.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/18/commander-quickstart/enhance-error.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/18/commander-quickstart/inquirer.gif">
+<meta property="article:published_time" content="2021-10-18T05:49:20.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.856Z">
+<meta property="article:author" content="Eminoda">
+<meta property="article:tag" content="commander">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/legacy/2021/10/18/commander-quickstart/chalk.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/10/18/commander-quickstart/"/>
+
+
+
+
+
+  <title>打造属于自己的一款命令行 cli 脚手架工具 | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2021/10/18/commander-quickstart/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">打造属于自己的一款命令行 cli 脚手架工具</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-10-18T13:49:20+08:00">
+                2021-10-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">开发</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">前端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你想了解命令行脚手架，这篇将带你入个门了解 <strong>commander</strong> 和 <strong>inquirer</strong> 库的使用。然后通过一个 Demo 示例来示范如何创作一个脚手架。</p>
+<h1 id="commander"><a href="#commander" class="headerlink" title="commander"></a>commander</h1><p>首先需要知道 <strong>commander</strong> 这个 <strong>npm</strong> 库，它帮我们封装了 <strong>解析命令行</strong> 的能力。我们之后要做的脚手架都是基于 <strong>commander</strong> 的。</p>
+<h2 id="先了解几个简单的使用方式"><a href="#先了解几个简单的使用方式" class="headerlink" title="先了解几个简单的使用方式"></a>先了解几个简单的使用方式</h2><h3 id="显示帮助-amp-版本信息"><a href="#显示帮助-amp-版本信息" class="headerlink" title="显示帮助&amp;版本信息"></a>显示帮助&amp;版本信息</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> program = <span class="built_in">require</span>(<span class="string">'commander'</span>);</span><br><span class="line"><span class="comment">// 定义程序名称，版本</span></span><br><span class="line">program.name(cliName).version(pkg.version);</span><br><span class="line"><span class="comment">// 解析命令行</span></span><br><span class="line">program.parse(process.argv);</span><br></pre></td></tr></table></figure>
+<p>执行 <strong>node ./bin/fl-cli –help</strong> ，将看到如下效果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">D:\project\frontend-learn-cli&gt;node ./bin/fl-cli --help</span><br><span class="line">Usage: fl [options]</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -V, --version  output the version number</span><br><span class="line">  -h, --help     display help for command</span><br></pre></td></tr></table></figure>
+<p>这个 <strong>program.parse</strong> 方法必须调用，不然命令行工具就不能“正常的工作了”。</p>
+<p>输出信息中，能看到 <strong>Usage</strong> 条目，默认它向我们展示如何去使用这个命令，当然我们也可以更改它：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">program.usage(<span class="string">'&lt;command&gt; [options]'</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Usage: fl &lt;command&gt; [options]</span><br></pre></td></tr></table></figure>
+<h3 id="如何约定命令-Command？"><a href="#如何约定命令-Command？" class="headerlink" title="如何约定命令 Command？"></a>如何约定命令 Command？</h3><p>命名一个 <strong>create</strong> 命令，约定用于创建应用（类似 vue create）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">program</span><br><span class="line">  .command(<span class="string">'create'</span>)</span><br><span class="line">  .description(<span class="string">'创建应用'</span>)</span><br><span class="line">  .action(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'hello command'</span>);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<p>通过 <strong>help</strong> 命令，能看到 <strong>Commands</strong> 条目中增加的新命令信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">D:\project\frontend-learn-cli&gt;node ./bin/fl-cli --help</span><br><span class="line">Usage: fl &lt;command&gt; [options]</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -V, --version   output the version number</span><br><span class="line">  -h, --help      display help for command</span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  create          创建应用</span><br><span class="line">  help [command]  display help for command</span><br></pre></td></tr></table></figure>
+<p>执行 <strong>create</strong> 命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\project\frontend-learn-cli&gt;node ./bin/fl-cli create</span><br><span class="line">hello command</span><br></pre></td></tr></table></figure>
+<h3 id="如何定义命令参数-Options？"><a href="#如何定义命令参数-Options？" class="headerlink" title="如何定义命令参数 Options？"></a>如何定义命令参数 Options？</h3><p>我们需要额外增加参数，来让命令应对多种情况，比如可以设置 -f 使得创建的应用强制覆盖当前路径：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">program</span><br><span class="line">  .command(<span class="string">'create'</span>)</span><br><span class="line">  .description(<span class="string">'创建应用'</span>)</span><br><span class="line">  .option(<span class="string">'-f,'</span>, <span class="string">'是否强制创建'</span>)</span><br><span class="line">  .action(<span class="function">(<span class="params">options, command</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(options);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\project\frontend-learn-cli&gt;node ./bin/fl-cli create -f</span><br><span class="line">&#123; f: true &#125;</span><br></pre></td></tr></table></figure>
+<p>我们也能自定义参数值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.option(<span class="string">'-f,--force &lt;path&gt;'</span>, <span class="string">'是否强制创建'</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\project\frontend-learn-cli&gt;node ./bin/fl-cli create --force /use/local</span><br><span class="line">&#123; force: '/use/local' &#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意，如果用户输入了 <strong>非预期</strong> 的参数将报错：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\project\frontend-learn-cli&gt;node ./bin/fl-cli create -abc</span><br><span class="line">error: unknown option '-abc'</span><br></pre></td></tr></table></figure>
+<p>我们可以添加 <strong>allowUnknownOption()</strong> 方法，防止 <strong>非预期</strong> 参数影响命令的执行：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">program</span><br><span class="line">  .command(<span class="string">'create'</span>)</span><br><span class="line">  .description(<span class="string">'创建应用'</span>)</span><br><span class="line">  .option(<span class="string">'-f,--force &lt;path&gt;'</span>, <span class="string">'是否强制创建'</span>)</span><br><span class="line">  .allowUnknownOption()</span><br><span class="line">  .action(<span class="function">(<span class="params">options, command</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(options);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\project\frontend-learn-cli&gt;node ./bin/fl-cli create -abc</span><br><span class="line">&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="进阶技巧"><a href="#进阶技巧" class="headerlink" title="进阶技巧"></a>进阶技巧</h2><p>如上，我们就能进行开发简单的命令行工具了。但离 <strong>人性化</strong> 的命令行工具还有点距离，下面提供几种技巧：</p>
+<h3 id="控制台输出语句的颜色"><a href="#控制台输出语句的颜色" class="headerlink" title="控制台输出语句的颜色"></a>控制台输出语句的颜色</h3><p>有个仓库叫 <strong>chalk</strong> ，让我们可以自定义 <strong>console.log</strong> 输出的颜色。这对于命令行有非常好的可视化效果。</p>
+<p>我们对 –help 命令做个封装，在 help 信息末尾添加蓝色的帮助命令语句：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> chalk = <span class="built_in">require</span>(<span class="string">'chalk'</span>);</span><br><span class="line">exports.outputHelp = <span class="function">(<span class="params">cliName</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log();</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`  Run <span class="subst">$&#123;chalk.cyan(<span class="string">`<span class="subst">$&#123;cliName&#125;</span> &lt;command&gt; --help`</span>)&#125;</span> for detailed usage of given command.`</span>);</span><br><span class="line">  <span class="built_in">console</span>.log();</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">program.on(<span class="string">'--help'</span>, () =&gt; &#123;</span><br><span class="line">  outputHelp(cliName);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>同时，遍历每个 <strong>Command</strong> 命令，也为其添加这一功能：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">program.commands.forEach(<span class="function">(<span class="params">c</span>) =&gt;</span> c.on(<span class="string">'--help'</span>, () =&gt; outputHelp(cliName)));</span><br></pre></td></tr></table></figure>
+<img src="/legacy/2021/10/18/commander-quickstart/chalk.png" class="" title="效果展示">
+<h3 id="“命令-参数”错误的封装"><a href="#“命令-参数”错误的封装" class="headerlink" title="“命令/参数”错误的封装"></a>“命令/参数”错误的封装</h3><p>由于命令错误，参数错误或者值漏填会导致命令行的出错，对于这类非预期的错误需要及时提示使用者，而不是只展示：<strong>error: option ‘-f,–force <path>‘ argument missing</strong> 这样的信息。</p>
+<p>参考 <a href="https://github.com/vuejs/vue-cli/blob/dev/packages/%40vue/cli/bin/vue.js#L219" target="_blank" rel="noopener">Vue 的错误处理</a> 我们可以覆写 <strong>commander</strong> 的方法，结合 <strong>chalk</strong> 加强输出错误信息：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> enhanceErrorMessages = <span class="function">(<span class="params">methodName, log</span>) =&gt;</span> &#123;</span><br><span class="line">  program.Command.prototype[methodName] = <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (methodName === <span class="string">'unknownOption'</span> &amp;&amp; <span class="keyword">this</span>._allowUnknownOption) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.outputHelp();</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`  `</span> + chalk.red(log(...args)));</span><br><span class="line">    <span class="built_in">console</span>.log();</span><br><span class="line">    process.exit(<span class="number">1</span>);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 类似有：missingArgument，unknownOption，optionMissingArgument 方法</span></span><br><span class="line">enhanceErrorMessages(<span class="string">'missingArgument'</span>, (argName) =&gt; &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">`Missing required argument <span class="subst">$&#123;chalk.yellow(<span class="string">`&lt;<span class="subst">$&#123;argName&#125;</span>&gt;`</span>)&#125;</span>.`</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<img src="/legacy/2021/10/18/commander-quickstart/enhance-error.png" class="" title="加强错误显示">
+<h3 id="交互式命令行-inquirer"><a href="#交互式命令行-inquirer" class="headerlink" title="交互式命令行 inquirer"></a>交互式命令行 inquirer</h3><p>通过 <strong>command</strong> ，<strong>option</strong> 可以定义所有命令行需要的功能，但在与使用者交互会相当不友好（会面对大量的命令说明）。</p>
+<p>相信用过 <strong>vue-cli</strong> 都知道：在创建项目时，我们可以跟随命令行的提示来选择对应需要的功能。</p>
+<p>这种交互式的命令行可以通过 <strong>inquirer</strong> 来完成。</p>
+<p>下面是采用了这种方式的效果图：</p>
+<img src="/legacy/2021/10/18/commander-quickstart/inquirer.gif" class="" title="效果图">
+<p>先定义一批 <strong>questions</strong> 交互问题：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> defaultQuestions = [</span><br><span class="line">  <span class="comment">// 列表选择</span></span><br><span class="line">  &#123;</span><br><span class="line">    type: <span class="string">'list'</span>,</span><br><span class="line">    name: <span class="string">'template'</span>,</span><br><span class="line">    message: <span class="string">'请选择模板'</span>,</span><br><span class="line">    choices: [&#123; <span class="attr">name</span>: <span class="string">'express'</span> &#125;, &#123; <span class="attr">name</span>: <span class="string">'vue2'</span> &#125;],</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 输入</span></span><br><span class="line">  &#123;</span><br><span class="line">    type: <span class="string">'input'</span>,</span><br><span class="line">    name: <span class="string">'appName'</span>,</span><br><span class="line">    message: <span class="string">'请输入应用名称'</span>,</span><br><span class="line">    <span class="keyword">default</span>() &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">'app'</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">];</span><br><span class="line"><span class="keyword">const</span> expressQuestions = [</span><br><span class="line">  &#123;</span><br><span class="line">    type: <span class="string">'checkbox'</span>,</span><br><span class="line">    name: <span class="string">'express.middleware'</span>,</span><br><span class="line">    message: <span class="string">'请选择中间件'</span>,</span><br><span class="line">    choices: [</span><br><span class="line">      &#123; <span class="attr">name</span>: <span class="string">'express.json'</span>, <span class="attr">checked</span>: <span class="literal">true</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">name</span>: <span class="string">'express.urlencoded'</span>, <span class="attr">checked</span>: <span class="literal">false</span> &#125;,</span><br><span class="line">    ],</span><br><span class="line">    when(answers) &#123;</span><br><span class="line">      <span class="keyword">return</span> answers.template == <span class="string">'express'</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> questions = [...defaultQuestions, ...expressQuestions];</span><br></pre></td></tr></table></figure>
+<p>然后在命令的 <strong>action</strong> 回调中调用 <strong>inquirer.prompt</strong> 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">program</span><br><span class="line">  .command(<span class="string">'create'</span>)</span><br><span class="line">  .description(<span class="string">'创建应用'</span>)</span><br><span class="line">  .option(<span class="string">'-f,--force &lt;path&gt;'</span>, <span class="string">'是否强制创建'</span>)</span><br><span class="line">  <span class="comment">// .allowUnknownOption()</span></span><br><span class="line">  .action(<span class="function">(<span class="params">options, command</span>) =&gt;</span> &#123;</span><br><span class="line">    inquirer.prompt(questions).then(<span class="keyword">async</span> (answers) =&gt; &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(answers);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<p>当交互结束后，这个 <strong>answers</strong> 将是我们自定义的结果值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  template: <span class="string">'express'</span>,</span><br><span class="line">  appName: <span class="string">'app'</span>,</span><br><span class="line">  express: &#123; <span class="attr">middlewares</span>: [ <span class="string">'json'</span> ] &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  template: <span class="string">'express'</span>,</span><br><span class="line">  appName: <span class="string">'app'</span>,</span><br><span class="line">  express: &#123; <span class="attr">middlewares</span>: [ <span class="string">'json'</span> ] &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h1><p>再了解上面有关命令行的工具操作后，下面可以实际“造”一个脚手架工具了。</p>
+<p>下面将提供一个创建 <strong>express</strong> 代码模板的脚手架。用于快速生成相关代码目录，而不用去技术栈网站去拷贝大量代码。（具体代码逻辑，在 <strong>npm</strong> 搜索 <strong>frontend-learn-cli</strong> 即可）</p>
+<p>简单实现思路：</p>
+<h2 id="通过-commander-，实现对创建-create-指令的命令行解析"><a href="#通过-commander-，实现对创建-create-指令的命令行解析" class="headerlink" title="通过 commander ，实现对创建 create 指令的命令行解析"></a>通过 <strong>commander</strong> ，实现对创建 <strong>create</strong> 指令的命令行解析</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">program</span><br><span class="line">  .command(<span class="string">'create'</span>)</span><br><span class="line">  .description(<span class="string">'创建应用'</span>)</span><br><span class="line">  .action(<span class="function">(<span class="params">options, command</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">//inquirer...</span></span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="添加-inquirer-定义好相关可选问题"><a href="#添加-inquirer-定义好相关可选问题" class="headerlink" title="添加 inquirer 定义好相关可选问题"></a>添加 <strong>inquirer</strong> 定义好相关可选问题</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">inquirer.prompt(questions).then(<span class="keyword">async</span> (answers) =&gt; &#123;</span><br><span class="line">  <span class="comment">// 模板逻辑...</span></span><br><span class="line">  <span class="comment">// 模板类型（express, vue...）</span></span><br><span class="line">  <span class="comment">// 项目名称</span></span><br><span class="line">  <span class="comment">// 中间件选择</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="定义模板固定代码"><a href="#定义模板固定代码" class="headerlink" title="定义模板固定代码"></a>定义模板固定代码</h2><p>根据自己对 <strong>express</strong> 的习惯，定义相关代码结构：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">template</span><br><span class="line">  |- express</span><br><span class="line">    |- bin</span><br><span class="line">        | www.ejs</span><br><span class="line">    |- routes</span><br><span class="line">        | health.js.ejs</span><br><span class="line">    | app.js.ejs</span><br><span class="line">    | package.json.ejs</span><br></pre></td></tr></table></figure>
+<p>注意：上面的文件都已 <strong>ejs</strong> 作为后缀。具体原因是：模板变量会根据 <strong>answers</strong> 变量，动态注入自定义值。</p>
+<p><strong>ejs</strong> 文件模板会张这个样子：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> app.js.ejs</span></span><br><span class="line">&lt;% if (express.middlewares.includes('json')) &#123; -%&gt;</span><br><span class="line">app.use(express.json())</span><br><span class="line">&lt;% &#125; -%&gt;</span><br><span class="line">&lt;% if (express.middlewares.includes('urlencoded')) &#123; -%&gt;</span><br><span class="line">app.use(express.urlencoded())</span><br><span class="line">&lt;% &#125; -%&gt;</span><br></pre></td></tr></table></figure>
+<p>为什么选择 <strong>ejs</strong>？</p>
+<p>是抄 <strong>express-generate</strong> 这个库的，当然也可以根据自己喜好选择模板引擎。这种模板方式让我做这种脚手架变得很方便，只要把历史项目 demo 复制进来，改一通后缀即可。</p>
+<h2 id="通过-fs-读模板到指定路径"><a href="#通过-fs-读模板到指定路径" class="headerlink" title="通过 fs 读模板到指定路径"></a>通过 fs 读模板到指定路径</h2><p>将模板内的文件通过 <strong>fs-extra</strong> 写到指令执行的当前路径下（文件具体操作这里就不详述了）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">inquirer.prompt(questions).then(<span class="keyword">async</span> (answers) =&gt; &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 创建目录</span></span><br><span class="line">    _mkdirProjectDir(answers.appName, options.f);</span><br><span class="line">    _writeFiles([</span><br><span class="line">      &#123; <span class="attr">dirtory</span>: <span class="string">'bin'</span>, <span class="attr">fileName</span>: <span class="string">'www'</span>, answers &#125;,</span><br><span class="line">      &#123; <span class="attr">dirtory</span>: <span class="string">'routes'</span>, <span class="attr">fileName</span>: <span class="string">'health.js'</span>, answers &#125;,</span><br><span class="line">      &#123; <span class="attr">dirtory</span>: <span class="string">'util'</span>, <span class="attr">fileName</span>: <span class="string">'index.js'</span>, answers &#125;,</span><br><span class="line">      &#123; <span class="attr">fileName</span>: <span class="string">'app.js'</span>, answers &#125;,</span><br><span class="line">      &#123; <span class="attr">fileName</span>: <span class="string">'package.json'</span>, answers &#125;,</span><br><span class="line">    ]);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(chalk.red(err.message));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="发布脚手架"><a href="#发布脚手架" class="headerlink" title="发布脚手架"></a>发布脚手架</h2><p>在 <strong>package.json</strong> 文件中，约定 <strong>bin</strong> 属性，并指向我们实现 commander 的文件：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"bin": &#123;</span><br><span class="line">  "fel": "bin/fel-cli.js"</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>然后通过 <strong>npm publish</strong> 发布我们的脚手架包，最后使用者通过 <strong>npm i xxx -g</strong> 下载就能用了。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+	
+	<script>tags.push('commander')</script>
+	
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2021/10/18/commander-quickstart/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: '打造属于自己的一款命令行 cli 脚手架工具',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510205828').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/legacy/tags/commander/" rel="tag"># commander</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2021/08/23/docker-quickstart/" rel="next" title="docker 入门">
+                <i class="fa fa-chevron-left"></i> docker 入门
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2021/10/20/cors-and-options/" rel="prev" title="CROS 和 OPTIOINS">
+                CROS 和 OPTIOINS <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#commander"><span class="nav-number">2.</span> <span class="nav-text">commander</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#先了解几个简单的使用方式"><span class="nav-number">2.1.</span> <span class="nav-text">先了解几个简单的使用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#显示帮助-amp-版本信息"><span class="nav-number">2.1.1.</span> <span class="nav-text">显示帮助&amp;版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何约定命令-Command？"><span class="nav-number">2.1.2.</span> <span class="nav-text">如何约定命令 Command？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何定义命令参数-Options？"><span class="nav-number">2.1.3.</span> <span class="nav-text">如何定义命令参数 Options？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进阶技巧"><span class="nav-number">2.2.</span> <span class="nav-text">进阶技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#控制台输出语句的颜色"><span class="nav-number">2.2.1.</span> <span class="nav-text">控制台输出语句的颜色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“命令-参数”错误的封装"><span class="nav-number">2.2.2.</span> <span class="nav-text">“命令&#x2F;参数”错误的封装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#交互式命令行-inquirer"><span class="nav-number">2.2.3.</span> <span class="nav-text">交互式命令行 inquirer</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Demo"><span class="nav-number">3.</span> <span class="nav-text">Demo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#通过-commander-，实现对创建-create-指令的命令行解析"><span class="nav-number">3.1.</span> <span class="nav-text">通过 commander ，实现对创建 create 指令的命令行解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加-inquirer-定义好相关可选问题"><span class="nav-number">3.2.</span> <span class="nav-text">添加 inquirer 定义好相关可选问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定义模板固定代码"><span class="nav-number">3.3.</span> <span class="nav-text">定义模板固定代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过-fs-读模板到指定路径"><span class="nav-number">3.4.</span> <span class="nav-text">通过 fs 读模板到指定路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发布脚手架"><span class="nav-number">3.5.</span> <span class="nav-text">发布脚手架</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

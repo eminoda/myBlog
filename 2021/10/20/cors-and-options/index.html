@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="cors," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言相关跨域等概念，都能在 CORS MDN 找到对应的说明描述。 本篇会针对几个知识点做说明，并结合代码示例做一些实操，加深理解（而不是跟着百度人云亦云）。 同源策略 同源策略是一个重要的安全策略，它用于限制一个 origin 的文档或者它加载的脚本如何能与另一个源的资源进行交互。它能帮助阻隔恶意文档，减少可能被攻击的媒介。  简单说，当我们访问一个网站时，浏览器会对源地址的不同部分（协议:&#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CROS 和 OPTIOINS">
+<meta property="og:url" content="http://yoursite.com/2021/10/20/cors-and-options/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="前言相关跨域等概念，都能在 CORS MDN 找到对应的说明描述。 本篇会针对几个知识点做说明，并结合代码示例做一些实操，加深理解（而不是跟着百度人云亦云）。 同源策略 同源策略是一个重要的安全策略，它用于限制一个 origin 的文档或者它加载的脚本如何能与另一个源的资源进行交互。它能帮助阻隔恶意文档，减少可能被攻击的媒介。  简单说，当我们访问一个网站时，浏览器会对源地址的不同部分（协议:&#x2F;&#x2F;">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-error.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/easy-request-1.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/options-1.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/options-2.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-error.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-methods.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-success.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-access-orgin.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-access-method.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-access-headers.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-access-maxage.gif">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-access-credentials.png">
+<meta property="article:published_time" content="2021-10-20T06:22:29.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.856Z">
+<meta property="article:author" content="Eminoda">
+<meta property="article:tag" content="cors">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/legacy/2021/10/20/cors-and-options/cors-error.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/10/20/cors-and-options/"/>
+
+
+
+
+
+  <title>CROS 和 OPTIOINS | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2021/10/20/cors-and-options/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CROS 和 OPTIOINS</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-10-20T14:22:29+08:00">
+                2021-10-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">开发</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">前端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>相关跨域等概念，都能在 <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS" target="_blank" rel="noopener">CORS MDN</a> 找到对应的说明描述。</p>
+<p>本篇会针对几个知识点做说明，并结合代码示例做一些实操，加深理解（而不是跟着百度人云亦云）。</p>
+<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><blockquote>
+<p>同源策略是一个重要的安全策略，它用于限制一个 origin 的文档或者它加载的脚本如何能与另一个源的资源进行交互。它能帮助阻隔恶意文档，减少可能被攻击的媒介。</p>
+</blockquote>
+<p>简单说，当我们访问一个网站时，浏览器会对源地址的不同部分（协议://域名:端口）做检查。比如防止利用它源的存储信息（Cookies…）做不安全的用途。</p>
+<h2 id="跨域-CORS"><a href="#跨域-CORS" class="headerlink" title="跨域 CORS"></a>跨域 CORS</h2><p>但凡被浏览器识别为不同源，浏览器都会认为是跨域，默认是不允许的。</p>
+<p>比如：试图在 <a href="http://127.0.0.1:4000" target="_blank" rel="noopener">http://127.0.0.1:4000</a> 中，请求 <a href="http://127.0.0.1:3000" target="_blank" rel="noopener">http://127.0.0.1:3000</a> 的资源会出现如下错误：</p>
+<img src="/legacy/2021/10/20/cors-and-options/cors-error.png" class="" title="跨域错误">
+<p>这也是前端 100% 在接口调试中会遇到的问题。</p>
+<p><strong>同源和跨域的判断规则</strong></p>
+<p>当前浏览器访问地址：<a href="http://domain/url" target="_blank" rel="noopener">http://domain/url</a></p>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>结果</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://domain/other" target="_blank" rel="noopener">http://domain/other</a></td>
+<td>同源</td>
+<td>地址不同</td>
+</tr>
+<tr>
+<td><a href="http://domain2" target="_blank" rel="noopener">http://domain2</a></td>
+<td>跨域</td>
+<td>域名不同</td>
+</tr>
+<tr>
+<td><a href="http://domain:8080" target="_blank" rel="noopener">http://domain:8080</a></td>
+<td>跨域</td>
+<td>端口不同</td>
+</tr>
+<tr>
+<td><a href="https://domain" target="_blank" rel="noopener">https://domain</a></td>
+<td>跨域</td>
+<td>协议不同</td>
+</tr>
+</tbody>
+</table>
+<h2 id="简单请求和复杂请求"><a href="#简单请求和复杂请求" class="headerlink" title="简单请求和复杂请求"></a>简单请求和复杂请求</h2><p>相信都会在浏览器的 Network 中看到两个同样地址的请求，有没有想过这是为什么呢？这是因为在请求中，会分为 <strong>简单请求</strong> 和 <strong>复杂请求</strong> 。</p>
+<p><strong>简单请求</strong>：满足如下条件的，将不会触发跨域检查：</p>
+<ul>
+<li>请求方法为：<strong>GET</strong> 、<strong>POST</strong> 、 <strong>HEAD</strong></li>
+<li>请求头：<strong>Accept</strong>、<strong>Accept-Language</strong>、<strong>Content-Language</strong>、<strong>Content-Type</strong></li>
+</ul>
+<p>其中 <strong>Content-Type</strong> 限定为 ：text/plain、multipart/form-data、application/x-www-form-urlencoded</p>
+<p>我们可以更改同源规则，看下如下示例：</p>
+<blockquote>
+<p><a href="http://127.0.0.1:4000/" target="_blank" rel="noopener">http://127.0.0.1:4000/</a> 下，请求 <a href="http://127.0.0.1:3000" target="_blank" rel="noopener">http://127.0.0.1:3000</a> 不同端口的地址</p>
+</blockquote>
+<img src="/legacy/2021/10/20/cors-and-options/easy-request-1.png" class="" title="简单请求">
+<p>域名不同，这已经跨域了。但由于请求方法为 <strong>GET</strong>，符合 <strong>简单请求</strong>，请求将正常工作。</p>
+<p><strong>复杂请求</strong>：不满足简单请求的都为复杂请求。在发送请求前，会使用 <strong>options</strong> 方法发起一个 <strong>预检请求（Preflight）</strong> 到服务器，以获知服务器是否允许该实际请求。</p>
+<p>模拟一个跨域请求：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 端口不同，content-type 也非限定值</span></span><br><span class="line">axios.post(</span><br><span class="line">  <span class="string">'http://127.0.0.1:3000/test/cors'</span>,</span><br><span class="line">  &#123;&#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'content-type'</span>: <span class="string">'application/json'</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>能看到在请求之前浏览器会事先发起一个 <strong>Preflight 预检请求</strong>：</p>
+<img src="/legacy/2021/10/20/cors-and-options/options-1.png" class="" title="Preflight">
+<p>这个 <strong>预检请求</strong> 的请求方法为 <strong>options</strong>，同时会包含 <strong>Access-Control-xxx</strong> 的请求头：</p>
+<img src="/legacy/2021/10/20/cors-and-options/options-2.png" class="" title="options请求信息">
+<p>当然，此时服务端没有做跨域处理（示例使用 express 起的服务，预检请求默认响应 200），就会出现浏览器 CORS 的错误警告。</p>
+<img src="/legacy/2021/10/20/cors-and-options/cors-error.png" class="" title="跨域错误">
+<h1 id="如何解决跨域"><a href="#如何解决跨域" class="headerlink" title="如何解决跨域"></a>如何解决跨域</h1><p>对于跨域，前端再熟悉不过，百度搜索能找到一堆解决方法，关键词不是 <strong>JSONP</strong>，或者添加些 <strong>Access-Control-XXX</strong> 响应头。</p>
+<p>本篇将详细说下后一种方式，姑且称为：服务端解决方案。</p>
+<h2 id="为-options-添加响应头"><a href="#为-options-添加响应头" class="headerlink" title="为 options 添加响应头"></a>为 options 添加响应头</h2><p>以 <strong>express</strong> 举例，首先对 <strong>OPTIONS</strong> 方法的请求添加这些响应头，它将根据告诉浏览器根据这些属性进行跨域限制：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">app.use(<span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (req.method == <span class="string">'OPTIONS'</span>) &#123;</span><br><span class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Origin'</span>, <span class="string">'*'</span>);</span><br><span class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Methods'</span>, <span class="string">'GET, PUT, POST, DELETE, OPTIONS'</span>);</span><br><span class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Headers'</span>, <span class="string">'content-type'</span>);</span><br><span class="line">    res.status(<span class="number">200</span>).end();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>如果你不对 <strong>预检接口</strong> 做正确的设置，那么后续一切都是徒劳。</p>
+<p>打个比方：如果 <strong>Access-Control-Allow-Methods</strong> 只设置了 <strong>POST</strong>，如果客户端请求方法为 <strong>PUT</strong>，那么最终会出现跨域异常，并会指出 <strong>PUT</strong> 没有在预检请求中的 <strong>Access-Control-Allow-Methods</strong> 出现：</p>
+<img src="/legacy/2021/10/20/cors-and-options/cors-methods.png" class="" title="跨域方法错误">
+<p>所以，以后读懂跨域异常对于正确的添加服务端响应信息非常重要。另外：<strong>GET、POST、HEAD</strong> 属于简单请求的方法，所以即使不在 <strong>Access-Control-Allow-Methods</strong> 定义也不碍事（如果不对请指出）</p>
+<h2 id="正式的跨域请求"><a href="#正式的跨域请求" class="headerlink" title="正式的跨域请求"></a>正式的跨域请求</h2><p>随后对我们代码发出的请求额外添加跨域响应头（这需要和前面的预检接口一致）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (req.method == <span class="string">'OPTIONS'</span>) &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// http://127.0.0.1:3000/test/cors</span></span><br><span class="line">  res.setHeader(<span class="string">'Access-Control-Allow-Origin'</span>, <span class="string">'*'</span>);</span><br><span class="line">  next();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后能看到我们等请求正常请求到了：</p>
+<img src="/legacy/2021/10/20/cors-and-options/cors-success.png" class="" title="跨域请求">
+<h1 id="对于跨域请求头的说明"><a href="#对于跨域请求头的说明" class="headerlink" title="对于跨域请求头的说明"></a>对于跨域请求头的说明</h1><p>上例出现了我们经常见到的三个：<strong>Access-Control-Allow-Origin</strong>，<strong>Access-Control-Allow-Methods</strong>，<strong>Access-Control-Allow-Headers</strong>。</p>
+<p>参考 <strong>cors</strong> 库，另外还有其他用于预检请求的响应头：</p>
+<table>
+<thead>
+<tr>
+<th>头属性</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Access-Control-Allow-Origin</td>
+<td>判断源地址（协议://域名:端口）</td>
+</tr>
+<tr>
+<td>Access-Control-Allow-Methods</td>
+<td>限定方法（GET,HEAD,PUT,PATCH,POST,DELETE）</td>
+</tr>
+<tr>
+<td>Access-Control-Allow-Headers</td>
+<td>限定请求头（content-type）</td>
+</tr>
+<tr>
+<td>Access-Control-Max-Age</td>
+<td>预检请求的缓存时间（单位为秒，-1 不缓存）</td>
+</tr>
+<tr>
+<td>Access-Control-Expose-Headers</td>
+<td>授权客户端能获取到的响应头</td>
+</tr>
+<tr>
+<td>Access-Control-Request-Headers</td>
+<td>客户端生成的请求头</td>
+</tr>
+<tr>
+<td>Access-Control-Allow-Credentials</td>
+<td>限定客户端可以携带敏感信息</td>
+</tr>
+<tr>
+<td>Vary</td>
+<td>定义可变化的头，防止浏览器缓存</td>
+</tr>
+</tbody>
+</table>
+<p>下面将对上面这些头做个说明。</p>
+<h2 id="Access-Control-Allow-Origin"><a href="#Access-Control-Allow-Origin" class="headerlink" title="Access-Control-Allow-Origin"></a>Access-Control-Allow-Origin</h2><p>在 <strong>预检请求</strong> 和 <strong>正常请求</strong> 告知浏览器被允许的源。支持通配符“*”，但不支持以逗号“,”分割的多源填写方式。</p>
+<p>如果尝试些多个域名，则会出现如下错误：</p>
+<blockquote>
+<p>Response to preflight request doesn’t pass access control check: The ‘Access-Control-Allow-Origin’ header contains multiple values ‘aaa,bbb’, but only one is allowed.</p>
+</blockquote>
+<img src="/legacy/2021/10/20/cors-and-options/cors-access-orgin.png" class="" title="多源错误">
+<p>另外，也不建议 <strong>Access-Control-Allow-Origin</strong> 以通配符方式定义，这样会增加安全隐患，最好以请求方的 <strong>origin</strong> 来赋值。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> origin = req.headers.origin;</span><br><span class="line">res.setHeader(<span class="string">'Access-Control-Allow-Origin'</span>, origin || <span class="string">'*'</span>);</span><br><span class="line"><span class="comment">// 因为会随着客户端请求的 Origin 变化，所以标识 Vary，让浏览器不要缓存</span></span><br><span class="line">res.setHeader(<span class="string">'Vary'</span>, <span class="string">'Origin'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="Access-Control-Allow-Methods"><a href="#Access-Control-Allow-Methods" class="headerlink" title="Access-Control-Allow-Methods"></a>Access-Control-Allow-Methods</h2><p>被允许的 <strong>Http</strong> 方法，按照需要填写，支持多个，例如： <strong>GET</strong> , <strong>HEAD</strong> , <strong>PUT</strong> , <strong>PATCH</strong> , <strong>POST</strong> , <strong>DELETE</strong> 。</p>
+<p>由于判断 <strong>简单请求</strong> 之一的 <strong>HTTP</strong> 方法默认为 <strong>GET</strong> ， <strong>POST</strong> ， <strong>HEAD</strong> ，所以这些即使不在 <strong>Access-Control-Allow-Methods</strong> 约定，浏览器也是支持的。</p>
+<p>比如：如果服务端定义 <strong>PUT</strong> 方法，而客户端发送的方法为 <strong>DELETE</strong>，则会出现如下错误：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">res.setHeader(<span class="string">'Access-Control-Allow-Methods'</span>, <span class="string">'PUT'</span>);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Method DELETE is not allowed by Access-Control-Allow-Methods in preflight response.</p>
+</blockquote>
+<img src="/legacy/2021/10/20/cors-and-options/cors-access-method.png" class="" title="方法错误">
+<h2 id="Access-Control-Allow-Headers"><a href="#Access-Control-Allow-Headers" class="headerlink" title="Access-Control-Allow-Headers"></a>Access-Control-Allow-Headers</h2><p>在 <strong>预检接口</strong> 告知客户端允许的请求头。</p>
+<p>像 <strong>简单请求</strong> 约定的请求头默认支持： <strong>Accept</strong> 、 <strong>Accept-Language</strong> 、 <strong>Content-Language</strong> 、 <strong>Content-Type</strong> （<strong>text/plain、multipart/form-data、application/x-www-form-urlencoded</strong>）</p>
+<p>如果客户端的请求头不在定义范围内，则会报错：</p>
+<blockquote>
+<p>Request header field abc is not allowed by Access-Control-Allow-Headers in preflight response.</p>
+</blockquote>
+<img src="/legacy/2021/10/20/cors-and-options/cors-access-headers.png" class="" title="请求头错误">
+<p>需要将此头调整为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">res.setHeader(<span class="string">'Access-Control-Allow-Headers'</span>, <span class="string">'content-type, abc'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="Access-Control-Max-Age"><a href="#Access-Control-Max-Age" class="headerlink" title="Access-Control-Max-Age"></a>Access-Control-Max-Age</h2><p>定义 <strong>预检接口</strong> 告知客户端允许的请求头可以缓存多久。</p>
+<p>默认时间规则：</p>
+<ul>
+<li>在 Firefox 中，上限是 24 小时 （即 86400 秒）。</li>
+<li>在 Chromium v76 之前， 上限是 10 分钟（即 600 秒)。</li>
+<li>从 Chromium v76 开始，上限是 2 小时（即 7200 秒)。</li>
+<li>Chromium 同时规定了一个默认值 5 秒。</li>
+<li>如果值为 -1，表示禁用缓存，则每次请求前都需要使用 OPTIONS 预检请求。</li>
+</ul>
+<p>比如设置为 5 秒后，客户端在第一次会发送 <strong>预检接口</strong> 后，5 秒内将不再发送 <strong>预检接口</strong>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">res.setHeader(<span class="string">'Access-Control-Max-Age'</span>, <span class="string">'5'</span>);</span><br></pre></td></tr></table></figure>
+<img src="/legacy/2021/10/20/cors-and-options/cors-access-maxage.gif" class="" title="缓存示例">
+<h2 id="Access-Control-Allow-Credentials"><a href="#Access-Control-Allow-Credentials" class="headerlink" title="Access-Control-Allow-Credentials"></a>Access-Control-Allow-Credentials</h2><p>跨域的请求，默认浏览器不会将当前地址的 Cookies 信息传给服务器，以确保信息的安全性。如果有需要，服务端需要设置 <strong>Access-Control-Allow-Credentials</strong> 响应头，另外客户端也需要开启 <strong>withCredentials</strong> 配置。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 客户端请求</span></span><br><span class="line">axios.post(</span><br><span class="line">  <span class="string">'http://127.0.0.1:3000/test/cors'</span>,</span><br><span class="line">  &#123;&#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'content-type'</span>: <span class="string">'application/json'</span>,</span><br><span class="line">      abc: <span class="string">'123'</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    withCredentials: <span class="literal">true</span>,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 所有请求</span></span><br><span class="line">res.setHeader(<span class="string">'Access-Control-Allow-Credentials'</span>, <span class="string">'true'</span>);</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，<strong>Access-Control-Allow-Origin</strong> 不能设置通配符“*”方式，会出现如下错误：</p>
+<img src="/legacy/2021/10/20/cors-and-options/cors-access-credentials.png" class="" title="不支持通配符">
+<p>这个 <strong>Access-Control-Allow-Origin</strong> 必须是当前页面源的地址。</p>
+<h2 id="Access-Control-Expose-Headers"><a href="#Access-Control-Expose-Headers" class="headerlink" title="Access-Control-Expose-Headers"></a>Access-Control-Expose-Headers</h2><p>和 <strong>Access-Control-Allow-Credentials</strong> 类似，如果服务端有自定义设置的请求头，跨域的客户端请求在响应信息中是接收不到该请求头的。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 服务端</span></span><br><span class="line">res.setHeader(<span class="string">'def'</span>, <span class="string">'123'</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">axios</span><br><span class="line">  .post(</span><br><span class="line">    <span class="string">'http://127.0.0.1:3000/test/cors'</span>,</span><br><span class="line">    &#123;&#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      headers: &#123;</span><br><span class="line">        <span class="string">'content-type'</span>: <span class="string">'application/json'</span>,</span><br><span class="line">        abc: <span class="string">'123'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      withCredentials: <span class="literal">true</span>,</span><br><span class="line">    &#125;</span><br><span class="line">  )</span><br><span class="line">  .then(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(data.headers.def); <span class="comment">//undefined</span></span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<p>需要在服务端设置 <strong>Access-Control-Expose-Headers</strong> 响应头，并标记哪些头是客户端能获取到的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">res.setHeader(<span class="string">'Access-Control-Expose-Headers'</span>, <span class="string">'def'</span>);</span><br><span class="line">res.setHeader(<span class="string">'def'</span>, <span class="string">'123'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="Access-Control-Request-Headers"><a href="#Access-Control-Request-Headers" class="headerlink" title="Access-Control-Request-Headers"></a>Access-Control-Request-Headers</h2><p>我试了半天没找到 <strong>Access-Control-Request-Headers</strong> 的使用示例，其实它是根据当前请求的头拼接得到的。</p>
+<p>如果客户端的请求头为：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"content-type"</span>: <span class="string">"application/json"</span>,</span><br><span class="line">  <span class="attr">"abc"</span>: <span class="string">"123"</span>,</span><br><span class="line">  <span class="attr">"xyz"</span>: <span class="string">"123"</span>,</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>那么浏览器最后会在 <strong>预检接口</strong> 添加一个 <strong>Access-Control-Request-Headers</strong> 的头，其值为：abc,content-type,xyz。然后服务端再根据 <strong>Access-Control-Allow-Headers</strong> 告诉浏览器服务端的请求头支持说明，最后浏览器判断是否会有跨域错误。</p>
+<p>另外，对于服务端也需要针对 <strong>Access-Control-Request-Headers</strong> 做 <strong>Vary</strong> 处理：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">res.setHeader(<span class="string">'Vary'</span>, <span class="string">'Origin'</span> + <span class="string">', '</span> + req.headers[<span class="string">'access-control-request-headers'</span>]);</span><br></pre></td></tr></table></figure>
+<p>如此，对于跨域及其怎么处理头信息会有个基本的概念。希望在遇到类似问题能有章法的解决，而非胡乱尝试。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+	
+	<script>tags.push('cors')</script>
+	
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2021/10/20/cors-and-options/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: 'CROS 和 OPTIOINS',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510205788').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/legacy/tags/cors/" rel="tag"># cors</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2021/10/18/commander-quickstart/" rel="next" title="打造属于自己的一款命令行 cli 脚手架工具">
+                <i class="fa fa-chevron-left"></i> 打造属于自己的一款命令行 cli 脚手架工具
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2021/12/23/xhr-response-type/" rel="prev" title="怎么通过 XHR 方式来处理图片资源的响应">
+                怎么通过 XHR 方式来处理图片资源的响应 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#同源策略"><span class="nav-number">1.1.</span> <span class="nav-text">同源策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#跨域-CORS"><span class="nav-number">1.2.</span> <span class="nav-text">跨域 CORS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单请求和复杂请求"><span class="nav-number">1.3.</span> <span class="nav-text">简单请求和复杂请求</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何解决跨域"><span class="nav-number">2.</span> <span class="nav-text">如何解决跨域</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为-options-添加响应头"><span class="nav-number">2.1.</span> <span class="nav-text">为 options 添加响应头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正式的跨域请求"><span class="nav-number">2.2.</span> <span class="nav-text">正式的跨域请求</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对于跨域请求头的说明"><span class="nav-number">3.</span> <span class="nav-text">对于跨域请求头的说明</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Access-Control-Allow-Origin"><span class="nav-number">3.1.</span> <span class="nav-text">Access-Control-Allow-Origin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Access-Control-Allow-Methods"><span class="nav-number">3.2.</span> <span class="nav-text">Access-Control-Allow-Methods</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Access-Control-Allow-Headers"><span class="nav-number">3.3.</span> <span class="nav-text">Access-Control-Allow-Headers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Access-Control-Max-Age"><span class="nav-number">3.4.</span> <span class="nav-text">Access-Control-Max-Age</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Access-Control-Allow-Credentials"><span class="nav-number">3.5.</span> <span class="nav-text">Access-Control-Allow-Credentials</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Access-Control-Expose-Headers"><span class="nav-number">3.6.</span> <span class="nav-text">Access-Control-Expose-Headers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Access-Control-Request-Headers"><span class="nav-number">3.7.</span> <span class="nav-text">Access-Control-Request-Headers</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

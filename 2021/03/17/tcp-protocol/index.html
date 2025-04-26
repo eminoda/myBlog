@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/legacy/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/legacy/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/legacy/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/legacy/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/legacy/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/legacy/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/legacy/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="http," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="TCP（传输控制协议） TCP：传输控制协议（Transmission Control Protocol） 是一种面向连接的、可靠的、基于字节流的传输层通信协议，由 IETF 的 RFC 793 定义。  通常我们听到 TCP&#x2F;IP 协议（族） 那么种称呼，其作用如下：  TCP&#x2F;IP 提供了点对点链接的机制，将资料应该如何封装、寻址、传输、路由以及在目的地如何接收，都加以标准化。它将软件通信过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="借助 wireshark 网络分析工具，剖析 TCP 三次握手流程">
+<meta property="og:url" content="http://yoursite.com/2021/03/17/tcp-protocol/index.html">
+<meta property="og:site_name" content="NextInnovation">
+<meta property="og:description" content="TCP（传输控制协议） TCP：传输控制协议（Transmission Control Protocol） 是一种面向连接的、可靠的、基于字节流的传输层通信协议，由 IETF 的 RFC 793 定义。  通常我们听到 TCP&#x2F;IP 协议（族） 那么种称呼，其作用如下：  TCP&#x2F;IP 提供了点对点链接的机制，将资料应该如何封装、寻址、传输、路由以及在目的地如何接收，都加以标准化。它将软件通信过程">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/osi.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-ip-layer.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp_open_close.jpg">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-connect.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-create-1.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-create-2.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-create-3.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-create-4.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-close.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-close-1.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-close-2.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-close-3.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-close-4.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-close-5.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/doc.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-data-pkg1.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-ref.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-pkg-1.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-pkg-2.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-pkg-3.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-pkg-4.png">
+<meta property="og:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/tcp-pkg-5.png">
+<meta property="article:published_time" content="2021-03-17T08:13:36.000Z">
+<meta property="article:modified_time" content="2023-08-16T16:41:35.804Z">
+<meta property="article:author" content="Eminoda">
+<meta property="article:tag" content="http">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/legacy/2021/03/17/tcp-protocol/osi.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/legacy/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+  var PIXEL_RATIO = (function () {
+    var c = document.createElement("canvas"),
+    ctx = c.getContext("2d"),
+    dpr = window.devicePixelRatio || 1,
+    bsr = ctx['webkitBackingStorePixelRatio'] ||
+      ctx['mozBackingStorePixelRatio'] ||
+      ctx['msBackingStorePixelRatio'] ||
+      ctx['oBackingStorePixelRatio'] ||
+      ctx['backingStorePixelRatio'] || 1;
+    return dpr / bsr;
+  })();
+  var ratio = PIXEL_RATIO;
+  var width = 700;
+  var height = 360;
+  function drawCanvas(post){
+      // https://ant.design/docs/spec/colors-cn
+      var $canvas = document.getElementById(post.title);
+      $canvas.width = width*ratio
+      $canvas.height = height*ratio
+      $canvas.style.width = width + 'px';
+      $canvas.style.height = height + 'px';
+      var ctx = $canvas.getContext('2d')
+      var title = post.post_img.title || post.title;
+      var subTitle = post.post_img.sub_title;
+      // 背景色
+      ctx.fillStyle = post.post_img.bg_color||"#333";
+      ctx.fillRect(0, 0, width*ratio, height*ratio);
+      // 字体
+      ctx.textAlign = 'center'
+      ctx.font = '40px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+      ctx.fillStyle = post.post_img.title_color||"#fff";
+        $canvas.style.letterSpacing = '1px'
+      if(subTitle){
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+        ctx.font = '24px Tahoma,Helvetica,Arial,Georgia,sans-serif';
+        ctx.fillStyle = post.post_img.sub_color||"#fff";
+        ctx.fillText(subTitle, width/2*ratio, 180*ratio+20);
+      }else{
+        ctx.fillText(title, width/2*ratio, 140*ratio);
+      }
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      (function($dom){
+        $dom.onclick = function(){
+          // 点击下载
+          var dlLink = document.createElement('a');
+          dlLink.download = post.title
+          dlLink.href = $dom.toDataURL("image/png");;
+          dlLink.dataset.downloadurl = ["image/png", dlLink.download, dlLink.href].join(':');
+
+          document.body.appendChild(dlLink);
+          dlLink.click();
+          document.body.removeChild(dlLink);
+        }
+      })($canvas)
+  }
+
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/03/17/tcp-protocol/"/>
+
+
+
+
+
+  <title>借助 wireshark 网络分析工具，剖析 TCP 三次握手流程 | NextInnovation</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2ef1aa85abed08ce76cd8d41d5f2de71";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/legacy/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NextInnovation</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/legacy/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/legacy/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/legacy/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/legacy/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/legacy/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-topic">
+          <a href="/legacy/topic" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-star"></i> <br />
+            
+            话题
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gittalk">
+          <a href="/legacy/gittalk/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/legacy/2021/03/17/tcp-protocol/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eminoda">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/legacy/images/eminoda/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NextInnovation">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">借助 wireshark 网络分析工具，剖析 TCP 三次握手流程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-17T16:13:36+08:00">
+                2021-03-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">开发</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/legacy/categories/%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">前端开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="TCP（传输控制协议）"><a href="#TCP（传输控制协议）" class="headerlink" title="TCP（传输控制协议）"></a>TCP（传输控制协议）</h1><blockquote>
+<p><strong>TCP：传输控制协议（Transmission Control Protocol）</strong> 是一种面向连接的、可靠的、基于字节流的传输层通信协议，由 IETF 的 RFC 793 定义。</p>
+</blockquote>
+<p>通常我们听到 <strong>TCP/IP 协议（族）</strong> 那么种称呼，其作用如下：</p>
+<blockquote>
+<p>TCP/IP 提供了点对点链接的机制，将资料应该如何封装、寻址、传输、路由以及在目的地如何接收，都加以标准化。<br>它将软件通信过程抽象化为 <strong>四个抽象层</strong>，采取协议堆栈的方式，分别实现出不同通信协议。协议族下的各种协议，依其功能不同，分别归属到这四个层次结构之中，常视为是 <strong>简化的七层 OSI 模型</strong>。</p>
+</blockquote>
+<p>那什么是 <strong>七层 OSI 模型</strong> ？下图展示了 <strong>OSI 模型</strong> 的结构：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/osi.png" class="" title="七层OSI模型">
+<p>了解了 <strong>OSI 模型</strong> 后，再来看下 <strong>TCP/IP 四层模型</strong> 的对比：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-ip-layer.png" class="" title="TCP&#x2F;IP四层模型">
+<p><strong>TCP/IP 模型</strong> 中，将 <strong>OSI</strong> 的应用层，表示层，会话层抽象为一个大应用层。</p>
+<h1 id="WireShake"><a href="#WireShake" class="headerlink" title="WireShake"></a>WireShake</h1><p>相信各位肯定看了很多遍类似这样的图：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp_open_close.jpg" class="" title="tcp握手图例">
+<p>但我一直没有真真实实地看到 <strong>TCP</strong> 创建和断开连接这样的过程，希望能像 <strong>Chrome Develop Tool</strong> 直观看到接口的请求和响应。而不是根据别人的文章所云的进行机械的记忆。</p>
+<p>为了了解 <strong>TCP</strong> 协议怎么进行握手的？这里就需要用到一个网络分析工具： <strong>WireShake</strong>。</p>
+<p>下面在说明 <strong>三次握手</strong> 和 <strong>四次挥手</strong> 时，会结合在 <strong>WireShake</strong> 看到的实际结果来理解 TCP 的连接过程。</p>
+<h1 id="三次握手（three-way-handshake）"><a href="#三次握手（three-way-handshake）" class="headerlink" title="三次握手（three-way handshake）"></a>三次握手（three-way handshake）</h1><p>在开始 TCP 说如何创建连接之前，先看下一些关键名词解释：</p>
+<ul>
+<li><strong>seq（Sequence Number）</strong>：端与端之间通讯的（初始化）序列号</li>
+<li><strong>SYN（Synchronize Sequence Numbers）</strong>：每次通讯需要对上述序列号（seq）进行 <strong>同步操作</strong>，以 <strong>解决网络包乱序问题</strong>（reordering）。</li>
+<li><strong>ACK（Acknowledgement Number）</strong>：用于确定接收到包后的回复确认，<strong>解决不丢包的问题</strong>。</li>
+</ul>
+<p>了解了上述名词后，再来看 <strong>三次握手</strong> 的过程图：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-connect.png" class="" title="TCP创建连接">
+<p>上图已经已经很清晰地展示了创建连接的过程。现在我们实际发送一个 Http 请求，并结合 <strong>WireShake</strong> 看下具体步骤细节：</p>
+<ol>
+<li><p>首先，我们访问一个网站（<a href="http://www.eminoda.com/elsa），在" target="_blank" rel="noopener">http://www.eminoda.com/elsa），在</a> Http 请求之前，先有了三次 TCP 的请求记录：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-create-1.png" class="">
+</li>
+<li><p>第 1 次：客户端向正常工作的服务端（<strong>LISTEN</strong> 状态）发送同步序列号请求（seq=x），同时客户端状态进入 <strong>SYN_SENT</strong></p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-create-2.png" class="">
+</li>
+<li><p>第 2 次：服务端收到后，创建 <strong>ACK</strong> 应答码作为收到确认信息（值为接受到的 seq+1，即：ACK=x+1），并创建新的序列号（seq=y），再一同发送给客户端。并进入 <strong>SYN_RCVD</strong> 状态</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-create-3.png" class="">
+</li>
+<li><p>第 3 次：客户端收到后，也创建 <strong>ACK</strong> 应答码作为收到确认信息（值为接受到的 seq+1，即：ACK=y+1），再发送给服务端，并进入 <strong>ESTABLISHED</strong> 状态</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-create-4.png" class="">
+</li>
+<li><p>最后，服务端收到后，进入 <strong>ESTABLISHED</strong> 状态，此时 <strong>TCP</strong> 连接创建成功，</p>
+
+</li>
+</ol>
+<h1 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h1><p>四次挥手和三次握手相反，用于 TCP 连接后的断开，下面是过程图：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-close.png" class="" title="TCP关闭连接">
+<p>结合 <strong>WireShake</strong> 也看下步骤：</p>
+<ol>
+<li><p>首先，在 <strong>WireShake</strong> 找到对应四次挥手的 TCP 请求：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-close-1.png" class="">
+</li>
+<li><p>第 1 次：客户端准备 <strong>序列号（seq=4710）</strong> 和 <strong>应答码（ACK=1245）</strong>，并设置 <strong>FIN</strong> 标识（示意没有数据传输了，要求释放连接）发送给服务端后，进入 <strong>FIN_WAIT_1</strong> 状态</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-close-2.png" class="">
+</li>
+<li><p>第 2 次：服务端收到后，准备 <strong>序列号（seq=1245）</strong> 和 <strong>应答码（ACK=4710+1）</strong> 发送给客户端，进入 <strong>CLOSE_WAIT</strong> 状态</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-close-3.png" class="">
+</li>
+<li><p>客户端收到后，确认了服务端同意关闭连接请求，并进入 <strong>FIN_WAIT_2</strong> 状态。此状态中将等待服务端再次发送的请求，已让客户端可以关闭连接。</p>
+</li>
+<li><p>第 3 次：过些“时间”后，服务端像客户端第一次发送的数据类似，发送 <strong>序列号（seq=1245）</strong> 和 <strong>应答码（ACK=4711）</strong>，并设置 <strong>FIN</strong> 标识，并进入 <strong>LAST_ACK</strong> 状态</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-close-4.png" class="">
+</li>
+<li><p>第 4 次：客户端收到后，发送 <strong>序列号（seq=4711）</strong> 和<strong>应答码（ACK=1245+1）</strong>，进入 <strong>TIME_WAIT</strong> 状态，如果服务端收到后将关闭。之后客户端等待 2MSL 时间后还没收到服务端数据也将关闭，至此整个 <strong>TCP</strong> 连接中断。</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-close-5.png" class="">
+</li>
+</ol>
+<h1 id="一些问题"><a href="#一些问题" class="headerlink" title="一些问题"></a>一些问题</h1><h2 id="为什么握手是三次，而不是二次？"><a href="#为什么握手是三次，而不是二次？" class="headerlink" title="为什么握手是三次，而不是二次？"></a>为什么握手是三次，而不是二次？</h2><p>减少次数，看上去更能提高通讯效率，但同样会增加连接的不确定性。详见下图：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/doc.png" class="">
+<p>总结下，就是端与端之间需要单独一次一来一回的通讯（以确认 <strong>seq</strong> 是否串台）来防止非预期的连接错误，加上首次的 <strong>SYN</strong> 请求总共三次。</p>
+<h2 id="那为何挥手是四次？"><a href="#那为何挥手是四次？" class="headerlink" title="那为何挥手是四次？"></a>那为何挥手是四次？</h2><p>因为 <strong>TCP</strong> 是双工通讯，某一端要向另一端发送关闭连接请求都是需要发送一次 FIN 请求，和接受一次针对 <strong>FIN</strong> 请求的应答确认。此时一端处于半连接状态（还可以发送数据），则需要反过来发送一次 <strong>FIN</strong> ，和接口一次 <strong>ACK</strong> 应答，最后两端才能都关闭。</p>
+<h2 id="TCP-数据包长什么样？"><a href="#TCP-数据包长什么样？" class="headerlink" title="TCP 数据包长什么样？"></a>TCP 数据包长什么样？</h2><p>先来看下 <strong>TCP</strong> 数据表的结构：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-data-pkg1.png" class="" title="tcp数据结构">
+<p>但凡网络课程睡觉的同学看到这表格可能和我一样蒙，但又说不出的熟悉，这里使用 <strong>WireShake</strong> 来读懂这个数据结构。</p>
+<p>先看下和 <strong>标准网络 OSI 模型</strong> 的映射关系：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-ref.png" class="" title="和OSI模型的映射关系">
+<p>下面逐步对这个数据包进行拆分查看，首先是 <strong>Frame</strong> ：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-pkg-1.png" class="" title="Frame">
+<p>能看到整个数据包大小为 753 字节，其数据就和上图下方的内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0000   c8 a7 76 d2 08 52 80 30 49 26 62 97 08 00 45 00   ..v..R.0I&amp;b...E.</span><br><span class="line">0010   02 e3 32 be 40 00 80 06 38 9b c0 a8 11 3f 2f 67   ..2.@...8....?&#x2F;g</span><br><span class="line">0020   8b 6d c7 c7 00 50 bb a1 d5 70 b3 2f 4b 04 50 18   .m...P...p.&#x2F;K.P.</span><br><span class="line">0030   02 01 0e 63 00 00 47 45 54 20 2f 65 6c 73 61 2f   ...c..GET &#x2F;elsa&#x2F;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>接着看以太网 <strong>Ethernet</strong> 内容：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-pkg-2.png" class="" title="Ethernet">
+<p>以太网帧头部为 14 字节（你可以双击 Ethernet 那栏，然后在底部看到“c8 a7 76 d2 08 52 80 30 49 26 62 97 08 00”被选中），并能看到 2 个通讯方的 Mac 地址，以及了解网卡是哪个厂家生产的。</p>
+<p>最后注意有个 <strong>Type</strong> 字段，标识上层协议是 <strong>IPV4</strong> 。</p>
+<p>然后是 <strong>Internet Protocol</strong> 内容：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-pkg-3.png" class="" title="Internet Protocol">
+<p>IP 协议层头部为 20 字节内容，这里你能具体看到两个 IP 地址值。</p>
+<p>再是 <strong>Transmission Control Protocol</strong> （TCP）传输层的内容：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-pkg-4.png" class="" title="Transmission Control Protocol">
+<p>在这里能看到数据包大小（<strong>TCP Segment Len</strong>）为 699 字节（753-14-20），这个值比较重要，因为下一次服务端将用 ACK=700（699+1）作为应答码发送给客户端。</p>
+<p>另外，因为连接已经创建，这次 <strong>TCP</strong> 报文中的标识符除了上面见过的 <strong>FIN</strong> ， <strong>ACK</strong> ， <strong>SYN</strong> 外，还出现了 <strong>PUSH</strong> （指示接收方应该尽快将这个报文段交给应用层而不用等待缓冲区装满）。</p>
+<p>再提个，能在底部看到一个 iRTT（Initial Round Trip Time）参数，他是个计算 TCP Window 窗口滑动的参数之一（有兴趣可以在底部参考链接里查阅）。</p>
+<p>最后就是我们再熟悉不过的 <strong>http</strong> 协议：</p>
+<img src="/legacy/2021/03/17/tcp-protocol/tcp-pkg-5.png" class="" title="http">
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>本文结合 <strong>wireshake</strong> 工具的使用，泛泛讲了下一些 TCP 协议的知识点，更多深入的内容可以查阅如下参考文章。</p>
+<p><a href="https://coolshell.cn/articles/11564.html" target="_blank" rel="noopener">TCP 的那些事儿（上/下）</a><br><a href="https://www.jianshu.com/p/c793a279f698" target="_blank" rel="noopener">计算机网络漫谈：OSI 七层模型与 TCP/IP 四层（参考）模型</a><br><a href="https://github.com/jawil/blog/issues/14" target="_blank" rel="noopener">通俗大白话来理解 TCP 协议的三次握手和四次分手</a><br><a href="https://github.com/JeffyLu/JeffyLu.github.io/issues/22" target="_blank" rel="noopener">好文推荐：计算机网络篇</a><br><a href="https://blog.csdn.net/ahafg/article/details/51039584" target="_blank" rel="noopener">Wireshark-TCP 协议分析（包结构以及连接的建立和释放）</a><br><a href="https://blog.packet-foo.com/2014/07/determining-tcp-initial-round-trip-time/" target="_blank" rel="noopener">Determining TCP Initial Round Trip Time</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <div>【长按关注】看看↓↓↓?</div>
+    <img id="wechat_subscriber_qcode" src="/images/qrcode/webcat.jpg" alt="Eminoda wechat" style="width: 200px; max-width: 100%;"/>
+    <div>【前端雨爸】分享前端技术实践，持续输出前端技术文章</div>
+    <div>欢迎留言，评论交流，一起讨论前端问题</div>
+</div>
+
+      </div>
+    
+    
+      <div>
+        <script>
+	var tags = []
+</script>
+
+	
+	<script>tags.push('http')</script>
+	
+
+
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+
+<script src="/legacy/lib/md5/md5.min.js"></script>
+<script src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+
+<script type="text/javascript">
+	var id = md5('/legacy/2021/03/17/tcp-protocol/')
+	var gitalk = new Gitalk({
+	  clientID: 'f5e934819613a06d3a38',
+	  clientSecret: 'f9ff1926fed5174d6f6e438e5e37dd5341af81fe',
+	  repo: 'eminoda.github.io',
+	  owner: 'eminoda',
+	  admin: ['eminoda'],
+	  perPage: 20,
+	  id: id,//长度有限制
+	  title: '借助 wireshark 网络分析工具，剖析 TCP 三次握手流程',
+	  body: '🚀 '+location.href+'\n\n欢迎通过 issues 留言 ，互相交流学习😊' 
+	})
+	gitalk.render('gitalk-container')
+</script>
+
+<style>
+	#issues_url{
+		text-align: center;
+    	font-size: 16px;
+	}
+	#issues_url a{
+		color:#6190e8;
+	}
+</style>
+<div id="issues_url">📢 因为是开源博客，为避免 <strong>Gitalk授权 </strong>带来的 <a href="https://github.com/dear-github/dear-github/issues/113" target="_blank" rel="noopener">安全风险</a>，也可访问
+</div>
+
+<script>
+$.get('https://api.github.com/repos/eminoda/eminoda.github.io/issues?labels=Gitalk,'+id+'&t=1745510206147').then(data=>{
+	if(data && data.length>0){
+		var issuesUrl = data[0].html_url
+		const $a = document.createElement('a')
+		$($a).attr('href',issuesUrl).attr('alt',issuesUrl).attr('target','blank').text('👉issues链接 ')
+		$('#issues_url').append($a).append('进行留言📝')
+	}
+})
+</script>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/legacy/tags/http/" rel="tag"># http</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/legacy/2021/03/15/web-socket-proxy/" rel="next" title="如何实现 WebSocket 反向代理？">
+                <i class="fa fa-chevron-left"></i> 如何实现 WebSocket 反向代理？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/legacy/2021/04/21/canvas-signature/" rel="prev" title="如何用 cavans 实现签名手写板">
+                如何用 cavans 实现签名手写板 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/legacy/images/eminoda/header.jpg"
+                alt="Eminoda" />
+            
+              <p class="site-author-name" itemprop="name">Eminoda</p>
+              <p class="site-description motion-element" itemprop="description">I'm a litter Full-Stack Developer.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/legacy/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">143</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/legacy/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/legacy/tags/index.html">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP（传输控制协议）"><span class="nav-number">1.</span> <span class="nav-text">TCP（传输控制协议）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WireShake"><span class="nav-number">2.</span> <span class="nav-text">WireShake</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三次握手（three-way-handshake）"><span class="nav-number">3.</span> <span class="nav-text">三次握手（three-way handshake）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四次挥手"><span class="nav-number">4.</span> <span class="nav-text">四次挥手</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些问题"><span class="nav-number">5.</span> <span class="nav-text">一些问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么握手是三次，而不是二次？"><span class="nav-number">5.1.</span> <span class="nav-text">为什么握手是三次，而不是二次？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#那为何挥手是四次？"><span class="nav-number">5.2.</span> <span class="nav-text">那为何挥手是四次？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-数据包长什么样？"><span class="nav-number">5.3.</span> <span class="nav-text">TCP 数据包长什么样？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eminoda</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/legacy/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/legacy/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/legacy/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/legacy/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/legacy/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/legacy/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

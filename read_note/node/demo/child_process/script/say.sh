@@ -1,3 +1,0 @@
-#! bin/shell
-
-echo $pwd
